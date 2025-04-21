@@ -1,44 +1,27 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
+  # Runs on pushes targeting the default branch
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: ['main', 'master']
 
-jobs:
-  build:
-# Importado en static-deploy.md
-# Este archivo se extrae como un archivo separado para que Renovate pueda actualizar las versiones de las acciones
-#
-#region contenido
-# Flujo de trabajo simple para desplegar contenido estático en GitHub Pages
-name: Desplegar contenido estático en Pages
-
-on:
-  # Se ejecuta cuando se hace push a la rama principal
-  push:
-    branches: ['main']
-
-  # Permite ejecutar este flujo de trabajo manualmente desde la pestaña de Acciones
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Establece los permisos del GITHUB_TOKEN para permitir el despliegue en GitHub Pages
+# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Permite un solo despliegue concurrente
+# Allow one concurrent deployment
 concurrency:
   group: 'pages'
   cancel-in-progress: true
 
 jobs:
-  # Trabajo único de despliegue ya que solo estamos desplegando
+  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -47,40 +30,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Configurar Node
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'npm'
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: npm ci
-      - name: Construir
+      - name: Build
         run: npm run build
-      - name: Configurar Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v4
-      - name: Subir artefacto
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Subir la carpeta dist
+          # Upload dist folder
           path: './dist'
-      - name: Desplegar a GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-#endregion contenido
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
