@@ -1,64 +1,67 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react'; // Import useMemo
 import { shuffleArray } from '../../utils/helpers';
 import DraggableTerm from '../dnd/DraggableTerm';
 import DropZoneDefinition from '../dnd/DropZoneDefinition';
 
 // MatchingQuestion Component
-const MatchingQuestion = ({ questionData, questionIndex, matches = {}, onMatchChange, isSubmitted, feedback, isIndividuallyChecked }) => { // Added isIndividuallyChecked
-    const [availableTerms, setAvailableTerms] = useState([]);
+const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitted, feedback, isIndividuallyChecked }) => {
+    // State for shuffled terms and definitions, initialized once or when questionData changes
+    const [shuffledTerms, setShuffledTerms] = useState([]);
     const [shuffledDefinitions, setShuffledDefinitions] = useState([]);
 
-    // Initialize terms and definitions
+    // Shuffle terms only when questionData.terms changes
     useEffect(() => {
-        const initialAvailable = (questionData.terms || []).filter(term => !Object.values(matches).includes(term));
-        setAvailableTerms(shuffleArray(initialAvailable));
-        setShuffledDefinitions(shuffleArray(questionData.definitions || []));
-    }, [questionData.terms, questionData.definitions, matches]); // Rerun when question data or matches change initially
+        // Use spread operator to avoid mutating original array if passed directly
+        setShuffledTerms(shuffleArray([...(questionData.terms || [])]));
+    }, [questionData.terms]);
 
-    // Update available terms when matches change (e.g., term dropped or returned)
+    // Shuffle definitions only when questionData.definitions changes
     useEffect(() => {
-        const termsInUse = Object.values(matches);
-        const updatedAvailable = (questionData.terms || []).filter(term => !termsInUse.includes(term));
-        // Only update if the available terms actually changed to avoid infinite loops with shuffle
-        if (JSON.stringify(shuffleArray(updatedAvailable)) !== JSON.stringify(availableTerms)) {
-            setAvailableTerms(shuffleArray(updatedAvailable));
-        }
-    }, [matches, questionData.terms, availableTerms]); // Added availableTerms dependency
+        // Use spread operator
+        setShuffledDefinitions(shuffleArray([...(questionData.definitions || [])]));
+    }, [questionData.definitions]);
+
+    // Derive available terms based on shuffledTerms and current matches
+    // useMemo ensures this calculation only runs when dependencies change, preventing unnecessary shuffling
+    const availableTerms = useMemo(() => {
+        const termsInUse = new Set(Object.values(matches)); // Use Set for efficient lookup
+        return shuffledTerms.filter(term => !termsInUse.has(term));
+    }, [shuffledTerms, matches]); // Depends only on the shuffled list and the current matches
 
     const handleDrop = useCallback((definition, term) => {
         if (isSubmitted) return;
         onMatchChange(questionData.id, definition, term);
-    }, [isSubmitted, onMatchChange, questionData.id]); // isSubmitted controls disabled state
+    }, [isSubmitted, onMatchChange, questionData.id]);
 
     const returnTermToAvailable = useCallback((term) => {
         if (isSubmitted || !term) return;
         const definitionToRemoveMatch = Object.keys(matches).find(def => matches[def] === term);
         if (definitionToRemoveMatch) {
-            onMatchChange(questionData.id, definitionToRemoveMatch, null); // This will trigger the useEffect above to update availableTerms
-        } else {
-            // Fallback: If somehow the term wasn't in matches but should be returned
-            if (!availableTerms.includes(term)) {
-                setAvailableTerms(prev => shuffleArray([...prev, term]));
-            }
+            // Setting match to null will trigger update in `availableTerms` via useMemo
+            onMatchChange(questionData.id, definitionToRemoveMatch, null);
         }
-    }, [isSubmitted, matches, onMatchChange, questionData.id, availableTerms]); // Added dependencies
+        // No need for fallback logic to manually add back to availableTerms,
+        // useMemo handles deriving the list correctly based on matches.
+    }, [isSubmitted, matches, onMatchChange, questionData.id]); // Removed availableTerms dependency
 
-    const shouldShowFeedback = (isSubmitted || isIndividuallyChecked) && feedback; // Show feedback if globally submitted OR individually checked AND feedback exists
+    const shouldShowFeedback = (isSubmitted || isIndividuallyChecked) && feedback;
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Available Terms Section */}
             <div className="space-y-3">
                 <h4 className="font-medium text-gray-600 mb-2">Términos (Arrastra desde aquí)</h4>
-                {availableTerms.length === 0 && !isSubmitted && (
+                {/* Check if all original terms are used */}
+                {availableTerms.length === 0 && (questionData.terms || []).length > 0 && !isSubmitted && Object.keys(matches).length > 0 && (
                     <p className="text-sm text-gray-500 italic">Todos los términos han sido usados.</p>
                 )}
+                {/* Display available terms derived from useMemo */}
                 {availableTerms.map(term => (
                     <DraggableTerm
                         key={term}
                         term={term}
                         questionId={questionData.id}
-                        isSubmitted={isSubmitted} // Pass isSubmitted for disabling drag
+                        isSubmitted={isSubmitted}
                     />
                 ))}
                 {/* Feedback for unplaced terms */}
@@ -75,6 +78,7 @@ const MatchingQuestion = ({ questionData, questionIndex, matches = {}, onMatchCh
             {/* Definitions Drop Zone Section */}
             <div className="space-y-3">
                 <h4 className="font-medium text-gray-600 mb-2">Definiciones (Suelta aquí)</h4>
+                {/* Use shuffledDefinitions directly */}
                 {shuffledDefinitions.map(definition => {
                     const droppedTerm = matches[definition] || null;
                     const definitionFeedback = shouldShowFeedback ? (feedback?.definitionFeedback?.[definition] ?? null) : null;
@@ -85,13 +89,13 @@ const MatchingQuestion = ({ questionData, questionIndex, matches = {}, onMatchCh
                                 questionId={questionData.id}
                                 droppedTerm={droppedTerm}
                                 onDrop={handleDrop}
-                                isSubmitted={isSubmitted} // Pass isSubmitted for disabling drop
-                                feedback={definitionFeedback} // Pass feedback for styling
+                                isSubmitted={isSubmitted}
+                                feedback={definitionFeedback}
                             />
                             {/* Return Term Button */}
-                            {droppedTerm && !isSubmitted && ( // Show return button only if not disabled
+                            {droppedTerm && !isSubmitted && (
                                 <button
-                                    type="button" // Added type="button"
+                                    type="button"
                                     onClick={() => returnTermToAvailable(droppedTerm)}
                                     className="absolute top-1 right-1 bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full leading-none opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
                                     aria-label={`Devolver ${droppedTerm}`}
