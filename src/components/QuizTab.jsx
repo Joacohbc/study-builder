@@ -270,7 +270,7 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                                                 type="button"
                                                 onClick={() => handleCheckSingleQuestion(qData.id)}
                                                 disabled={isIndividuallyChecked}
-                                                className="px-4 py-1 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded shadow-sm transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="px-4 py-1 text-sm bg-gray-500 hover:bg-gray-600 text-white rounded shadow-sm transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" // Changed from purple to gray
                                             >
                                                 {isIndividuallyChecked ? 'Respuesta Revisada' : 'Revisar Respuesta'}
                                             </button>
