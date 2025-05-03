@@ -98,16 +98,56 @@ const EditorTab = ({
                         Object.entries(q.correctMatches).forEach(([term, definition]) => { if (!q.terms.includes(term) || !q.definitions.includes(definition)) throw new Error(`En pregunta 'matching' '${q.id}', cada clave/valor en 'correctMatches' debe existir en 'terms' y 'definitions' respectivamente.`); });
                         break;
                     case 'fill-in-the-blanks': {
-                        if (!q.blanks || typeof q.blanks !== 'object' || Object.keys(q.blanks).length === 0) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}' necesita un objeto 'blanks' no vacío.`);
-                        const blankIdsInQuestion = (q.question.match(/\\[[A-Z0-9_]+\\]/g) || []).map(b => b.substring(1, b.length - 1));
-                        if (blankIdsInQuestion.length !== Object.keys(q.blanks).length) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El número de placeholders [BLANK_ID] en 'question' no coincide con el número de entradas en 'blanks'.`);
+                        // Basic validation for blanks object
+                        if (!q.blanks || typeof q.blanks !== 'object') throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}' necesita un objeto 'blanks'.`);
+                        // Allow empty blanks object if question has no placeholders
+                        const hasPlaceholders = /\[[a-zA-Z0-9_]+\]/.test(q.question);
+                        const hasBlankEntries = Object.keys(q.blanks).length > 0;
+
+                        if (hasPlaceholders && !hasBlankEntries) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}' tiene placeholders en 'question' pero el objeto 'blanks' está vacío.`);
+                        if (!hasPlaceholders && hasBlankEntries) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}' tiene entradas en 'blanks' pero no hay placeholders [...] en 'question'.`);
+                        if (!hasPlaceholders && !hasBlankEntries) break; // Valid case: no blanks needed
+
+                        // Extract placeholder IDs from the question string (case-insensitive ID within brackets)
+                        const placeholderMatches = [...q.question.matchAll(/\[([a-zA-Z0-9_]+)\]/g)]; // Corrected Regex
+                        const placeholderIdsInQuestion = new Set(placeholderMatches.map(match => match[1])); // Use a Set for efficient lookup and uniqueness
+
+                        // Get keys from the blanks object
+                        const blankKeys = new Set(Object.keys(q.blanks));
+
+                        // Check for mismatches between placeholders and blank definitions
+                        if (placeholderIdsInQuestion.size !== blankKeys.size) {
+                             throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': Discrepancia entre placeholders [ID] en 'question' (${placeholderIdsInQuestion.size}) y entradas en 'blanks' (${blankKeys.size}). Deben coincidir.`);
+                        }
+
+                        // Check if every placeholder in the question has a corresponding blank definition
+                        for (const idInQ of placeholderIdsInQuestion) {
+                            if (!blankKeys.has(idInQ)) {
+                                // This check might be redundant due to the size comparison, but ensures clarity
+                                throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El placeholder [${idInQ}] existe en 'question' pero no hay entrada para él en 'blanks'.`);
+                            }
+                        }
+
+                         // Check if every blank definition corresponds to a placeholder in the question
+                         for (const blankId of blankKeys) {
+                             if (!placeholderIdsInQuestion.has(blankId)) {
+                                 // This check might be redundant due to the size comparison, but ensures clarity
+                                 throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El ID de blank '${blankId}' existe en 'blanks' pero no como placeholder [${blankId}] en 'question'.`);
+                             }
+                         }
+
+                        // Validate each blank entry
                         Object.entries(q.blanks).forEach(([blankId, blankData]) => {
-                            if (!blankIdsInQuestion.includes(blankId)) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El ID de blank '${blankId}' existe en 'blanks' pero no como placeholder [${blankId}] en 'question'.`);
+                            // Ensure the blankId actually corresponds to a placeholder found in the question
+                            // This check is somewhat redundant given the previous checks, but safe to keep.
+                            if (!placeholderIdsInQuestion.has(blankId)) {
+                                throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El ID de blank '${blankId}' existe en 'blanks' pero no como placeholder [${blankId}] en 'question'.`);
+                            }
+
                             if (!blankData || typeof blankData !== 'object') throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': La entrada para '${blankId}' en 'blanks' debe ser un objeto.`);
                             if (!Array.isArray(blankData.options) || blankData.options.length < 2) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}', blank '${blankId}': necesita un array 'options' con al menos 2 strings.`);
                             if (typeof blankData.correctAnswer !== 'string' || !blankData.options.includes(blankData.correctAnswer)) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}', blank '${blankId}': necesita un 'correctAnswer' (string) que esté presente en sus 'options'.`);
                         });
-                        blankIdsInQuestion.forEach(idInQ => { if (!q.blanks[idInQ]) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El placeholder [${idInQ}] existe en 'question' pero no hay entrada para él en 'blanks'.`); });
                         break;
                     }
                     default:
