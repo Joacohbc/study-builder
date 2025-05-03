@@ -3,6 +3,7 @@ import { shuffleArray } from '../utils/helpers';
 import SingleChoiceQuestion from './questions/SingleChoiceQuestion';
 import MultipleChoiceQuestion from './questions/MultipleChoiceQuestion';
 import MatchingQuestion from './questions/MatchingQuestion';
+import FillInTheBlanksQuestion from './questions/FillInTheBlanksQuestion'; // Import the new component
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
 const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added activeSetName prop for context
@@ -44,6 +45,21 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
              return { ...prevAnswers, [questionId]: newMatches, };
          });
      }, []);
+
+     // Callback to handle answer changes from fill-in-the-blanks questions
+     const handleFillInTheBlanksChange = useCallback((questionId, blankId, value) => {
+        setAnswers(prevAnswers => {
+            const currentBlanks = prevAnswers[questionId] || {}; // Get current answers for this question
+            const newBlanks = {
+                ...currentBlanks,
+                [blankId]: value, // Update the specific blank's value
+            };
+            return {
+                ...prevAnswers,
+                [questionId]: newBlanks,
+            };
+        });
+    }, []);
 
 
     // Handle form submission: calculate score and generate feedback
@@ -100,7 +116,40 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                     questionFeedback.isAnswered = answeredMatchCount > 0 || questionFeedback.unplacedTerms.length < totalTerms;
                     isCorrect = totalTerms > 0 && correctMatchCount === totalTerms && questionFeedback.unplacedTerms.length === 0;
                     questionFeedback.correctMatchesCount = correctMatchCount; questionFeedback.totalMatches = totalTerms;
+                } else if (qData.type === 'fill-in-the-blanks') {
+                    const userBlanks = typeof userAnswer === 'object' && userAnswer !== null ? userAnswer : {};
+                    const correctBlanks = qData.blanks || {};
+                    const blankIds = Object.keys(correctBlanks);
+                    let correctBlanksCount = 0;
+                    let answeredBlanksCount = 0;
+                    questionFeedback.blankFeedback = {}; // Store feedback per blank
+
+                    blankIds.forEach(blankId => {
+                        const userAnswerForBlank = userBlanks[blankId] || null;
+                        const correctAnswerForBlank = correctBlanks[blankId]?.correctAnswer;
+                        const isBlankAnswered = userAnswerForBlank !== null && userAnswerForBlank !== "";
+                        const isBlankCorrect = isBlankAnswered && userAnswerForBlank === correctAnswerForBlank;
+
+                        if (isBlankAnswered) {
+                            answeredBlanksCount++;
+                        }
+                        if (isBlankCorrect) {
+                            correctBlanksCount++;
+                        }
+                        questionFeedback.blankFeedback[blankId] = {
+                            userAnswer: userAnswerForBlank,
+                            correctAnswer: correctAnswerForBlank,
+                            isCorrect: isBlankCorrect
+                        };
+                    });
+
+                    questionFeedback.isAnswered = answeredBlanksCount > 0;
+                    // Considered correct only if all blanks are answered correctly
+                    isCorrect = blankIds.length > 0 && correctBlanksCount === blankIds.length;
+                    questionFeedback.correctBlanksCount = correctBlanksCount;
+                    questionFeedback.totalBlanks = blankIds.length;
                 }
+
 
                 if (isCorrect) { score++; }
                 questionFeedback.isCorrect = isCorrect;
@@ -155,7 +204,8 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                                 <div key={qData.id} className="bg-white p-6 rounded-lg shadow" data-question-index={index}>
                                     {/* Question Title */}
                                     <h3 className="text-lg font-semibold mb-4 text-gray-700">
-                                        Pregunta {index + 1}: {qData.question}
+                                        Pregunta {index + 1}: {/* Display question text differently for fill-in-the-blanks */}
+                                        {qData.type === 'fill-in-the-blanks' ? "Completa la frase:" : qData.question}
                                     </h3>
                                     {/* Container for options/matching areas */}
                                     <div className="options-container">
@@ -163,6 +213,17 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                                         {qData.type === 'single' && ( <SingleChoiceQuestion questionData={qData} questionIndex={index} selectedAnswer={answers[qData.id] || ''} onChange={handleAnswerChange} isSubmitted={isSubmitted} feedback={questionFeedback} /> )}
                                         {qData.type === 'multiple' && ( <MultipleChoiceQuestion questionData={qData} questionIndex={index} selectedAnswers={answers[qData.id] || []} onChange={handleAnswerChange} isSubmitted={isSubmitted} feedback={questionFeedback} /> )}
                                         {qData.type === 'matching' && ( <MatchingQuestion questionData={qData} questionIndex={index} matches={answers[qData.id] || {}} onMatchChange={handleMatchChange} isSubmitted={isSubmitted} feedback={questionFeedback} /> )}
+                                        {/* Render FillInTheBlanksQuestion */}
+                                        {qData.type === 'fill-in-the-blanks' && (
+                                            <FillInTheBlanksQuestion
+                                                questionData={qData}
+                                                questionIndex={index}
+                                                selectedAnswers={answers[qData.id] || {}}
+                                                onChange={handleFillInTheBlanksChange} // Use the specific handler
+                                                isSubmitted={isSubmitted}
+                                                feedback={questionFeedback}
+                                            />
+                                        )}
                                     </div>
                                      {/* Display evaluation error message if it occurred */}
                                      {isSubmitted && questionFeedback?.error && ( <p className="mt-2 text-sm text-red-600 font-semibold">{questionFeedback.error}</p> )}
@@ -195,12 +256,51 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                              if (!feedback) return null; // Should not happen
 
                              let feedbackClass = 'p-4 border rounded-md mb-4 '; let feedbackText = '';
+                             let questionTitle = qData.question;
+                             if (qData.type === 'fill-in-the-blanks') questionTitle = "Completa la frase (Pregunta " + (index + 1) + ")";
+
+
                              if (feedback.error) { feedbackClass += 'bg-red-100 border-red-300'; feedbackText = feedback.error; }
                              else if (feedback.isCorrect) { feedbackClass += 'bg-green-100 border-green-300'; feedbackText = '¡Correcto!'; }
-                             else if (feedback.isAnswered) { feedbackClass += 'bg-red-100 border-red-300'; feedbackText = 'Incorrecto.'; if (qData.type === 'single') feedbackText += ` La respuesta correcta es: ${feedback.correctAnswer}`; if (qData.type === 'multiple') feedbackText += ` Las respuestas correctas son: ${(feedback.correctAnswers || []).join(', ')}`; }
-                             else { feedbackClass += 'bg-yellow-100 border-yellow-400'; feedbackText = 'No respondida.'; if (qData.type === 'single') feedbackText += ` La respuesta correcta es: ${feedback.correctAnswer}`; if (qData.type === 'multiple') feedbackText += ` Las respuestas correctas son: ${(feedback.correctAnswers || []).join(', ')}`; }
+                             else if (feedback.isAnswered) {
+                                 feedbackClass += 'bg-red-100 border-red-300'; feedbackText = 'Incorrecto.';
+                                 if (qData.type === 'single') feedbackText += ` La respuesta correcta es: ${feedback.correctAnswer}`;
+                                 if (qData.type === 'multiple') feedbackText += ` Las respuestas correctas son: ${(feedback.correctAnswers || []).join(', ')}`;
+                                 // Add feedback for fill-in-the-blanks (already shown in the component, but can add summary here)
+                                 if (qData.type === 'fill-in-the-blanks') {
+                                     const correctAnswersSummary = Object.entries(qData.blanks)
+                                         .map(([id, data]) => `[${id}]: ${data.correctAnswer}`)
+                                         .join(', ');
+                                     feedbackText += ` Respuestas correctas: ${correctAnswersSummary}`;
+                                 }
+                                 // Add feedback for matching (can be complex, maybe just indicate incorrect)
+                                 if (qData.type === 'matching') {
+                                     feedbackText += ` Revisa las uniones correctas arriba.`;
+                                 }
+                             }
+                             else { // Not answered
+                                 feedbackClass += 'bg-yellow-100 border-yellow-400'; feedbackText = 'No respondida.';
+                                 if (qData.type === 'single') feedbackText += ` La respuesta correcta es: ${feedback.correctAnswer}`;
+                                 if (qData.type === 'multiple') feedbackText += ` Las respuestas correctas son: ${(feedback.correctAnswers || []).join(', ')}`;
+                                 if (qData.type === 'fill-in-the-blanks') {
+                                     const correctAnswersSummary = Object.entries(qData.blanks)
+                                         .map(([id, data]) => `[${id}]: ${data.correctAnswer}`)
+                                         .join(', ');
+                                     feedbackText += ` Respuestas correctas: ${correctAnswersSummary}`;
+                                 }
+                                 if (qData.type === 'matching') {
+                                     feedbackText += ` Revisa las uniones correctas arriba.`;
+                                 }
+                             }
 
-                             return ( <div key={`feedback-${qData.id}`} className={feedbackClass}> <p className="font-semibold">Pregunta {index + 1}: {qData.question}</p> <p className={`mt-1 text-sm ${feedback.isCorrect ? 'text-green-700' : feedback.isAnswered ? 'text-red-700' : 'text-yellow-700'}`}> {feedbackText} </p> </div> );
+                             return (
+                                <div key={`feedback-${qData.id}`} className={feedbackClass}>
+                                    <p className="font-semibold">Pregunta {index + 1}: {questionTitle}</p>
+                                    <p className={`mt-1 text-sm ${feedback.isCorrect ? 'text-green-700' : feedback.isAnswered ? 'text-red-700' : 'text-yellow-700'}`}>
+                                        {feedbackText}
+                                    </p>
+                                </div>
+                             );
                         })}
                     </div>
                     {/* Retry Button */}

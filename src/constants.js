@@ -27,5 +27,21 @@ export const defaultQuizData = [
     {
         id: 'q_sci_1', type: 'single', question: '¿Cuál es el símbolo químico del agua?',
         options: ['O2', 'CO2', 'H2O', 'NaCl'], correctAnswer: 'H2O'
+    },
+    // --- New Fill-in-the-Blanks Example ---
+    {
+        id: 'q_comp_fill_1',
+        type: 'fill-in-the-blanks',
+        question: 'El [COMPONENT_1] es la unidad central de procesamiento, mientras que la [MEMORY_TYPE] es la memoria volátil principal.',
+        blanks: {
+            "COMPONENT_1": {
+                "options": ["CPU", "GPU", "SSD", "Placa Base"],
+                "correctAnswer": "CPU"
+            },
+            "MEMORY_TYPE": {
+                "options": ["RAM", "ROM", "Cache L1", "Disco Duro"],
+                "correctAnswer": "RAM"
+            }
+        }
     }
 ];

@@ -33,70 +33,76 @@ const HelpTab = () => {
       "id": "q_single_example",
       "type": "single",
       "question": "¿Cuál es la función principal del componente X?",
-      "options": [
-        "Almacenar datos temporalmente",
-        "Procesar la entrada del usuario",
-        "Mostrar información visual",
-        "Gestionar la red"
-      ],
-      "correctAnswer": "Procesar la entrada del usuario"
+      "options": ["Almacenar datos", "Procesar entrada", "Mostrar info", "Gestionar red"],
+      "correctAnswer": "Procesar entrada"
     }
     \`\`\`
 
 2.  **Opción Múltiple (\`multiple\`):**
     * \`id\`: String único (ej: "q_multi_1").
     * \`type\`: "multiple".
-    * \`question\`: String con la pregunta (debe indicar que puede haber más de una respuesta correcta).
-    * \`options\`: Array de strings con las posibles respuestas (incluye las correctas). Debe haber al menos 3 opciones. Crea distractores plausibles.
-    * \`correctAnswers\`: Array de strings que coinciden exactamente con *todas* las respuestas correctas dentro del array \`options\`.
+    * \`question\`: String con la pregunta (indicar selección múltiple).
+    * \`options\`: Array de strings con posibles respuestas (incluye correctas). Al menos 3 opciones.
+    * \`correctAnswers\`: Array de strings que coinciden con *todas* las respuestas correctas en \`options\`.
 
     *Ejemplo:*
     \`\`\`json
     {
       "id": "q_multi_example",
       "type": "multiple",
-      "question": "¿Cuáles de los siguientes son beneficios del enfoque Y? (Selecciona todas las que apliquen)",
-      "options": [
-        "Mayor velocidad",
-        "Menor costo",
-        "Mayor complejidad",
-        "Mejor escalabilidad"
-      ],
-      "correctAnswers": [
-        "Mayor velocidad",
-        "Mejor escalabilidad"
-      ]
+      "question": "¿Cuáles son beneficios del enfoque Y? (Selecciona todas)",
+      "options": ["Velocidad", "Costo", "Complejidad", "Escalabilidad"],
+      "correctAnswers": ["Velocidad", "Escalabilidad"]
     }
     \`\`\`
 
 3.  **Unir Conceptos (\`matching\`):**
     * \`id\`: String único (ej: "q_match_1").
     * \`type\`: "matching".
-    * \`question\`: String con la instrucción (ej: "Une cada término con su definición correcta:").
-    * \`terms\`: Array de strings con los términos clave a unir.
-    * \`definitions\`: Array de strings con las definiciones correspondientes. Debe haber el mismo número de términos y definiciones.
-    * \`correctMatches\`: Objeto donde cada clave es un string de \`terms\` y su valor es el string correspondiente de \`definitions\`. Asegúrate de que cada término tenga una única definición correcta y viceversa dentro de esta pregunta.
+    * \`question\`: String con la instrucción (ej: "Une cada término con su definición:").
+    * \`terms\`: Array de strings (términos clave).
+    * \`definitions\`: Array de strings (definiciones). Mismo número que términos.
+    * \`correctMatches\`: Objeto { término: definición_correcta }. Cada término/definición debe ser único aquí.
 
     *Ejemplo:*
     \`\`\`json
     {
       "id": "q_match_example",
       "type": "matching",
-      "question": "Une cada componente con su descripción:",
-      "terms": [
-        "CPU",
-        "RAM",
-        "Disco Duro"
-      ],
-      "definitions": [
-        "Memoria volátil de acceso aleatorio",
-        "Unidad central de procesamiento",
-        "Almacenamiento persistente no volátil"
-      ],
-      "correctMatches": {
-        "CPU": "Unidad central de procesamiento",
-        "RAM": "Memoria volátil de acceso aleatorio",
-        "Disco Duro": "Almacenamiento persistente no volátil"
+      "question": "Une componente y descripción:",
+      "terms": ["CPU", "RAM", "Disco Duro"],
+      "definitions": ["Memoria volátil", "Procesador", "Almacenamiento persistente"],
+      "correctMatches": { "CPU": "Procesador", "RAM": "Memoria volátil", "Disco Duro": "Almacenamiento persistente" }
+    }
+    \`\`\`
+
+4.  **Rellenar Huecos (\`fill-in-the-blanks\`):**
+    * \`id\`: String único (ej: "q_fill_1").
+    * \`type\`: "fill-in-the-blanks".
+    * \`question\`: String con el texto que contiene placeholders como \`[BLANK_ID]\`. Los \`BLANK_ID\` deben ser strings en mayúsculas con letras, números y guiones bajos (ej: \`[TERM_1]\`, \`[DEFINITION_A]\`).
+    * \`blanks\`: Objeto donde cada clave es un \`BLANK_ID\` (sin corchetes) que aparece en \`question\`. El valor para cada clave es un objeto con:
+        * \`options\`: Array de strings con las posibles respuestas para ese hueco (incluye la correcta). Al menos 2 opciones. Crea distractores plausibles.
+        * \`correctAnswer\`: String que coincide exactamente con la respuesta correcta para ese hueco dentro de su array \`options\`.
+
+    *Ejemplo:*
+    \`\`\`json
+    {
+      "id": "q_fill_example",
+      "type": "fill-in-the-blanks",
+      "question": "El lenguaje [LANG] es interpretado, mientras que [COMP_LANG] es compilado. Ambos usan [DATA_FORMAT] para intercambio de datos.",
+      "blanks": {
+        "LANG": {
+          "options": ["Python", "C++", "Java"],
+          "correctAnswer": "Python"
+        },
+        "COMP_LANG": {
+          "options": ["JavaScript", "C++", "Ruby"],
+          "correctAnswer": "C++"
+        },
+        "DATA_FORMAT": {
+          "options": ["XML", "JSON", "YAML"],
+          "correctAnswer": "JSON"
+        }
       }
     }
     \`\`\`
@@ -104,12 +110,12 @@ const HelpTab = () => {
 **Instrucciones para Generar Preguntas:**
 
 1.  **Analiza el Texto:** Lee cuidadosamente el documento/texto proporcionado.
-2.  **Identifica Contenido Clave:** Busca definiciones, conceptos importantes, comparaciones, listas de características/beneficios/desventajas, procesos, hechos clave, etc.
-3.  **Crea Preguntas Variadas:** Intenta generar una mezcla de los tres tipos de preguntas (\`single\`, \`multiple\`, \`matching\`) si el contenido lo permite.
-4.  **Formula Preguntas Claras:** Asegúrate de que las preguntas sean directas y fáciles de entender.
-5.  **Crea Distractores (Opciones Incorrectas):** Para preguntas 'single' y 'multiple', las opciones incorrectas deben ser relevantes al tema pero claramente erróneas según el texto fuente.
-6.  **Asegura la Precisión:** Verifica que las respuestas correctas (\`correctAnswer\`, \`correctAnswers\`, \`correctMatches\`) se basen directamente en la información del texto fuente.
-7.  **Genera IDs Únicos:** Asigna un \`id\` único y descriptivo a cada pregunta generada (puedes usar un prefijo y un número incremental, ej: "gen_q_1", "gen_q_2").
+2.  **Identifica Contenido Clave:** Busca definiciones, conceptos, comparaciones, listas, procesos, hechos clave, frases importantes donde se puedan ocultar términos clave.
+3.  **Crea Preguntas Variadas:** Intenta generar una mezcla de los cuatro tipos de preguntas (\`single\`, \`multiple\`, \`matching\`, \`fill-in-the-blanks\`) si el contenido lo permite. Para 'fill-in-the-blanks', busca frases donde 1-3 términos clave puedan ser reemplazados por huecos.
+4.  **Formula Preguntas/Textos Claros:** Asegúrate de que sean directos y fáciles de entender. Para 'fill-in-the-blanks', usa placeholders claros como \`[KEY_TERM]\`.
+5.  **Crea Distractores (Opciones Incorrectas):** Para 'single', 'multiple' y 'fill-in-the-blanks', las opciones incorrectas deben ser relevantes pero erróneas según el texto fuente.
+6.  **Asegura la Precisión:** Verifica que las respuestas correctas se basen directamente en la información del texto fuente.
+7.  **Genera IDs Únicos:** Asigna un \`id\` único y descriptivo a cada pregunta (ej: "gen_q_1").
 8.  **Output:** Proporciona únicamente el array JSON resultante, sin texto adicional antes o después.
 
 **Texto Fuente:**
@@ -162,12 +168,12 @@ const HelpTab = () => {
                 <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Características</h3>
                 <ul className="list-disc list-inside space-y-1">
                     <li>Gestión de Sets: Guardar, cargar y eliminar diferentes conjuntos de preguntas.</li>
-                    <li>Preguntas de opción única, múltiple y unir conceptos (arrastrar y soltar).</li>
+                    <li>Preguntas de opción única, múltiple, unir conceptos (arrastrar y soltar) y rellenar huecos (dropdowns).</li> {/* Updated */}
                     <li>Barajado aleatorio de preguntas y opciones/términos al cargar y reintentar (dentro del set activo).</li>
                     <li>Retroalimentación instantánea al enviar.</li>
                     <li>Puntuación final.</li>
                     <li>Edición de Preguntas (JSON) del set activo.</li>
-                    <li>Ayuda Integrada.</li>
+                    <li>Ayuda Integrada con prompt para IA.</li> {/* Updated */}
                 </ul>
 
                 <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Cómo Usar</h3>
@@ -188,7 +194,7 @@ const HelpTab = () => {
                            <li>Introduce un nombre y usa "Guardar Como Nuevo Set" para crear un nuevo conjunto con el contenido del editor. Este nuevo set se volverá el activo.</li>
                         </ul>
                     </li>
-                    <li><strong>Responder (en "Cuestionario")</strong>: Responde las preguntas del set activo. Arrastra términos a definiciones para unir. Haz clic en "Enviar Respuestas".</li>
+                    <li><strong>Responder (en "Cuestionario")</strong>: Responde las preguntas del set activo. Arrastra términos a definiciones para unir. Selecciona opciones en los desplegables para rellenar huecos. Haz clic en "Enviar Respuestas".</li> {/* Updated */}
                     <li><strong>Ver Resultados</strong>: Se mostrará puntuación y retroalimentación para el set activo.</li>
                     <li><strong>Reintentar</strong>: Usa "Intentar de Nuevo" para reiniciar el cuestionario *con el mismo set activo* (se baraja de nuevo).</li>
 
@@ -198,8 +204,8 @@ const HelpTab = () => {
                 <p>Cada set es un array de objetos JSON. Cada objeto (pregunta) <strong>debe tener una clave <code className={inlineCodeStyle}>id</code> única dentro de ese set</strong>.</p>
                  <ul className="list-disc list-inside space-y-1">
                     <li><code className={inlineCodeStyle}>id</code>: Identificador único para la pregunta (string, ej: "q1").</li>
-                    <li><code className={inlineCodeStyle}>type</code>: 'single', 'multiple', 'matching'.</li>
-                    <li><code className={inlineCodeStyle}>question</code>: Texto de la pregunta (string).</li>
+                    <li><code className={inlineCodeStyle}>type</code>: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.</li> {/* Updated */}
+                    <li><code className={inlineCodeStyle}>question</code>: Texto de la pregunta o la frase con huecos (string).</li>
                 </ul>
 
                 <h4 className="text-md md:text-lg font-semibold mt-2 mb-1">Tipo 'single'</h4>
@@ -267,6 +273,36 @@ const HelpTab = () => {
     "correctMatches": {
         "Término A": "Definición A",
         "Término B": "Definición B"
+    }
+}`
+                }</code></pre>
+
+                {/* --- New Fill-in-the-Blanks Type --- */}
+                <h4 className="text-md md:text-lg font-semibold mt-2 mb-1">Tipo 'fill-in-the-blanks'</h4>
+                <ul className="list-disc list-inside space-y-1">
+                    <li><code className={inlineCodeStyle}>question</code>: String con el texto y placeholders como <code className={inlineCodeStyle}>[BLANK_ID]</code>.</li>
+                    <li><code className={inlineCodeStyle}>blanks</code>: Objeto donde cada clave es un <code className={inlineCodeStyle}>BLANK_ID</code> (sin corchetes) del texto.</li>
+                    <li>Cada valor en <code className={inlineCodeStyle}>blanks</code> es un objeto con:
+                        <ul className="list-disc list-inside ml-4 my-1 space-y-1">
+                            <li><code className={inlineCodeStyle}>options</code>: Array de strings (opciones para ese hueco).</li>
+                            <li><code className={inlineCodeStyle}>correctAnswer</code>: String de la respuesta correcta para ese hueco.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <pre className={codeBlockStyle}><code>{
+`{
+    "id": "q_fill_example",
+    "type": "fill-in-the-blanks",
+    "question": "React usa un [DOM_TYPE] virtual, y las props fluyen hacia [DIRECTION].",
+    "blanks": {
+        "DOM_TYPE": {
+            "options": ["Shadow", "Virtual", "Light"],
+            "correctAnswer": "Virtual"
+        },
+        "DIRECTION": {
+            "options": ["arriba", "abajo", "los lados"],
+            "correctAnswer": "abajo"
+        }
     }
 }`
                 }</code></pre>

@@ -65,17 +65,59 @@ const EditorTab = ({
         try {
             const parsedData = JSON.parse(jsonString);
             if (!Array.isArray(parsedData)) { throw new Error("El formato debe ser un array JSON: [...]"); }
+            const ids = new Set(); // Keep track of IDs to ensure uniqueness
+
             parsedData.forEach((q, index) => {
                  if (!q || typeof q !== 'object') throw new Error(`Item en índice ${index} no es un objeto.`);
+
+                 // --- ID Validation ---
                  if (!q.id || typeof q.id !== 'string' || q.id.trim() === '') throw new Error(`Pregunta en índice ${index} necesita un 'id' (string) no vacío.`);
+                 if (ids.has(q.id)) throw new Error(`ID duplicado encontrado: '${q.id}'. Los IDs deben ser únicos dentro del set.`);
+                 ids.add(q.id);
+
+                 // --- Common Fields Validation ---
                  if (!q.type || typeof q.type !== 'string') throw new Error(`Pregunta '${q.id}' necesita un 'type' (string).`);
                  if (!q.question || typeof q.question !== 'string') throw new Error(`Pregunta '${q.id}' necesita una 'question' (string).`);
-                 // TODO: Add more specific validation based on question type
+
+                 // --- Type-Specific Validation ---
+                 switch (q.type) {
+                    case 'single':
+                        if (!Array.isArray(q.options) || q.options.length < 2) throw new Error(`Pregunta 'single' '${q.id}' necesita un array 'options' con al menos 2 strings.`);
+                        if (typeof q.correctAnswer !== 'string' || !q.options.includes(q.correctAnswer)) throw new Error(`Pregunta 'single' '${q.id}' necesita un 'correctAnswer' (string) que esté presente en 'options'.`);
+                        break;
+                    case 'multiple':
+                        if (!Array.isArray(q.options) || q.options.length < 2) throw new Error(`Pregunta 'multiple' '${q.id}' necesita un array 'options' con al menos 2 strings.`);
+                        if (!Array.isArray(q.correctAnswers) || q.correctAnswers.length < 1) throw new Error(`Pregunta 'multiple' '${q.id}' necesita un array 'correctAnswers' con al menos 1 string.`);
+                        q.correctAnswers.forEach(ans => { if (typeof ans !== 'string' || !q.options.includes(ans)) throw new Error(`En pregunta 'multiple' '${q.id}', cada 'correctAnswer' debe ser un string presente en 'options'.`); });
+                        break;
+                    case 'matching':
+                        if (!Array.isArray(q.terms) || q.terms.length < 1) throw new Error(`Pregunta 'matching' '${q.id}' necesita un array 'terms' con al menos 1 string.`);
+                        if (!Array.isArray(q.definitions) || q.definitions.length < 1) throw new Error(`Pregunta 'matching' '${q.id}' necesita un array 'definitions' con al menos 1 string.`);
+                        if (q.terms.length !== q.definitions.length) throw new Error(`Pregunta 'matching' '${q.id}' debe tener el mismo número de 'terms' y 'definitions'.`);
+                        if (!q.correctMatches || typeof q.correctMatches !== 'object' || Object.keys(q.correctMatches).length !== q.terms.length) throw new Error(`Pregunta 'matching' '${q.id}' necesita un objeto 'correctMatches' con una entrada para cada término.`);
+                        Object.entries(q.correctMatches).forEach(([term, definition]) => { if (!q.terms.includes(term) || !q.definitions.includes(definition)) throw new Error(`En pregunta 'matching' '${q.id}', cada clave/valor en 'correctMatches' debe existir en 'terms' y 'definitions' respectivamente.`); });
+                        break;
+                    case 'fill-in-the-blanks': {
+                        if (!q.blanks || typeof q.blanks !== 'object' || Object.keys(q.blanks).length === 0) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}' necesita un objeto 'blanks' no vacío.`);
+                        const blankIdsInQuestion = (q.question.match(/\\[[A-Z0-9_]+\\]/g) || []).map(b => b.substring(1, b.length - 1));
+                        if (blankIdsInQuestion.length !== Object.keys(q.blanks).length) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El número de placeholders [BLANK_ID] en 'question' no coincide con el número de entradas en 'blanks'.`);
+                        Object.entries(q.blanks).forEach(([blankId, blankData]) => {
+                            if (!blankIdsInQuestion.includes(blankId)) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El ID de blank '${blankId}' existe en 'blanks' pero no como placeholder [${blankId}] en 'question'.`);
+                            if (!blankData || typeof blankData !== 'object') throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': La entrada para '${blankId}' en 'blanks' debe ser un objeto.`);
+                            if (!Array.isArray(blankData.options) || blankData.options.length < 2) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}', blank '${blankId}': necesita un array 'options' con al menos 2 strings.`);
+                            if (typeof blankData.correctAnswer !== 'string' || !blankData.options.includes(blankData.correctAnswer)) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}', blank '${blankId}': necesita un 'correctAnswer' (string) que esté presente en sus 'options'.`);
+                        });
+                        blankIdsInQuestion.forEach(idInQ => { if (!q.blanks[idInQ]) throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El placeholder [${idInQ}] existe en 'question' pero no hay entrada para él en 'blanks'.`); });
+                        break;
+                    }
+                    default:
+                        throw new Error(`Tipo de pregunta desconocido '${q.type}' para la pregunta '${q.id}'. Tipos válidos: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.`);
+                 }
              });
             return parsedData; // Return parsed data if valid
         } catch (error) {
             console.error("Error parsing or validating JSON:", error);
-            showStatus(`Error: ${error.message}. Revisa la sintaxis y estructura.`, 'error');
+            showStatus(`Error de validación: ${error.message}. Revisa la sintaxis, estructura e IDs únicos.`, 'error');
             return null; // Return null if invalid
         }
     };
@@ -137,16 +179,6 @@ const EditorTab = ({
     const showStatus = (message, type) => {
         setStatusMessage({ message, type });
         setTimeout(() => setStatusMessage({ message: '', type: '' }), 5000);
-    };
-
-    // Helper function to determine the color of the status message
-    const getStatusColor = () => {
-        switch (statusMessage.type) {
-            case 'success': return 'text-green-600';
-            case 'error': return 'text-red-600';
-            case 'info': return 'text-blue-600';
-            default: return 'text-gray-600';
-        }
     };
 
     const setNames = quizSets ? Object.keys(quizSets) : [];
