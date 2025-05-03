@@ -54,7 +54,7 @@ const EditorTab = ({
                 // App component handles switching to default if active was deleted
             }
         } else if (selectedSetToLoad === DEFAULT_SET_NAME) {
-             showStatus(`No se puede eliminar el set "${DEFAULT_SET_NAME}".`, 'error');
+            showStatus(`No se puede eliminar el set "${DEFAULT_SET_NAME}".`, 'error');
         }
     };
 
@@ -68,19 +68,19 @@ const EditorTab = ({
             const ids = new Set(); // Keep track of IDs to ensure uniqueness
 
             parsedData.forEach((q, index) => {
-                 if (!q || typeof q !== 'object') throw new Error(`Item en índice ${index} no es un objeto.`);
+                if (!q || typeof q !== 'object') throw new Error(`Item en índice ${index} no es un objeto.`);
 
-                 // --- ID Validation ---
-                 if (!q.id || typeof q.id !== 'string' || q.id.trim() === '') throw new Error(`Pregunta en índice ${index} necesita un 'id' (string) no vacío.`);
-                 if (ids.has(q.id)) throw new Error(`ID duplicado encontrado: '${q.id}'. Los IDs deben ser únicos dentro del set.`);
-                 ids.add(q.id);
+                // --- ID Validation ---
+                if (!q.id || typeof q.id !== 'string' || q.id.trim() === '') throw new Error(`Pregunta en índice ${index} necesita un 'id' (string) no vacío.`);
+                if (ids.has(q.id)) throw new Error(`ID duplicado encontrado: '${q.id}'. Los IDs deben ser únicos dentro del set.`);
+                ids.add(q.id);
 
-                 // --- Common Fields Validation ---
-                 if (!q.type || typeof q.type !== 'string') throw new Error(`Pregunta '${q.id}' necesita un 'type' (string).`);
-                 if (!q.question || typeof q.question !== 'string') throw new Error(`Pregunta '${q.id}' necesita una 'question' (string).`);
+                // --- Common Fields Validation ---
+                if (!q.type || typeof q.type !== 'string') throw new Error(`Pregunta '${q.id}' necesita un 'type' (string).`);
+                if (!q.question || typeof q.question !== 'string') throw new Error(`Pregunta '${q.id}' necesita una 'question' (string).`);
 
-                 // --- Type-Specific Validation ---
-                 switch (q.type) {
+                // --- Type-Specific Validation ---
+                switch (q.type) {
                     case 'single':
                         if (!Array.isArray(q.options) || q.options.length < 2) throw new Error(`Pregunta 'single' '${q.id}' necesita un array 'options' con al menos 2 strings.`);
                         if (typeof q.correctAnswer !== 'string' || !q.options.includes(q.correctAnswer)) throw new Error(`Pregunta 'single' '${q.id}' necesita un 'correctAnswer' (string) que esté presente en 'options'.`);
@@ -117,7 +117,7 @@ const EditorTab = ({
 
                         // Check for mismatches between placeholders and blank definitions
                         if (placeholderIdsInQuestion.size !== blankKeys.size) {
-                             throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': Discrepancia entre placeholders [ID] en 'question' (${placeholderIdsInQuestion.size}) y entradas en 'blanks' (${blankKeys.size}). Deben coincidir.`);
+                            throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': Discrepancia entre placeholders [ID] en 'question' (${placeholderIdsInQuestion.size}) y entradas en 'blanks' (${blankKeys.size}). Deben coincidir.`);
                         }
 
                         // Check if every placeholder in the question has a corresponding blank definition
@@ -128,13 +128,13 @@ const EditorTab = ({
                             }
                         }
 
-                         // Check if every blank definition corresponds to a placeholder in the question
-                         for (const blankId of blankKeys) {
-                             if (!placeholderIdsInQuestion.has(blankId)) {
-                                 // This check might be redundant due to the size comparison, but ensures clarity
-                                 throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El ID de blank '${blankId}' existe en 'blanks' pero no como placeholder [${blankId}] en 'question'.`);
-                             }
-                         }
+                        // Check if every blank definition corresponds to a placeholder in the question
+                        for (const blankId of blankKeys) {
+                            if (!placeholderIdsInQuestion.has(blankId)) {
+                                // This check might be redundant due to the size comparison, but ensures clarity
+                                throw new Error(`Pregunta 'fill-in-the-blanks' '${q.id}': El ID de blank '${blankId}' existe en 'blanks' pero no como placeholder [${blankId}] en 'question'.`);
+                            }
+                        }
 
                         // Validate each blank entry
                         Object.entries(q.blanks).forEach(([blankId, blankData]) => {
@@ -152,8 +152,8 @@ const EditorTab = ({
                     }
                     default:
                         throw new Error(`Tipo de pregunta desconocido '${q.type}' para la pregunta '${q.id}'. Tipos válidos: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.`);
-                 }
-             });
+                }
+            });
             return parsedData; // Return parsed data if valid
         } catch (error) {
             console.error("Error parsing or validating JSON:", error);
@@ -173,7 +173,7 @@ const EditorTab = ({
             if (success) {
                 showStatus(`Cambios guardados en el set '${activeSetName}'.`, 'success');
             } else {
-                 showStatus(`Error al guardar cambios en '${activeSetName}'.`, 'error'); // Should not happen if validation passed, but good practice
+                showStatus(`Error al guardar cambios en '${activeSetName}'.`, 'error'); // Should not happen if validation passed, but good practice
             }
         }
     };
@@ -185,8 +185,8 @@ const EditorTab = ({
             return;
         }
         if (newName === DEFAULT_SET_NAME) {
-             showStatus(`No puedes usar el nombre reservado "${DEFAULT_SET_NAME}". Elige otro nombre.`, 'error');
-             return;
+            showStatus(`No puedes usar el nombre reservado "${DEFAULT_SET_NAME}". Elige otro nombre.`, 'error');
+            return;
         }
         // Optional: Check if name already exists and ask for confirmation to overwrite
         if (quizSets && quizSets[newName]) {
@@ -202,7 +202,7 @@ const EditorTab = ({
                 showStatus(`Set guardado como '${newName}'. Ahora es el set activo.`, 'success');
                 setNewSetNameInput(''); // Clear the input field
             } else {
-                 showStatus(`Error al guardar como '${newName}'.`, 'error');
+                showStatus(`Error al guardar como '${newName}'.`, 'error');
             }
         }
     };
@@ -255,22 +255,22 @@ const EditorTab = ({
                         Eliminar Set
                     </button>
                 </div>
-                 <button
+                <button
                     onClick={handleResetClick}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-md text-sm shadow-sm transition duration-150 w-full sm:w-auto"
-                 >
+                >
                     Restablecer "{DEFAULT_SET_NAME}"
-                 </button>
+                </button>
             </div>
 
             {/* --- Section: Editing Area --- */}
             <div className="p-4 border rounded-lg space-y-4">
-                 <h3 className="text-lg font-semibold text-gray-700">
+                <h3 className="text-lg font-semibold text-gray-700">
                     Editando Set: <span className="font-bold text-indigo-700">{activeSetName || 'N/A'}</span>
-                 </h3>
-                 <p className="text-sm text-gray-600">
+                </h3>
+                <p className="text-sm text-gray-600">
                     Modifica el JSON a continuación. Asegúrate de que el formato sea válido y que cada pregunta tenga un `id` único antes de guardar.
-                 </p>
+                </p>
                 {/* Textarea for JSON editing */}
                 <textarea
                     id="json-editor"
@@ -293,27 +293,27 @@ const EditorTab = ({
 
                     {/* Save As New */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-grow">
-                       <input
+                        <input
                             type="text"
                             value={newSetNameInput}
                             onChange={(e) => setNewSetNameInput(e.target.value)}
                             placeholder="Nombre para el nuevo set"
                             className="block w-full sm:w-auto flex-grow pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm"
-                       />
-                       <button
+                        />
+                        <button
                             onClick={handleSaveAsNewClick}
                             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300 w-full sm:w-auto"
-                       >
+                        >
                             Guardar Como Nuevo Set
-                       </button>
+                        </button>
                     </div>
                 </div>
-                 {/* Display status message */}
-                 {statusMessage.message && (
+                {/* Display status message */}
+                {statusMessage.message && (
                     <div className={`mt-4 text-sm p-2 rounded border ${statusMessage.type === 'success' ? 'bg-green-50 border-green-300 text-green-700' : statusMessage.type === 'error' ? 'bg-red-50 border-red-300 text-red-700' : 'bg-blue-50 border-blue-300 text-blue-700'}`}>
                         {statusMessage.message}
                     </div>
-                 )}
+                )}
             </div>
         </div>
     );

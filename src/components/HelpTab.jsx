@@ -181,17 +181,17 @@ const HelpTab = () => {
                     <li><strong>Navegar por Pestañas</strong>: Usa los botones ("Cuestionario", "Editor de Sets", "Ayuda / README").</li>
                     <li><strong>Gestionar Sets (en "Editor de Sets")</strong>:
                         <ul className="list-disc list-inside ml-4 my-1 space-y-1">
-                           <li>Usa el dropdown y el botón "Cargar Set Seleccionado" para elegir qué conjunto de preguntas usar en el cuestionario y editar.</li>
-                           <li>Usa el botón "Eliminar Set Seleccionado" para borrar un set (excepto el predeterminado).</li>
-                           <li>Usa el botón "Restablecer 'Preguntas de Ejemplo'" para volver a la versión original de ese set específico.</li> {/* Updated default name */}
+                            <li>Usa el dropdown y el botón "Cargar Set Seleccionado" para elegir qué conjunto de preguntas usar en el cuestionario y editar.</li>
+                            <li>Usa el botón "Eliminar Set Seleccionado" para borrar un set (excepto el predeterminado).</li>
+                            <li>Usa el botón "Restablecer 'Preguntas de Ejemplo'" para volver a la versión original de ese set específico.</li> {/* Updated default name */}
                         </ul>
                     </li>
-                     <li><strong>Editar Preguntas (en "Editor de Sets")</strong>:
+                    <li><strong>Editar Preguntas (en "Editor de Sets")</strong>:
                         <ul className="list-disc list-inside ml-4 my-1 space-y-1">
-                           <li>El textarea muestra el JSON del set actualmente cargado.</li>
-                           <li>Modifica el JSON. <strong>¡Cuidado con la sintaxis y los IDs únicos!</strong></li>
-                           <li>Usa "Guardar Cambios" para actualizar el set actual (no funciona con el set predeterminado).</li>
-                           <li>Introduce un nombre y usa "Guardar Como Nuevo Set" para crear un nuevo conjunto con el contenido del editor. Este nuevo set se volverá el activo.</li>
+                            <li>El textarea muestra el JSON del set actualmente cargado.</li>
+                            <li>Modifica el JSON. <strong>¡Cuidado con la sintaxis y los IDs únicos!</strong></li>
+                            <li>Usa "Guardar Cambios" para actualizar el set actual (no funciona con el set predeterminado).</li>
+                            <li>Introduce un nombre y usa "Guardar Como Nuevo Set" para crear un nuevo conjunto con el contenido del editor. Este nuevo set se volverá el activo.</li>
                         </ul>
                     </li>
                     <li><strong>Responder (en "Cuestionario")</strong>: Responde las preguntas del set activo. Arrastra términos a definiciones para unir. Selecciona opciones en los desplegables para rellenar huecos. Haz clic en "Enviar Respuestas".</li> {/* Updated */}
@@ -202,7 +202,7 @@ const HelpTab = () => {
 
                 <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Formato JSON de Preguntas (React)</h3>
                 <p>Cada set es un array de objetos JSON. Cada objeto (pregunta) <strong>debe tener una clave <code className={inlineCodeStyle}>id</code> única dentro de ese set</strong>.</p>
-                 <ul className="list-disc list-inside space-y-1">
+                <ul className="list-disc list-inside space-y-1">
                     <li><code className={inlineCodeStyle}>id</code>: Identificador único para la pregunta (string, ej: "q1").</li>
                     <li><code className={inlineCodeStyle}>type</code>: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.</li> {/* Updated */}
                     <li><code className={inlineCodeStyle}>question</code>: Texto de la pregunta o la frase con huecos (string).</li>
@@ -215,7 +215,7 @@ const HelpTab = () => {
                 </ul>
                 {/* Correctly formatted JSON example */}
                 <pre className={codeBlockStyle}><code>{
-`{
+                    `{
     "id": "q_single_example",
     "type": "single",
     "question": "¿Pregunta?",
@@ -234,7 +234,7 @@ const HelpTab = () => {
                 </ul>
                 {/* Correctly formatted JSON example */}
                 <pre className={codeBlockStyle}><code>{
-`{
+                    `{
     "id": "q_multi_example",
     "type": "multiple",
     "question": "¿Pregunta múltiple?",
@@ -258,7 +258,7 @@ const HelpTab = () => {
                 </ul>
                 {/* Correctly formatted JSON example */}
                 <pre className={codeBlockStyle}><code>{
-`{
+                    `{
     "id": "q_match_example",
     "type": "matching",
     "question": "Une conceptos",
@@ -290,7 +290,7 @@ const HelpTab = () => {
                     </li>
                 </ul>
                 <pre className={codeBlockStyle}><code>{
-`{
+                    `{
     "id": "q_fill_example",
     "type": "fill-in-the-blanks",
     "question": "React usa un [DOM_TYPE] virtual, y las props fluyen hacia [DIRECTION].",

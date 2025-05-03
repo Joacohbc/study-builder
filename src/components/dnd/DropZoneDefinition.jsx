@@ -23,7 +23,7 @@ const DropZoneDefinition = ({ definition, questionId, droppedTerm, onDrop, isSub
         zoneClass = 'border border-dashed border-gray-400';
     }
 
-    return ( <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} className={`p-3 rounded-md min-h-[60px] flex items-center justify-between space-x-2 transition-colors duration-200 drop-zone ${zoneClass}`} data-definition={definition}> <span className="text-gray-800 flex-grow">{definition}</span> {droppedTerm ? (<div className={`p-2 border rounded-md text-sm ${termClass}`}>{droppedTerm}</div>) : (!isSubmitted && <span className="text-gray-400 italic text-sm placeholder-text">(Arrastra aquí)</span>)} {/* Show placeholder only if not disabled */} </div> );
+    return (<div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} className={`p-3 rounded-md min-h-[60px] flex items-center justify-between space-x-2 transition-colors duration-200 drop-zone ${zoneClass}`} data-definition={definition}> <span className="text-gray-800 flex-grow">{definition}</span> {droppedTerm ? (<div className={`p-2 border rounded-md text-sm ${termClass}`}>{droppedTerm}</div>) : (!isSubmitted && <span className="text-gray-400 italic text-sm placeholder-text">(Arrastra aquí)</span>)} {/* Show placeholder only if not disabled */} </div>);
 };
 
 export default DropZoneDefinition;

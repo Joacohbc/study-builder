@@ -16,7 +16,7 @@ const DraggableTerm = ({ term, questionId, isSubmitted }) => { // isSubmitted co
         if (isSubmitted) return;
         // Check if currentTarget exists before removing class
         if (e.currentTarget) {
-             e.currentTarget.classList.remove('opacity-50', 'cursor-grabbing');
+            e.currentTarget.classList.remove('opacity-50', 'cursor-grabbing');
         }
     };
 
