@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+import React from 'react';
+import './theme/Flashcard.css';
 
 const Flashcard = ({ card, isFlipped, onFlip }) => {
     return (
@@ -23,13 +23,6 @@ const Flashcard = ({ card, isFlipped, onFlip }) => {
             >
                 <p className="text-lg text-gray-800">{card.back}</p>
             </div>
-
-            {/* Basic Styling for Flip Effect */}
-            <style jsx>{`
-                .perspective-1000 { perspective: 1000px; }
-                .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-                .flip { transform: rotateY(180deg); }
-            `}</style>
         </div>
     );
 };

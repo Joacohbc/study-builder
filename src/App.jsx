@@ -314,12 +314,6 @@ function App() {
                     </div>
                 </div>
             </div>
-            {/* Global Styles (Optional) - Moved from App.jsx */}
-            <style jsx global>{`
-                .draggable { cursor: grab; user-select: none; touch-action: none; }
-                .dragging { opacity: 0.5; cursor: grabbing; }
-                .drop-zone { transition: background-color 0.2s ease, border-color 0.2s ease; }
-             `}</style>
         </div>
     );
 }

@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/* Estilos globales para drag and drop */
+.draggable { 
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.dragging { 
+    opacity: 0.5; 
+    cursor: grabbing;
+}
+
+.drop-zone { 
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
