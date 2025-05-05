@@ -291,7 +291,7 @@ function App() {
                             <BookIcon />
                         </div>
                         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
-                            Cuestionario Interactivo
+                            Study Builder
                         </h1>
                         <p className="text-gray-600 mt-2">Tu herramienta de estudio personalizada</p>
                     </div>

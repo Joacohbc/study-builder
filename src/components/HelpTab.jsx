@@ -176,9 +176,10 @@ const HelpTab = () => {
             {/* Static help content */}
             <div id="explanation-content" className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none space-y-3 border-t pt-6">
                 {/* Updated title */}
-                <h2 className="text-xl md:text-2xl font-semibold mt-4 mb-2">Cuestionario Interactivo</h2>
-                {/* Updated description */}
-                <p>Esta es una aplicación React para crear y realizar cuestionarios interactivos. Permite gestionar múltiples conjuntos (sets) de preguntas, además de las funcionalidades originales.</p>
+                <h2 className="text-xl md:text-2xl font-semibold mt-4 mb-2">Study Builder</h2>
+                <p className="mb-4">
+                    Esta aplicación está diseñada para ayudarte a estudiar diferentes materias mediante cuestionarios interactivos y flashcards.
+                </p>
 
                 <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Características</h3>
                 <ul className="list-disc list-inside space-y-1">
