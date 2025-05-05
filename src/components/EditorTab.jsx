@@ -1,5 +1,20 @@
 import React, { useState, useEffect } from 'react';
 
+// Icons for copy and paste functionality
+const CopyIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+);
+
+const PasteIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+  </svg>
+);
+
 // Editor Tab Component: Allows editing the quiz questions and managing sets
 const EditorTab = ({
     quizSets,           // Object containing all sets { setName: [questions] }
@@ -21,6 +36,8 @@ const EditorTab = ({
     const [newSetNameInput, setNewSetNameInput] = useState('');
     // State for status messages (save success/error, load, delete)
     const [statusMessage, setStatusMessage] = useState({ message: '', type: '' }); // type: 'success', 'error', 'info'
+    // State for clipboard operation messages
+    const [clipboardMessage, setClipboardMessage] = useState({ message: '', type: '' });
 
     // Effect to update the textarea when the active set data changes
     useEffect(() => {
@@ -240,6 +257,56 @@ const EditorTab = ({
         }
     };
 
+    // --- Handlers for Clipboard Operations ---
+
+    const handleCopyToClipboard = () => {
+        try {
+            navigator.clipboard.writeText(jsonString).then(
+                () => {
+                    showClipboardStatus('JSON copiado al portapapeles', 'success');
+                },
+                (err) => {
+                    console.error('Error al copiar al portapapeles:', err);
+                    showClipboardStatus('Error al copiar. Intenta seleccionar y copiar manualmente (Ctrl+C)', 'error');
+                }
+            );
+        } catch (err) {
+            console.error('Error al acceder al portapapeles:', err);
+            showClipboardStatus('Error al acceder al portapapeles. Tu navegador puede no soportar esta función', 'error');
+        }
+    };
+
+    const handlePasteFromClipboard = () => {
+        try {
+            navigator.clipboard.readText().then(
+                (clipText) => {
+                    try {
+                        // Verify it's valid JSON before setting it
+                        JSON.parse(clipText);
+                        setJsonString(clipText);
+                        showClipboardStatus('JSON pegado desde el portapapeles', 'success');
+                    } catch (parseErr) {
+                        console.error('El texto pegado no es JSON válido:', parseErr);
+                        showClipboardStatus('El contenido del portapapeles no es JSON válido', 'error');
+                    }
+                },
+                (err) => {
+                    console.error('Error al leer del portapapeles:', err);
+                    showClipboardStatus('Error al pegar. Intenta seleccionar y pegar manualmente (Ctrl+V)', 'error');
+                }
+            );
+        } catch (err) {
+            console.error('Error al acceder al portapapeles:', err);
+            showClipboardStatus('Error al acceder al portapapeles. Tu navegador puede no soportar esta función', 'error');
+        }
+    };
+
+    // Helper to show clipboard operation messages and clear them after a delay
+    const showClipboardStatus = (message, type) => {
+        setClipboardMessage({ message, type });
+        setTimeout(() => setClipboardMessage({ message: '', type: '' }), 3000);
+    };
+
     // Helper to show status messages and clear them after a delay
     const showStatus = (message, type) => {
         setStatusMessage({ message, type });
@@ -311,6 +378,34 @@ const EditorTab = ({
                     {setType === 'flashcard' && <span> Cada flashcard debe tener las propiedades `front` y `back`.</span>}
                     {/* Add hints for other types if needed */}
                 </p>
+                
+                {/* Clipboard Actions */}
+                <div className="flex flex-wrap gap-2">
+                    <button
+                        onClick={handleCopyToClipboard}
+                        className="flex items-center gap-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-1 px-3 rounded-md text-sm transition duration-150"
+                        title="Copiar todo el JSON al portapapeles"
+                    >
+                        <CopyIcon /> Copiar JSON
+                    </button>
+                    <button
+                        onClick={handlePasteFromClipboard}
+                        className="flex items-center gap-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-1 px-3 rounded-md text-sm transition duration-150"
+                        title="Pegar JSON desde el portapapeles"
+                    >
+                        <PasteIcon /> Pegar JSON
+                    </button>
+                    
+                    {/* Clipboard operation message */}
+                    {clipboardMessage.message && (
+                        <span className={`inline-flex items-center text-xs py-1 px-2 rounded ${
+                            clipboardMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                            {clipboardMessage.message}
+                        </span>
+                    )}
+                </div>
+                
                 {/* Textarea for JSON editing */}
                 <textarea
                     id="json-editor"
