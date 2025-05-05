@@ -1,27 +1,37 @@
 import React from 'react';
 import './theme/Flashcard.css';
 
-const Flashcard = ({ card, isFlipped, onFlip }) => {
+const Flashcard = ({ card, isFlipped, onFlip, index }) => {
     return (
-        <div
-            className={`relative w-full h-48 border rounded-lg shadow-md cursor-pointer perspective-1000 ${isFlipped ? 'flip' : ''}`}
-            onClick={onFlip}
-            style={{ transformStyle: 'preserve-3d', transition: 'transform 0.6s' }}
+        <div 
+            className="flashcard-container flashcard-enter-animation"
+            style={{ animationDelay: `${index * 0.1}s` }}
         >
-            {/* Front Side */}
-            <div
-                className={`absolute w-full h-full backface-hidden flex items-center justify-center p-4 text-center bg-white border border-gray-300 rounded-lg ${isFlipped ? 'z-0' : 'z-10'}`}
-                style={{ transform: 'rotateY(0deg)' }}
+            <div 
+                className={`flashcard-inner perspective-1000 ${isFlipped ? 'flip' : ''}`} 
+                onClick={onFlip}
             >
-                <p className="text-lg font-medium text-gray-800">{card.front}</p>
-            </div>
+                {/* Front Side */}
+                <div className="flashcard-front backface-hidden">
+                    <div className="flashcard-badge">Término</div>
+                    <div className="flashcard-content">
+                        {card.front}
+                    </div>
+                    <div className="absolute bottom-4 text-xs text-gray-400">
+                        Clic para ver la definición
+                    </div>
+                </div>
 
-            {/* Back Side */}
-            <div
-                className={`absolute w-full h-full backface-hidden flex items-center justify-center p-4 text-center bg-blue-100 border border-blue-300 rounded-lg ${isFlipped ? 'z-10' : 'z-0'}`}
-                style={{ transform: 'rotateY(180deg)' }}
-            >
-                <p className="text-lg text-gray-800">{card.back}</p>
+                {/* Back Side */}
+                <div className="flashcard-back backface-hidden">
+                    <div className="flashcard-badge">Definición</div>
+                    <div className="flashcard-content">
+                        {card.back}
+                    </div>
+                    <div className="absolute bottom-4 text-xs text-gray-400">
+                        Clic para ver el término
+                    </div>
+                </div>
             </div>
         </div>
     );

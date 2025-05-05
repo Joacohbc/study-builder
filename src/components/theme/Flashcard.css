@@ -1,4 +1,4 @@
-/* Estilos para el efecto de volteo de tarjetas */
+/* Estilos mejorados para el efecto de volteo de tarjetas */
 .perspective-1000 { 
     perspective: 1000px; 
 }
@@ -10,4 +10,163 @@
 
 .flip { 
     transform: rotateY(180deg); 
+}
+
+/* Nuevos estilos mejorados para las tarjetas */
+.flashcard-container {
+    width: 100%;
+    max-width: 500px;
+    height: 280px;
+    margin: 0 auto 24px;
+    transition: all 0.3s ease;
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 2px 10px -3px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+/* Modificado: solo cambia la sombra en hover, sin cambio de posición */
+.flashcard-inner:hover {
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.15), 0 5px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    border-radius: 16px;
+    background-color: white;
+    background-image: 
+        radial-gradient(circle at top left, rgba(79, 70, 229, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
+    border: 1px solid rgba(226, 232, 240, 1);
+}
+
+.flashcard-back {
+    transform: rotateY(180deg);
+    background-image: 
+        radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at top right, rgba(79, 70, 229, 0.04) 0%, transparent 40%);
+}
+
+.flashcard-content {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    text-align: center;
+}
+
+.flashcard-front .flashcard-content {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.flashcard-back .flashcard-content {
+    font-size: 1.25rem;
+    color: #4b5563;
+}
+
+.flashcard-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: white;
+    background: linear-gradient(to right, #4f46e5, #8b5cf6);
+    border-radius: 9999px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Controles de navegación de flashcards */
+.flashcard-controls {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.flashcard-control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background-color: white;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.flashcard-control-btn:hover {
+    background-color: #f9fafb;
+    color: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.flashcard-control-btn:active {
+    transform: translateY(0);
+}
+
+.flashcard-progress {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 12px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.flashcard-progress-bar {
+    flex: 1;
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    margin: 0 12px;
+    overflow: hidden;
+}
+
+.flashcard-progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #4f46e5, #8b5cf6);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* Animaciones adicionales */
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.flashcard-enter-animation {
+    animation: cardEntrance 0.4s ease-out forwards;
 }
