@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { DEFAULT_SET_NAME, LOCAL_STORAGE_SETS_KEY, LOCAL_STORAGE_ACTIVE_SET_KEY, defaultQuizData } from './constants';
+import { loadAllSets, saveAllSets, loadActiveSetName, saveActiveSetName, getDefaultsForType } from './utils/storageManager';
 import QuizTab from './components/QuizTab';
 import EditorTab from './components/EditorTab';
 import HelpTab from './components/HelpTab';
+import FlashcardTab from './components/FlashcardTab'; // Import FlashcardTab
 
 // --- GitHub Icon SVG ---
 const GitHubIcon = () => (
@@ -14,184 +15,211 @@ const GitHubIcon = () => (
 
 // --- Main App Component ---
 function App() {
-    // State to manage the currently active tab
-    const [activeTab, setActiveTab] = useState('quiz'); // 'quiz', 'editor', 'explanation'
-    // State to hold all quiz sets { setName: [questions] }
-    const [quizSets, setQuizSets] = useState(null); // Initialize as null to detect loading
-    // State to hold the name of the currently active set
-    const [activeSetName, setActiveSetName] = useState('');
-    // State to hold the actual question data for the active set
+    // State for active UI tab ('quiz', 'flashcards', 'editor', 'explanation')
+    const [activeUITab, setActiveUITab] = useState('quiz');
+    // State for the type of content being edited ('quiz', 'flashcard')
+    const [editorContentType, setEditorContentType] = useState('quiz');
+
+    // --- Quiz State ---
+    const [quizSets, setQuizSets] = useState(null);
+    const [activeQuizSetName, setActiveQuizSetName] = useState('');
     const [activeQuizData, setActiveQuizData] = useState([]);
 
-    // Effect to load data from localStorage on initial mount
+    // --- Flashcard State ---
+    const [flashcardSets, setFlashcardSets] = useState(null);
+    const [activeFlashcardSetName, setActiveFlashcardSetName] = useState('');
+    const [activeFlashcardData, setActiveFlashcardData] = useState([]);
+
+    // --- Get Defaults from Storage Manager ---
+    const quizDefaults = getDefaultsForType('quiz');
+    const flashcardDefaults = getDefaultsForType('flashcard');
+
+    // --- Effect to Load All Data on Mount ---
     useEffect(() => {
-        // console.log("App useEffect: Loading data from localStorage...");
-        let loadedSets = {};
-        let storedSets = localStorage.getItem(LOCAL_STORAGE_SETS_KEY);
+        console.log("App useEffect: Loading all data...");
 
-        // Try parsing stored sets
-        if (storedSets) {
-            try {
-                loadedSets = JSON.parse(storedSets);
-                if (typeof loadedSets !== 'object' || loadedSets === null) {
-                    console.warn("Stored sets data is not an object. Resetting.");
-                    loadedSets = {}; // Reset if not an object
-                }
-            } catch (error) {
-                console.error("Error parsing stored sets data:", error);
-                loadedSets = {}; // Reset on error
-            }
+        // Load Quiz Data
+        const loadedQuizSets = loadAllSets(quizDefaults.storageKey, quizDefaults.defaultSetName, quizDefaults.defaultData);
+        const currentActiveQuizSetName = loadActiveSetName(quizDefaults.activeSetKey, loadedQuizSets, quizDefaults.defaultSetName);
+        setQuizSets(loadedQuizSets);
+        setActiveQuizSetName(currentActiveQuizSetName);
+        setActiveQuizData(loadedQuizSets[currentActiveQuizSetName] || []);
+        console.log("Quiz loaded. Active:", currentActiveQuizSetName, "Total:", Object.keys(loadedQuizSets).length);
+
+        // Load Flashcard Data
+        const loadedFlashcardSets = loadAllSets(flashcardDefaults.storageKey, flashcardDefaults.defaultSetName, flashcardDefaults.defaultData);
+        const currentActiveFlashcardSetName = loadActiveSetName(flashcardDefaults.activeSetKey, loadedFlashcardSets, flashcardDefaults.defaultSetName);
+        setFlashcardSets(loadedFlashcardSets);
+        setActiveFlashcardSetName(currentActiveFlashcardSetName);
+        setActiveFlashcardData(loadedFlashcardSets[currentActiveFlashcardSetName] || []);
+        console.log("Flashcards loaded. Active:", currentActiveFlashcardSetName, "Total:", Object.keys(loadedFlashcardSets).length);
+
+        // Set initial editor type based on the last active quiz set (or default)
+        // This could be more sophisticated later (e.g., remember last edited type)
+        setEditorContentType('quiz');
+
+    }, [quizDefaults.storageKey, quizDefaults.defaultSetName, quizDefaults.defaultData, quizDefaults.activeSetKey,
+        flashcardDefaults.storageKey, flashcardDefaults.defaultSetName, flashcardDefaults.defaultData, flashcardDefaults.activeSetKey]);
+
+    // --- Generic Handler Functions for Set Management ---
+
+    const getSetFunctions = (type) => {
+        if (type === 'quiz') {
+            return {
+                sets: quizSets,
+                setSets: setQuizSets,
+                activeSetName: activeQuizSetName,
+                setActiveSetName: setActiveQuizSetName,
+                setActiveData: setActiveQuizData,
+                defaults: quizDefaults,
+            };
+        } else if (type === 'flashcard') {
+            return {
+                sets: flashcardSets,
+                setSets: setFlashcardSets,
+                activeSetName: activeFlashcardSetName,
+                setActiveSetName: setActiveFlashcardSetName,
+                setActiveData: setActiveFlashcardData,
+                defaults: flashcardDefaults,
+            };
         }
-
-        // Ensure the default set exists
-        if (!loadedSets[DEFAULT_SET_NAME]) {
-            // console.log("Default set not found in storage. Adding it.");
-            // Ensure default data has unique IDs
-            const defaultDataWithIds = defaultQuizData.map((q, index) => ({ ...q, id: q.id || `q_default_${index}` }));
-            loadedSets[DEFAULT_SET_NAME] = defaultDataWithIds;
-            // Save back immediately if default was added
-            localStorage.setItem(LOCAL_STORAGE_SETS_KEY, JSON.stringify(loadedSets));
-        }
-
-        // Determine the active set name
-        let currentActiveSetName = localStorage.getItem(LOCAL_STORAGE_ACTIVE_SET_KEY);
-        // Validate if the stored active set name actually exists in the loaded sets
-        if (!currentActiveSetName || !loadedSets[currentActiveSetName]) {
-            // console.log("Active set name not found or invalid. Using default.");
-            currentActiveSetName = DEFAULT_SET_NAME;
-            localStorage.setItem(LOCAL_STORAGE_ACTIVE_SET_KEY, currentActiveSetName);
-        }
-
-        // Set the state
-        setQuizSets(loadedSets);
-        setActiveSetName(currentActiveSetName);
-        setActiveQuizData(loadedSets[currentActiveSetName] || []); // Load active set data or empty array
-
-        // console.log("App loaded. Active set:", currentActiveSetName, "Total sets:", Object.keys(loadedSets).length);
-
-    }, []); // Empty dependency array ensures this runs only once on mount
-
-    // --- Handler Functions for Set Management ---
-
-    // Function to update state and localStorage when sets change
-    const updateQuizSets = (newSets) => {
-        setQuizSets(newSets);
-        try {
-            localStorage.setItem(LOCAL_STORAGE_SETS_KEY, JSON.stringify(newSets));
-        } catch (error) {
-            console.error("Error saving sets to localStorage:", error);
-            // TODO: Show error to user?
-        }
+        throw new Error(`Invalid set type: ${type}`);
     };
 
-    // Function to change the active set
-    const handleLoadSet = (setName) => {
-        if (quizSets && quizSets[setName]) {
+    const updateSets = (type, newSets) => {
+        const { setSets, defaults } = getSetFunctions(type);
+        setSets(newSets);
+        saveAllSets(defaults.storageKey, newSets);
+    };
+
+    const handleLoadSet = (type, setName) => {
+        const { sets, setActiveSetName, setActiveData, defaults } = getSetFunctions(type);
+        if (sets && sets[setName]) {
             setActiveSetName(setName);
-            setActiveQuizData(quizSets[setName]);
-            localStorage.setItem(LOCAL_STORAGE_ACTIVE_SET_KEY, setName);
-            // console.log(`Set '${setName}' loaded.`);
+            setActiveData(sets[setName]);
+            saveActiveSetName(defaults.activeSetKey, setName);
+            console.log(`${type} set '${setName}' loaded.`);
         } else {
-            console.error(`Attempted to load non-existent set: ${setName}`);
+            console.error(`Attempted to load non-existent ${type} set: ${setName}`);
         }
     };
 
-    // Function to save changes to the currently active set
-    const handleSaveChanges = (setName, updatedQuestions) => {
-        if (setName === DEFAULT_SET_NAME) {
-            console.error("Attempted to save changes to the default set.");
-            return false; // Indicate failure
+    const handleSaveChanges = (type, setName, updatedData) => {
+        const { sets, activeSetName, setActiveData, defaults } = getSetFunctions(type);
+        if (setName === defaults.defaultSetName) {
+            console.error(`Attempted to save changes to the default ${type} set. Use 'Save As New'.`);
+            return false;
         }
-        if (quizSets && quizSets[setName]) {
-            const newSets = { ...quizSets, [setName]: updatedQuestions };
-            updateQuizSets(newSets);
-            // Also update activeQuizData if the saved set is the active one
+        if (sets && sets[setName]) {
+            const newSets = { ...sets, [setName]: updatedData };
+            updateSets(type, newSets);
             if (activeSetName === setName) {
-                setActiveQuizData(updatedQuestions);
+                setActiveData(updatedData);
             }
-            // console.log(`Changes saved to set '${setName}'.`);
-            return true; // Indicate success
+            console.log(`Changes saved to ${type} set '${setName}'.`);
+            return true;
         }
-        console.error(`Attempted to save changes to non-existent set: ${setName}`);
-        return false; // Indicate failure
+        console.error(`Attempted to save changes to non-existent ${type} set: ${setName}`);
+        return false;
     };
 
-    // Function to save the current editor content as a new set
-    const handleSaveAsNewSet = (newSetName, questionsToSave) => {
+    const handleSaveAsNewSet = (type, newSetName, dataToSave) => {
+        const { sets, setActiveSetName, setActiveData, defaults } = getSetFunctions(type);
         if (!newSetName || newSetName.trim() === '') {
-            console.error("Attempted to save with empty name.");
-            return false; // Indicate failure (handled also in component, but good practice)
+            console.error(`Attempted to save ${type} set with empty name.`);
+            return false;
         }
-        if (newSetName === DEFAULT_SET_NAME) {
-            console.error("Attempted to save with reserved default name.");
+        if (newSetName === defaults.defaultSetName) {
+            console.error(`Attempted to save ${type} set with reserved default name "${defaults.defaultSetName}".`);
             return false;
         }
 
-        const newSets = { ...(quizSets || {}), [newSetName]: questionsToSave };
-        updateQuizSets(newSets);
+        const newSets = { ...(sets || {}), [newSetName]: dataToSave };
+        updateSets(type, newSets);
 
-        // Make the newly saved set the active one
         setActiveSetName(newSetName);
-        setActiveQuizData(questionsToSave);
-        localStorage.setItem(LOCAL_STORAGE_ACTIVE_SET_KEY, newSetName);
+        setActiveData(dataToSave);
+        saveActiveSetName(defaults.activeSetKey, newSetName);
 
-        // console.log(`Set saved as '${newSetName}' and activated.`);
-        return true; // Indicate success
+        console.log(`${type} set saved as '${newSetName}' and activated.`);
+        return true;
     };
 
-    // Function to delete a specific set
-    const handleDeleteSet = (setNameToDelete) => {
-        if (!setNameToDelete || setNameToDelete === DEFAULT_SET_NAME) {
-            console.error(`Attempted to delete invalid or default set: ${setNameToDelete}`);
+    const handleDeleteSet = (type, setNameToDelete) => {
+        const { sets, activeSetName, defaults } = getSetFunctions(type);
+        if (!setNameToDelete || setNameToDelete === defaults.defaultSetName) {
+            console.error(`Attempted to delete invalid or default ${type} set: ${setNameToDelete}`);
             return;
         }
-        if (quizSets && quizSets[setNameToDelete]) {
-            const newSets = { ...quizSets };
+        if (sets && sets[setNameToDelete]) {
+            const newSets = { ...sets };
             delete newSets[setNameToDelete];
-            updateQuizSets(newSets);
-            // console.log(`Set '${setNameToDelete}' deleted.`);
+            updateSets(type, newSets);
+            console.log(`${type} set '${setNameToDelete}' deleted.`);
 
-            // If the deleted set was the active one, switch to the default set
             if (activeSetName === setNameToDelete) {
-                // console.log("Active set deleted. Switching to default set.");
-                handleLoadSet(DEFAULT_SET_NAME);
+                console.log(`Active ${type} set deleted. Switching to default set.`);
+                handleLoadSet(type, defaults.defaultSetName);
             }
         } else {
-            console.error(`Attempted to delete non-existent set: ${setNameToDelete}`);
+            console.error(`Attempted to delete non-existent ${type} set: ${setNameToDelete}`);
         }
     };
 
-    // Function to reset the default set to its original questions
-    const handleResetDefaultSet = () => {
-        // Ensure default data has unique IDs
-        const defaultDataWithIds = defaultQuizData.map((q, index) => ({ ...q, id: q.id || `q_default_${index}` }));
-        if (quizSets) {
-            const newSets = { ...quizSets, [DEFAULT_SET_NAME]: defaultDataWithIds };
-            updateQuizSets(newSets);
-            // console.log(`Set '${DEFAULT_SET_NAME}' reset to defaults.`);
-
-            // If the default set is currently active, reload its data into the state
-            if (activeSetName === DEFAULT_SET_NAME) {
-                setActiveQuizData(defaultDataWithIds);
+    const handleResetDefaultSet = (type) => {
+        const { sets, activeSetName, setActiveData, defaults } = getSetFunctions(type);
+        const defaultDataWithIds = defaults.defaultData.map((item, index) => ({ ...item, id: item.id || `${type}_default_${index}` }));
+        if (sets) {
+            const newSets = { ...sets, [defaults.defaultSetName]: defaultDataWithIds };
+            updateSets(type, newSets);
+            console.log(`${type} set '${defaults.defaultSetName}' reset to defaults.`);
+            if (activeSetName === defaults.defaultSetName) {
+                setActiveData(defaultDataWithIds);
             }
         }
     };
 
-
     // --- Tab Configuration ---
-    const tabs = [
+    const uiTabs = [
         { id: 'quiz', label: 'Cuestionario' },
-        { id: 'editor', label: 'Editor de Sets' }, // Renamed tab
+        { id: 'flashcards', label: 'Flashcards' }, // New Flashcards tab
+        { id: 'editor', label: 'Editor de Sets' },
         { id: 'explanation', label: 'Ayuda / README' },
     ];
 
-    // Render loading state until sets are loaded from localStorage
-    if (quizSets === null) {
+    // Render loading state
+    if (quizSets === null || flashcardSets === null) {
         return <div className="p-8 text-center text-gray-500">Cargando datos...</div>;
     }
 
+    // Determine props for EditorTab based on editorContentType
+    const editorProps = editorContentType === 'quiz'
+        ? {
+            quizSets: quizSets,
+            activeSetName: activeQuizSetName,
+            activeQuizData: activeQuizData,
+            onLoadSet: (setName) => handleLoadSet('quiz', setName),
+            onSaveChanges: (setName, data) => handleSaveChanges('quiz', setName, data),
+            onSaveAsNewSet: (newName, data) => handleSaveAsNewSet('quiz', newName, data),
+            onDeleteSet: (setName) => handleDeleteSet('quiz', setName),
+            onResetDefaultSet: () => handleResetDefaultSet('quiz'),
+            defaultSetName: quizDefaults.defaultSetName,
+            setType: 'quiz',
+        }
+        : {
+            quizSets: flashcardSets, // Pass flashcard sets here
+            activeSetName: activeFlashcardSetName,
+            activeQuizData: activeFlashcardData, // Pass flashcard data here
+            onLoadSet: (setName) => handleLoadSet('flashcard', setName),
+            onSaveChanges: (setName, data) => handleSaveChanges('flashcard', setName, data),
+            onSaveAsNewSet: (newName, data) => handleSaveAsNewSet('flashcard', newName, data),
+            onDeleteSet: (setName) => handleDeleteSet('flashcard', setName),
+            onResetDefaultSet: () => handleResetDefaultSet('flashcard'),
+            defaultSetName: flashcardDefaults.defaultSetName,
+            setType: 'flashcard',
+        };
+
     return (
-        // Main container - Added relative positioning
         <div className="bg-gray-100 font-sans p-4 md:p-8 min-h-screen relative">
             {/* GitHub Link - Added */}
             <a
@@ -215,14 +243,14 @@ function App() {
                 {/* Tab Navigation Area */}
                 <div className="mb-6">
                     {/* Tab Buttons */}
-                    <div className="flex border-b border-gray-300">
-                        {tabs.map(tab => (
+                    <div className="flex flex-wrap border-b border-gray-300">
+                        {uiTabs.map(tab => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id)} // Set active tab on click
+                                onClick={() => setActiveUITab(tab.id)} // Set active tab on click
                                 // Apply conditional styling for active/inactive tabs
                                 className={`py-2 px-4 text-sm md:text-base cursor-pointer border-b-2 font-medium transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 rounded-t-md
-                                    ${activeTab === tab.id
+                                    ${activeUITab === tab.id
                                         ? 'border-blue-600 text-blue-600' // Active tab style
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' // Inactive tab style
                                     }`}
@@ -235,27 +263,52 @@ function App() {
                     {/* Tab Content Area */}
                     <div className="mt-6">
                         {/* Conditionally render the content based on the active tab */}
-                        {activeTab === 'quiz' && (
+                        {activeUITab === 'quiz' && (
                             <QuizTab
                                 // Pass only the data for the currently active set
                                 quizData={activeQuizData}
-                                activeSetName={activeSetName} // Pass name for context
+                                activeSetName={activeQuizSetName} // Pass name for context
                                 onQuizComplete={(results) => console.log("Quiz Completed:", results)} // Example callback
                             />
                         )}
-                        {activeTab === 'editor' && (
-                            <EditorTab
-                                quizSets={quizSets}
-                                activeSetName={activeSetName}
-                                activeQuizData={activeQuizData}
-                                onLoadSet={handleLoadSet}
-                                onSaveChanges={handleSaveChanges}
-                                onSaveAsNewSet={handleSaveAsNewSet}
-                                onDeleteSet={handleDeleteSet}
-                                onResetDefaultSet={handleResetDefaultSet}
+                        {activeUITab === 'flashcards' && (
+                            <FlashcardTab
+                                flashcardData={activeFlashcardData}
+                                activeSetName={activeFlashcardSetName}
                             />
                         )}
-                        {activeTab === 'explanation' && (
+                        {activeUITab === 'editor' && (
+                            <div>
+                                {/* Radio buttons to select editor type */}
+                                <div className="mb-4 flex items-center space-x-4 border-b pb-3">
+                                    <span className="font-medium text-gray-700">Editar tipo de set:</span>
+                                    <label className="flex items-center space-x-1 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="editorType"
+                                            value="quiz"
+                                            checked={editorContentType === 'quiz'}
+                                            onChange={() => setEditorContentType('quiz')}
+                                            className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                                        />
+                                        <span>Cuestionarios</span>
+                                    </label>
+                                    <label className="flex items-center space-x-1 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="editorType"
+                                            value="flashcard"
+                                            checked={editorContentType === 'flashcard'}
+                                            onChange={() => setEditorContentType('flashcard')}
+                                            className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                                        />
+                                        <span>Flashcards</span>
+                                    </label>
+                                </div>
+                                <EditorTab {...editorProps} />
+                            </div>
+                        )}
+                        {activeUITab === 'explanation' && (
                             <HelpTab />
                         )}
                     </div>

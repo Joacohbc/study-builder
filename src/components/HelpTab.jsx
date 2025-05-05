@@ -9,18 +9,32 @@ const HelpTab = () => {
     const [copySuccess, setCopySuccess] = useState('');
 
     // The prompt to be copied
-    const aiPrompt = `Eres una IA asistente diseñada para crear preguntas de cuestionario interactivas a partir de un texto o documento proporcionado. Tu objetivo es generar un array JSON de objetos de pregunta que se ajuste al siguiente formato y tipos:
+    const aiPrompt = `Eres una IA asistente diseñada para crear preguntas de cuestionario interactivas y/o flashcards a partir de un texto o documento proporcionado. Tu objetivo es generar un array JSON de objetos que se ajuste al siguiente formato y tipos:
 
 **Formato General del Array JSON:**
 [
-  { /* Pregunta 1 */ },
-  { /* Pregunta 2 */ },
+  { /* Objeto 1 */ },
+  { /* Objeto 2 */ },
   ...
 ]
 
-**Formatos de Objeto de Pregunta:**
+**Formatos de Objeto:**
 
-1.  **Opción Única (\`single\`):**
+1.  **Flashcard:**
+    * \`id\`: String único (ej: "fc_1").
+    * \`front\`: String con el contenido del frente de la tarjeta (pregunta, término o concepto).
+    * \`back\`: String con el contenido del dorso de la tarjeta (respuesta, definición o explicación).
+
+    *Ejemplo:*
+    \`\`\`json
+    {
+      "id": "fc_example",
+      "front": "¿Qué es React?",
+      "back": "Una biblioteca de JavaScript para construir interfaces de usuario"
+    }
+    \`\`\`
+
+2.  **Opción Única (\`single\`):**
     * \`id\`: String único (ej: "q_single_1").
     * \`type\`: "single".
     * \`question\`: String con la pregunta.
@@ -38,7 +52,7 @@ const HelpTab = () => {
     }
     \`\`\`
 
-2.  **Opción Múltiple (\`multiple\`):**
+3.  **Opción Múltiple (\`multiple\`):**
     * \`id\`: String único (ej: "q_multi_1").
     * \`type\`: "multiple".
     * \`question\`: String con la pregunta (indicar selección múltiple).
@@ -56,7 +70,7 @@ const HelpTab = () => {
     }
     \`\`\`
 
-3.  **Unir Conceptos (\`matching\`):**
+4.  **Unir Conceptos (\`matching\`):**
     * \`id\`: String único (ej: "q_match_1").
     * \`type\`: "matching".
     * \`question\`: String con la instrucción (ej: "Une cada término con su definición:").
@@ -76,7 +90,7 @@ const HelpTab = () => {
     }
     \`\`\`
 
-4.  **Rellenar Huecos (\`fill-in-the-blanks\`):**
+5.  **Rellenar Huecos (\`fill-in-the-blanks\`):**
     * \`id\`: String único (ej: "q_fill_1").
     * \`type\`: "fill-in-the-blanks".
     * \`question\`: String con el texto que contiene placeholders como \`[BLANK_ID]\`. Los \`BLANK_ID\` deben ser strings en mayúsculas con letras, números y guiones bajos (ej: \`[TERM_1]\`, \`[DEFINITION_A]\`).
@@ -107,19 +121,20 @@ const HelpTab = () => {
     }
     \`\`\`
 
-**Instrucciones para Generar Preguntas:**
+**Instrucciones para Generar Contenido:**
 
 1.  **Analiza el Texto:** Lee cuidadosamente el documento/texto proporcionado.
-2.  **Identifica Contenido Clave:** Busca definiciones, conceptos, comparaciones, listas, procesos, hechos clave, frases importantes donde se puedan ocultar términos clave.
-3.  **Crea Preguntas Variadas:** Intenta generar una mezcla de los cuatro tipos de preguntas (\`single\`, \`multiple\`, \`matching\`, \`fill-in-the-blanks\`) si el contenido lo permite. Para 'fill-in-the-blanks', busca frases donde 1-3 términos clave puedan ser reemplazados por huecos.
-4.  **Formula Preguntas/Textos Claros:** Asegúrate de que sean directos y fáciles de entender. Para 'fill-in-the-blanks', usa placeholders claros como \`[KEY_TERM]\`.
-5.  **Crea Distractores (Opciones Incorrectas):** Para 'single', 'multiple' y 'fill-in-the-blanks', las opciones incorrectas deben ser relevantes pero erróneas según el texto fuente.
-6.  **Asegura la Precisión:** Verifica que las respuestas correctas se basen directamente en la información del texto fuente.
-7.  **Genera IDs Únicos:** Asigna un \`id\` único y descriptivo a cada pregunta (ej: "gen_q_1").
-8.  **Output:** Proporciona únicamente el array JSON resultante, sin texto adicional antes o después.
+2.  **Identifica Contenido Clave:** Busca definiciones, conceptos, comparaciones, listas, procesos, hechos clave, frases importantes.
+3.  **Genera el Formato Apropiado:**
+    * Para **flashcards**: Identifica pares de conceptos/definiciones o preguntas/respuestas.
+    * Para **cuestionarios**: Crea una mezcla de los cuatro tipos de preguntas si el contenido lo permite.
+4.  **Formula Contenido Claro:** Asegúrate de que todo sea directo y fácil de entender.
+5.  **Asegura la Precisión:** Verifica que toda la información se base directamente en el texto fuente.
+6.  **Genera IDs Únicos:** Asigna un \`id\` único y descriptivo a cada elemento (ej: "fc_1", "q_1", etc.).
+7.  **Output:** Proporciona únicamente el array JSON resultante, sin texto adicional antes o después.
 
 **Texto Fuente:**
-[Aquí pega el texto o documento a partir del cual generar las preguntas]`;
+[Aquí pega el texto o documento a partir del cual generar el contenido]`;
 
     // Function to copy the prompt to clipboard
     const handleCopyPrompt = () => {
@@ -167,18 +182,19 @@ const HelpTab = () => {
 
                 <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Características</h3>
                 <ul className="list-disc list-inside space-y-1">
-                    <li>Gestión de Sets: Guardar, cargar y eliminar diferentes conjuntos de preguntas.</li>
-                    <li>Preguntas de opción única, múltiple, unir conceptos (arrastrar y soltar) y rellenar huecos (dropdowns).</li> {/* Updated */}
+                    <li>Gestión de Sets: Guardar, cargar y eliminar diferentes conjuntos de preguntas o flashcards.</li>
+                    <li>Preguntas de opción única, múltiple, unir conceptos (arrastrar y soltar) y rellenar huecos (dropdowns).</li>
+                    <li>Flashcards con frente/dorso y navegación intuitiva.</li>
                     <li>Barajado aleatorio de preguntas y opciones/términos al cargar y reintentar (dentro del set activo).</li>
                     <li>Retroalimentación instantánea al enviar.</li>
                     <li>Puntuación final.</li>
-                    <li>Edición de Preguntas (JSON) del set activo.</li>
-                    <li>Ayuda Integrada con prompt para IA.</li> {/* Updated */}
+                    <li>Edición de Preguntas y Flashcards (JSON) del set activo.</li>
+                    <li>Ayuda Integrada con prompt para IA.</li>
                 </ul>
 
                 <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Cómo Usar</h3>
                 <ol className="list-decimal list-inside space-y-1">
-                    <li><strong>Navegar por Pestañas</strong>: Usa los botones ("Cuestionario", "Editor de Sets", "Ayuda / README").</li>
+                    <li><strong>Navegar por Pestañas</strong>: Usa los botones ("Cuestionario", "Flashcards", "Editor de Sets", "Ayuda / README").</li>
                     <li><strong>Gestionar Sets (en "Editor de Sets")</strong>:
                         <ul className="list-disc list-inside ml-4 my-1 space-y-1">
                             <li>Usa el dropdown y el botón "Cargar Set Seleccionado" para elegir qué conjunto de preguntas usar en el cuestionario y editar.</li>
@@ -200,11 +216,29 @@ const HelpTab = () => {
 
                 </ol>
 
-                <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Formato JSON de Preguntas (React)</h3>
-                <p>Cada set es un array de objetos JSON. Cada objeto (pregunta) <strong>debe tener una clave <code className={inlineCodeStyle}>id</code> única dentro de ese set</strong>.</p>
+                <h3 className="text-lg md:text-xl font-semibold mt-3 mb-1">Formato JSON de Preguntas y Flashcards</h3>
+                <p>Cada set es un array de objetos JSON. Cada objeto <strong>debe tener una clave <code className={inlineCodeStyle}>id</code> única dentro de ese set</strong>.</p>
+
+                {/* Add Flashcard Format Section */}
+                <h4 className="text-md md:text-lg font-semibold mt-3 mb-1">Formato de Flashcard</h4>
+                <ul className="list-disc list-inside space-y-1">
+                    <li><code className={inlineCodeStyle}>id</code>: Identificador único para la flashcard (string, ej: "fc1").</li>
+                    <li><code className={inlineCodeStyle}>front</code>: Contenido del frente de la tarjeta (pregunta, término o concepto).</li>
+                    <li><code className={inlineCodeStyle}>back</code>: Contenido del dorso de la tarjeta (respuesta, definición o explicación).</li>
+                </ul>
+                {/* Flashcard JSON example */}
+                <pre className={codeBlockStyle}><code>{
+                    `{
+    "id": "fc_example",
+    "front": "Capital de Francia",
+    "back": "París"
+}`
+                }</code></pre>
+
+                <h4 className="text-md md:text-lg font-semibold mt-3 mb-1">Formato de Preguntas de Cuestionario</h4>
                 <ul className="list-disc list-inside space-y-1">
                     <li><code className={inlineCodeStyle}>id</code>: Identificador único para la pregunta (string, ej: "q1").</li>
-                    <li><code className={inlineCodeStyle}>type</code>: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.</li> {/* Updated */}
+                    <li><code className={inlineCodeStyle}>type</code>: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.</li>
                     <li><code className={inlineCodeStyle}>question</code>: Texto de la pregunta o la frase con huecos (string).</li>
                 </ul>
 
