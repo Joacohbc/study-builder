@@ -3,10 +3,46 @@ import { shuffleArray } from '../utils/helpers';
 import SingleChoiceQuestion from './questions/SingleChoiceQuestion';
 import MultipleChoiceQuestion from './questions/MultipleChoiceQuestion';
 import MatchingQuestion from './questions/MatchingQuestion';
-import FillInTheBlanksQuestion from './questions/FillInTheBlanksQuestion'; // Import the new component
+import FillInTheBlanksQuestion from './questions/FillInTheBlanksQuestion';
+
+// Icons
+const CheckIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 6L9 17l-5-5"></path>
+  </svg>
+);
+
+const RefreshIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M23 4v6h-6"></path>
+    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+  </svg>
+);
+
+const QuestionIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+  </svg>
+);
+
+const TrophyIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+    <path d="M4 22h16"></path>
+    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+    <path d="M9 2v7.5"></path>
+    <path d="M15 2v7.5"></path>
+    <path d="M12 2v10"></path>
+    <path d="M6 9a6 6 0 0 0 12 0"></path>
+  </svg>
+);
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
-const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added activeSetName prop for context
+const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
     // State for shuffled questions to display
     const [shuffledQuestions, setShuffledQuestions] = useState([]);
     // State to store user answers { questionId: answerValue }
@@ -212,21 +248,90 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
         window.scrollTo(0, 0); // Scroll to the top of the page
     };
 
+    // Calcular el porcentaje de respuestas contestadas
+    const calculateCompletionPercentage = () => {
+        if (!quizData || quizData.length === 0) return 0;
+        
+        const answeredQuestions = shuffledQuestions.filter(q => 
+            q.id && (
+                answers[q.id] !== undefined && 
+                answers[q.id] !== null && 
+                (typeof answers[q.id] !== 'object' || 
+                 Object.keys(answers[q.id]).length > 0)
+            )
+        );
+        
+        return Math.round((answeredQuestions.length / shuffledQuestions.length) * 100);
+    };
+
     return (
-        <div>
-            <h2 className="text-lg font-semibold mb-4 text-center text-gray-600">Set Actual: {activeSetName || 'N/A'}</h2>
+        <div className="animate-fade-in">
+            {/* Header with visual indicators */}
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b border-gray-200">
+                <div>
+                    <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+                        <span className="mr-2 text-indigo-600"><QuestionIcon /></span>
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500">
+                            {activeSetName || 'Sin título'}
+                        </span>
+                    </h2>
+                    {quizData && quizData.length > 0 && (
+                        <p className="text-sm text-gray-600 mt-1">
+                            {quizData.length} {quizData.length === 1 ? 'pregunta' : 'preguntas'} en este cuestionario
+                        </p>
+                    )}
+                </div>
+
+                {/* Progress indicator */}
+                {!isSubmitted && quizData && quizData.length > 0 && (
+                    <div className="mt-4 md:mt-0 w-full md:w-60">
+                        <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
+                            <span>Progreso</span>
+                            <span>{calculateCompletionPercentage()}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                                className="bg-gradient-to-r from-indigo-600 to-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
+                                style={{ width: `${calculateCompletionPercentage()}%` }}
+                            ></div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
             {/* Show message if no questions are loaded */}
             {(!quizData || quizData.length === 0) ? (
-                <p className="text-center text-red-600 font-semibold">
-                    No hay preguntas en el set activo ('{activeSetName}'). Carga otro set o edita este en la pestaña "Editor de Sets".
-                </p>
+                <div className="bg-gray-50 p-8 rounded-xl shadow-inner text-center">
+                    <div className="text-gray-400 flex justify-center mb-4">
+                        <QuestionIcon />
+                    </div>
+                    <p className="text-center text-gray-800 font-medium mb-2">
+                        No hay preguntas en el set activo
+                    </p>
+                    <p className="text-gray-600 mb-6">
+                        <span className="font-semibold">"{activeSetName}"</span> no contiene preguntas. 
+                        Carga otro set o edita este en la pestaña "Editor de Sets".
+                    </p>
+                    <button 
+                        onClick={() => {
+                            // Find and click the Editor tab button
+                            const tabButton = document.querySelector('button[class*="border-indigo-600"]');
+                            if (tabButton) tabButton.click();
+                        }}
+                        className="px-4 py-2 bg-indigo-100 text-indigo-700 font-medium rounded-lg hover:bg-indigo-200 transition-colors duration-200"
+                    >
+                        Ir al Editor
+                    </button>
+                </div>
             ) : (
                 /* Render the quiz form */
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="space-y-8">
                     <div id="quiz-container" className="space-y-8">
                         {/* Map over shuffled questions to render each one */}
                         {shuffledQuestions.map((qData, index) => {
-                            if (!qData || !qData.id) return <p key={`error-${index}`} className="text-red-500">Error: Datos de pregunta inválidos.</p>; // Basic check
+                            if (!qData || !qData.id) return (
+                                <p key={`error-${index}`} className="text-red-500">Error: Datos de pregunta inválidos.</p>
+                            ); // Basic check
 
                             const isIndividuallyChecked = !!individualFeedback[qData.id];
                             // Determine the feedback to show: individual first, then overall results if submitted
@@ -234,19 +339,91 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                             // Determine if inputs should be disabled
                             const isDisabled = isSubmitted || isIndividuallyChecked;
 
+                            // Determine question status for styling
+                            let questionStatus = '';
+                            let statusBgClass = 'bg-white';
+                            let statusBorderClass = 'border-gray-200';
+
+                            if (questionFeedback) {
+                                if (questionFeedback.isCorrect) {
+                                    questionStatus = 'Correcta';
+                                    statusBgClass = 'bg-green-50';
+                                    statusBorderClass = 'border-green-200';
+                                } else if (questionFeedback.isAnswered) {
+                                    questionStatus = 'Incorrecta';
+                                    statusBgClass = 'bg-red-50';
+                                    statusBorderClass = 'border-red-200';
+                                } else {
+                                    questionStatus = 'Sin responder';
+                                    statusBgClass = 'bg-yellow-50';
+                                    statusBorderClass = 'border-yellow-200';
+                                }
+                            }
+
                             return (
-                                <div key={qData.id} className="bg-white p-6 rounded-lg shadow" data-question-index={index}>
-                                    {/* Question Title */}
-                                    <h3 className="text-lg font-semibold mb-4 text-gray-700">
-                                        Pregunta {index + 1}: {/* Display question text differently for fill-in-the-blanks */}
-                                        {qData.type === 'fill-in-the-blanks' ? "Completa la frase:" : qData.question}
-                                    </h3>
+                                <div 
+                                    key={qData.id} 
+                                    className={`p-6 rounded-xl shadow-sm border transition-all duration-300 ${statusBgClass} ${statusBorderClass} hover:shadow-md`}
+                                    data-question-index={index}
+                                >
+                                    <div className="flex flex-wrap justify-between items-start mb-4">
+                                        {/* Question Title with Question Number Badge */}
+                                        <div className="flex items-center mb-2 md:mb-0">
+                                            <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-indigo-100 text-indigo-800 font-medium text-sm mr-3">
+                                                {index + 1}
+                                            </span>
+                                            <h3 className="text-lg font-semibold text-gray-800">
+                                                {qData.type === 'fill-in-the-blanks' ? "Completa la frase:" : qData.question}
+                                            </h3>
+                                        </div>
+
+                                        {/* Question Status Badge - Only shown if feedback exists */}
+                                        {questionStatus && (
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                                ${questionFeedback?.isCorrect ? 'bg-green-100 text-green-800' : 
+                                                  questionFeedback?.isAnswered ? 'bg-red-100 text-red-800' : 
+                                                  'bg-yellow-100 text-yellow-800'}`}>
+                                                {questionStatus}
+                                            </span>
+                                        )}
+                                    </div>
+
                                     {/* Container for options/matching areas */}
-                                    <div className="options-container">
+                                    <div className="options-container mt-4">
                                         {/* Render specific component based on question type */}
-                                        {qData.type === 'single' && (<SingleChoiceQuestion questionData={qData} questionIndex={index} selectedAnswer={answers[qData.id] || ''} onChange={handleAnswerChange} isSubmitted={isDisabled} feedback={questionFeedback} isIndividuallyChecked={isIndividuallyChecked} />)}
-                                        {qData.type === 'multiple' && (<MultipleChoiceQuestion questionData={qData} questionIndex={index} selectedAnswers={answers[qData.id] || []} onChange={handleAnswerChange} isSubmitted={isDisabled} feedback={questionFeedback} isIndividuallyChecked={isIndividuallyChecked} />)}
-                                        {qData.type === 'matching' && (<MatchingQuestion questionData={qData} questionIndex={index} matches={answers[qData.id] || {}} onMatchChange={handleMatchChange} isSubmitted={isDisabled} feedback={questionFeedback} isIndividuallyChecked={isIndividuallyChecked} />)}
+                                        {qData.type === 'single' && (
+                                            <SingleChoiceQuestion 
+                                                questionData={qData} 
+                                                questionIndex={index} 
+                                                selectedAnswer={answers[qData.id] || ''} 
+                                                onChange={handleAnswerChange} 
+                                                isSubmitted={isDisabled} 
+                                                feedback={questionFeedback} 
+                                                isIndividuallyChecked={isIndividuallyChecked} 
+                                            />
+                                        )}
+                                        {qData.type === 'multiple' && (
+                                            <MultipleChoiceQuestion 
+                                                questionData={qData} 
+                                                questionIndex={index} 
+                                                selectedAnswers={answers[qData.id] || []} 
+                                                onChange={handleAnswerChange} 
+                                                isSubmitted={isDisabled} 
+                                                feedback={questionFeedback} 
+                                                isIndividuallyChecked={isIndividuallyChecked} 
+                                            />
+                                        )}
+                                        {qData.type === 'matching' && (
+                                            <MatchingQuestion 
+                                                questionData={qData} 
+                                                questionIndex={index} 
+                                                matches={answers[qData.id] || {}} 
+                                                onMatchChange={handleMatchChange} 
+                                                isSubmitted={isDisabled} 
+                                                feedback={questionFeedback} 
+                                                isIndividuallyChecked={isIndividuallyChecked} 
+                                            />
+                                        )}
                                         {/* Render FillInTheBlanksQuestion */}
                                         {qData.type === 'fill-in-the-blanks' && (
                                             <FillInTheBlanksQuestion
@@ -260,8 +437,11 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                                             />
                                         )}
                                     </div>
+                                    
                                     {/* Display evaluation error message if it occurred */}
-                                    {(isSubmitted || isIndividuallyChecked) && questionFeedback?.error && (<p className="mt-2 text-sm text-red-600 font-semibold">{questionFeedback.error}</p>)}
+                                    {(isSubmitted || isIndividuallyChecked) && questionFeedback?.error && (
+                                        <p className="mt-3 text-sm text-red-600 font-medium">{questionFeedback.error}</p>
+                                    )}
 
                                     {/* Add Check Answer Button */}
                                     {!isSubmitted && (
@@ -270,8 +450,13 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
                                                 type="button"
                                                 onClick={() => handleCheckSingleQuestion(qData.id)}
                                                 disabled={isIndividuallyChecked}
-                                                className="px-4 py-1 text-sm bg-gray-500 hover:bg-gray-600 text-white rounded shadow-sm transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" // Changed from purple to gray
+                                                className={`flex items-center px-4 py-2 text-sm rounded-lg shadow-sm transition duration-200 
+                                                    ${isIndividuallyChecked 
+                                                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+                                                        : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                                                    }`}
                                             >
+                                                <CheckIcon className="mr-1" />
                                                 {isIndividuallyChecked ? 'Respuesta Revisada' : 'Revisar Respuesta'}
                                             </button>
                                         </div>
@@ -283,7 +468,14 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
 
                     {/* Submit Button */}
                     <div className="mt-10 text-center">
-                        <button type="submit" disabled={isSubmitted} className={`bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ${isSubmitted ? 'opacity-50 cursor-not-allowed' : ''}`} >
+                        <button 
+                            type="submit" 
+                            disabled={isSubmitted} 
+                            className={`inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white font-medium py-3 px-8 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 ${
+                                isSubmitted ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                        >
+                            <CheckIcon className="mr-2" />
                             {isSubmitted ? 'Respuestas Enviadas' : 'Enviar Respuestas'}
                         </button>
                     </div>
@@ -292,43 +484,110 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
 
             {/* Results Section (conditionally rendered after submission) */}
             {isSubmitted && results && (
-                <div id="results-container" className="mt-10 p-6 bg-gray-50 rounded-lg">
-                    <h2 className="text-xl font-semibold text-center mb-4">Resultados ({activeSetName})</h2>
-                    {/* Display overall score */}
-                    <p id="score" className="text-center text-lg font-bold mb-6"> Tu puntuación: {results.score} de {results.total} </p>
+                <div 
+                    id="results-container" 
+                    className="mt-12 p-8 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-lg border border-gray-200 animate-fade-in"
+                >
+                    <div className="flex justify-center mb-6">
+                        <div className="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                            <TrophyIcon />
+                        </div>
+                    </div>
+                    
+                    <h2 className="text-2xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 mb-2">
+                        Resultados
+                    </h2>
+                    <p className="text-center text-gray-600 mb-6">
+                        {activeSetName}
+                    </p>
+                    
+                    {/* Score display with visual graph */}
+                    <div className="flex flex-col items-center mb-8">
+                        <div className="relative h-32 w-32">
+                            {/* Background circle */}
+                            <div className="absolute inset-0 rounded-full bg-gray-100"></div>
+                            
+                            {/* Score circle with animation */}
+                            <div 
+                                className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600 to-blue-500 transition-all duration-1000 ease-out"
+                                style={{ 
+                                    clipPath: `polygon(50% 50%, 50% 0%, ${
+                                        50 + 50 * Math.cos((Math.min(results.score / results.total, 1) * 2 * Math.PI) - Math.PI/2)
+                                    }% ${
+                                        50 + 50 * Math.sin((Math.min(results.score / results.total, 1) * 2 * Math.PI) - Math.PI/2)
+                                    }%, ${
+                                        results.score / results.total >= 0.25 ? '100% 0%, 100% 100%, 0% 100%, 0% 0%' : ''
+                                    })` 
+                                }}
+                            ></div>
+                            
+                            {/* Inner white circle */}
+                            <div className="absolute inset-4 rounded-full bg-white flex items-center justify-center">
+                                <div className="text-center">
+                                    <div className="text-2xl font-bold text-gray-800">{results.score}</div>
+                                    <div className="text-xs text-gray-500">de {results.total}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p className="text-center mt-4">
+                            <span className="text-xl font-bold text-gray-800">
+                                {Math.round((results.score / results.total) * 100)}%
+                            </span>
+                            <span className="text-gray-600 ml-1 text-sm">
+                                de aciertos
+                            </span>
+                        </p>
+                    </div>
+
                     {/* Container for detailed feedback (optional, basic feedback shown here) */}
-                    <div id="feedback" className="space-y-4">
+                    <div id="feedback" className="space-y-4 max-w-2xl mx-auto">
+                        <h3 className="text-lg font-medium text-gray-800 mb-2">Detalle de respuestas</h3>
+                        
                         {/* Map over the *shuffled* questions again to show feedback in displayed order */}
                         {shuffledQuestions.map((qData, index) => {
                             if (!qData || !qData.id) return null; // Skip if invalid
                             const feedback = results.feedback[qData.id];
                             if (!feedback) return null; // Should not happen
 
-                            let feedbackClass = 'p-4 border rounded-md mb-4 '; let feedbackText = '';
+                            let feedbackClass = 'p-4 border rounded-lg mb-4 transition-all duration-200 '; 
+                            let feedbackText = '';
                             let questionTitle = qData.question;
-                            if (qData.type === 'fill-in-the-blanks') questionTitle = "Completa la frase (Pregunta " + (index + 1) + ")";
+                            
+                            if (qData.type === 'fill-in-the-blanks') {
+                                questionTitle = "Completa la frase (Pregunta " + (index + 1) + ")";
+                            }
 
-
-                            if (feedback.error) { feedbackClass += 'bg-red-100 border-red-300'; feedbackText = feedback.error; }
-                            else if (feedback.isCorrect) { feedbackClass += 'bg-green-100 border-green-300'; feedbackText = '¡Correcto!'; }
+                            if (feedback.error) { 
+                                feedbackClass += 'bg-red-50 border-red-200 hover:border-red-300'; 
+                                feedbackText = feedback.error; 
+                            }
+                            else if (feedback.isCorrect) { 
+                                feedbackClass += 'bg-green-50 border-green-200 hover:border-green-300'; 
+                                feedbackText = '¡Correcto!'; 
+                            }
                             else if (feedback.isAnswered) {
-                                feedbackClass += 'bg-red-100 border-red-300'; feedbackText = 'Incorrecto.';
+                                feedbackClass += 'bg-red-50 border-red-200 hover:border-red-300'; 
+                                feedbackText = 'Incorrecto.';
                                 if (qData.type === 'single') feedbackText += ` La respuesta correcta es: ${feedback.correctAnswer}`;
                                 if (qData.type === 'multiple') feedbackText += ` Las respuestas correctas son: ${(feedback.correctAnswers || []).join(', ')}`;
-                                // Add feedback for fill-in-the-blanks (already shown in the component, but can add summary here)
+                                
+                                // Add feedback for fill-in-the-blanks
                                 if (qData.type === 'fill-in-the-blanks') {
                                     const correctAnswersSummary = Object.entries(qData.blanks)
                                         .map(([id, data]) => `[${id}]: ${data.correctAnswer}`)
                                         .join(', ');
                                     feedbackText += ` Respuestas correctas: ${correctAnswersSummary}`;
                                 }
-                                // Add feedback for matching (can be complex, maybe just indicate incorrect)
+                                
+                                // Add feedback for matching
                                 if (qData.type === 'matching') {
                                     feedbackText += ` Revisa las uniones correctas arriba.`;
                                 }
                             }
                             else { // Not answered
-                                feedbackClass += 'bg-yellow-100 border-yellow-400'; feedbackText = 'No respondida.';
+                                feedbackClass += 'bg-yellow-50 border-yellow-200 hover:border-yellow-300'; 
+                                feedbackText = 'No respondida.';
                                 if (qData.type === 'single') feedbackText += ` La respuesta correcta es: ${feedback.correctAnswer}`;
                                 if (qData.type === 'multiple') feedbackText += ` Las respuestas correctas son: ${(feedback.correctAnswers || []).join(', ')}`;
                                 if (qData.type === 'fill-in-the-blanks') {
@@ -344,16 +603,39 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => { // Added acti
 
                             return (
                                 <div key={`feedback-${qData.id}`} className={feedbackClass}>
-                                    <p className="font-semibold">Pregunta {index + 1}: {questionTitle}</p>
-                                    <p className={`mt-1 text-sm ${feedback.isCorrect ? 'text-green-700' : feedback.isAnswered ? 'text-red-700' : 'text-yellow-700'}`}>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-100 text-gray-800 font-medium text-sm mr-3">
+                                                {index + 1}
+                                            </span>
+                                            <p className="font-medium text-gray-800">{questionTitle}</p>
+                                        </div>
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                            ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 
+                                              feedback.isAnswered ? 'bg-red-100 text-red-800' : 
+                                              'bg-yellow-100 text-yellow-800'}`}>
+                                            {feedback.isCorrect ? 'Correcto' : feedback.isAnswered ? 'Incorrecto' : 'Sin responder'}
+                                        </span>
+                                    </div>
+                                    <p className={`mt-2 text-sm ${feedback.isCorrect ? 'text-green-700' : feedback.isAnswered ? 'text-red-700' : 'text-yellow-700'}`}>
                                         {feedbackText}
                                     </p>
                                 </div>
                             );
                         })}
                     </div>
-                    {/* Retry Button */}
-                    <div className="mt-6 text-center"> <button id="retry-button" onClick={handleRetry} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300" > Intentar de Nuevo </button> </div>
+                    
+                    {/* Action Buttons */}
+                    <div className="mt-8 flex justify-center">
+                        <button 
+                            id="retry-button" 
+                            onClick={handleRetry} 
+                            className="flex items-center bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-medium py-2 px-6 rounded-lg transition-all duration-200" 
+                        >
+                            <RefreshIcon className="mr-2" />
+                            Intentar de Nuevo
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
