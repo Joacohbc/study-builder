@@ -18,21 +18,8 @@ function App() {
 
     // --- Use StudySetContext ---
     const {
-        quizSets,
-        activeQuizSetName,
-        activeQuizData,
-        flashcardSets,
-        activeFlashcardSetName,
-        activeFlashcardData,
-        quizDefaults,
-        flashcardDefaults,
-        editorContentType,
+        editorContentType, // Get editorContentType from the hook
         setEditorContentType,
-        handleLoadSet,
-        handleSaveChanges,
-        handleSaveAsNewSet,
-        handleDeleteSet,
-        handleResetDefaultSet,
         isLoading
     } = useStudySets();
 
@@ -55,33 +42,6 @@ function App() {
             </div>
         );
     }
-
-    // Determine props for EditorTab based on editorContentType
-    const editorProps = editorContentType === 'quiz'
-        ? {
-            quizSets: quizSets,
-            activeSetName: activeQuizSetName,
-            activeQuizData: activeQuizData,
-            onLoadSet: (setName) => handleLoadSet('quiz', setName),
-            onSaveChanges: (setName, data) => handleSaveChanges('quiz', setName, data),
-            onSaveAsNewSet: (newName, data) => handleSaveAsNewSet('quiz', newName, data),
-            onDeleteSet: (setName) => handleDeleteSet('quiz', setName),
-            onResetDefaultSet: () => handleResetDefaultSet('quiz'),
-            defaultSetName: quizDefaults.defaultSetName,
-            setType: 'quiz',
-        }
-        : {
-            quizSets: flashcardSets,
-            activeSetName: activeFlashcardSetName,
-            activeQuizData: activeFlashcardData,
-            onLoadSet: (setName) => handleLoadSet('flashcard', setName),
-            onSaveChanges: (setName, data) => handleSaveChanges('flashcard', setName, data),
-            onSaveAsNewSet: (newName, data) => handleSaveAsNewSet('flashcard', newName, data),
-            onDeleteSet: (setName) => handleDeleteSet('flashcard', setName),
-            onResetDefaultSet: () => handleResetDefaultSet('flashcard'),
-            defaultSetName: flashcardDefaults.defaultSetName,
-            setType: 'flashcard',
-        };
 
     return (
         <div className="bg-gradient-to-br from-indigo-50 to-blue-100 font-sans min-h-screen relative">
@@ -143,18 +103,13 @@ function App() {
                             {activeUITab === 'quiz' && (
                                 <div className="animate-fade-in">
                                     <QuizTab
-                                        quizData={activeQuizData}
-                                        activeSetName={activeQuizSetName}
                                         onQuizComplete={(results) => console.log("Quiz Completed:", results)}
                                     />
                                 </div>
                             )}
                             {activeUITab === 'flashcards' && (
                                 <div className="animate-fade-in">
-                                    <FlashcardTab
-                                        flashcardData={activeFlashcardData}
-                                        activeSetName={activeFlashcardSetName}
-                                    />
+                                    <FlashcardTab />
                                 </div>
                             )}
                             {activeUITab === 'editor' && (
@@ -168,7 +123,7 @@ function App() {
                                                     type="radio"
                                                     name="editorType"
                                                     value="quiz"
-                                                    checked={editorContentType === 'quiz'}
+                                                    checked={editorContentType === 'quiz'} // Use the variable from the hook
                                                     onChange={() => setEditorContentType('quiz')}
                                                     className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                                                 />
@@ -182,7 +137,7 @@ function App() {
                                                     type="radio"
                                                     name="editorType"
                                                     value="flashcard"
-                                                    checked={editorContentType === 'flashcard'}
+                                                    checked={editorContentType === 'flashcard'} // Use the variable from the hook
                                                     onChange={() => setEditorContentType('flashcard')}
                                                     className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                                                 />
@@ -193,7 +148,7 @@ function App() {
                                             </label>
                                         </div>
                                     </div>
-                                    <EditorTab {...editorProps} />
+                                    <EditorTab />
                                 </div>
                             )}
                             {activeUITab === 'explanation' && (

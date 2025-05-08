@@ -1,22 +1,36 @@
 import React, { useState, useEffect } from 'react';
+import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
 import { parseAndValidateSetData } from '../services/ValidationService';
 import SetManagementControls from './editor/SetManagementControls';
 import ClipboardControls from './editor/ClipboardControls';
 import SaveActions from './editor/SaveActions';
 
 // Editor Tab Component: Allows editing the quiz questions and managing sets
-const EditorTab = ({
-    quizSets,
-    activeSetName,
-    activeQuizData,
-    onLoadSet: parentOnLoadSet, // Renamed to avoid conflict
-    onSaveChanges: parentOnSaveChanges, // Renamed
-    onSaveAsNewSet: parentOnSaveAsNewSet, // Renamed
-    onDeleteSet: parentOnDeleteSet, // Renamed
-    onResetDefaultSet: parentOnResetDefaultSet, // Renamed
-    defaultSetName,
-    setType
-}) => {
+const EditorTab = () => { // Removed all props
+    const {
+        quizSets,
+        activeQuizSetName,
+        activeQuizData,
+        flashcardSets,
+        activeFlashcardSetName,
+        activeFlashcardData,
+        quizDefaults,
+        flashcardDefaults,
+        editorContentType, // Use editorContentType from context
+        handleLoadSet: parentOnLoadSet,
+        handleSaveChanges: parentOnSaveChanges,
+        handleSaveAsNewSet: parentOnSaveAsNewSet,
+        handleDeleteSet: parentOnDeleteSet,
+        handleResetDefaultSet: parentOnResetDefaultSet
+    } = useStudySets();
+
+    // Determine current set type and data based on editorContentType
+    const setType = editorContentType;
+    const activeSetName = setType === 'quiz' ? activeQuizSetName : activeFlashcardSetName;
+    const activeSetData = setType === 'quiz' ? activeQuizData : activeFlashcardData;
+    const allSets = setType === 'quiz' ? quizSets : flashcardSets;
+    const defaultSetName = setType === 'quiz' ? quizDefaults.defaultSetName : flashcardDefaults.defaultSetName;
+
     const [jsonString, setJsonString] = useState('');
     const [selectedSetToLoad, setSelectedSetToLoad] = useState(activeSetName || defaultSetName);
     const [newSetNameInput, setNewSetNameInput] = useState('');
@@ -25,13 +39,13 @@ const EditorTab = ({
 
     useEffect(() => {
         try {
-            const dataToDisplay = Array.isArray(activeQuizData) ? activeQuizData : [];
+            const dataToDisplay = Array.isArray(activeSetData) ? activeSetData : []; // Use activeSetData
             setJsonString(JSON.stringify(dataToDisplay, null, 2));
         } catch (error) {
             setJsonString(`Error cargando datos del set activo (${setType}).`);
             console.error(`Error stringifying active ${setType} data:`, error);
         }
-    }, [activeQuizData, setType]);
+    }, [activeSetData, setType]); // Dependency on activeSetData
 
     useEffect(() => {
         setSelectedSetToLoad(activeSetName || defaultSetName);
@@ -64,7 +78,7 @@ const EditorTab = ({
 
     const handleLoadSet = () => {
         if (selectedSetToLoad) {
-            parentOnLoadSet(selectedSetToLoad); // Call prop function
+            parentOnLoadSet(setType, selectedSetToLoad); // Pass setType
             showStatus(`Set '${selectedSetToLoad}' (${setType}) cargado.`, 'info');
         }
     };
@@ -72,7 +86,7 @@ const EditorTab = ({
     const handleDeleteSet = () => {
         if (selectedSetToLoad && selectedSetToLoad !== defaultSetName) {
             if (window.confirm(`¿Estás seguro de que quieres eliminar el set '${selectedSetToLoad}' (${setType})? Esta acción no se puede deshacer.`)) {
-                parentOnDeleteSet(selectedSetToLoad); // Call prop function
+                parentOnDeleteSet(setType, selectedSetToLoad); // Pass setType
                 showStatus(`Set '${selectedSetToLoad}' (${setType}) eliminado.`, 'info');
             }
         } else if (selectedSetToLoad === defaultSetName) {
@@ -82,7 +96,7 @@ const EditorTab = ({
     
     const handleResetDefaultSet = () => {
         if (window.confirm(`¿Estás seguro de que quieres restablecer el contenido del set "${defaultSetName}" (${setType}) a su estado original?`)) {
-            parentOnResetDefaultSet(); // Call prop function
+            parentOnResetDefaultSet(setType); // Pass setType
             showStatus(`Set "${defaultSetName}" (${setType}) restablecido.`, 'info');
         }
     };
@@ -125,7 +139,7 @@ const EditorTab = ({
         }
         const parsedData = validateAndPrepareData();
         if (parsedData) {
-            const success = parentOnSaveChanges(activeSetName, parsedData); // Call prop function
+            const success = parentOnSaveChanges(setType, activeSetName, parsedData); // Pass setType
             if (success) {
                 showStatus(`Cambios guardados en el set '${activeSetName}' (${setType}).`, 'success');
             } else {
@@ -144,14 +158,14 @@ const EditorTab = ({
             showStatus(`No puedes usar el nombre reservado "${defaultSetName}". Elige otro nombre.`, 'error');
             return;
         }
-        if (quizSets && quizSets[newName]) {
+        if (allSets && allSets[newName]) { // Use allSets
             if (!window.confirm(`El set '${newName}' (${setType}) ya existe. ¿Quieres sobrescribirlo?`)) {
                 return;
             }
         }
         const parsedData = validateAndPrepareData();
         if (parsedData) {
-            const success = parentOnSaveAsNewSet(newName, parsedData); // Call prop function
+            const success = parentOnSaveAsNewSet(setType, newName, parsedData); // Pass setType
             if (success) {
                 showStatus(`Set guardado como '${newName}' (${setType}). Ahora es el set activo.`, 'success');
                 setNewSetNameInput('');
@@ -168,7 +182,7 @@ const EditorTab = ({
     return (
         <div className="space-y-6">
             <SetManagementControls
-                sets={quizSets}
+                sets={allSets} // Use allSets
                 selectedSetToLoad={selectedSetToLoad}
                 onSetSelectionChange={handleSetSelectionChange}
                 onLoadSet={handleLoadSet}

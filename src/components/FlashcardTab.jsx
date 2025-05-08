@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
 import Flashcard from './Flashcard';
 import ArrowLeftIcon from './icons/ArrowLeftIcon'; // Corrected import
 import ArrowRightIcon from './icons/ArrowRightIcon'; // Corrected import
@@ -8,7 +9,9 @@ import EmptyFlashcardIcon from './icons/EmptyFlashcardIcon'; // Corrected import
 import ProgressBar from './ProgressBar'; // Import the new ProgressBar component
 
 // FlashcardTab Component: Displays flashcards and handles navigation
-const FlashcardTab = ({ flashcardData, activeSetName }) => {
+const FlashcardTab = () => { // Removed flashcardData and activeSetName from props
+    const { activeFlashcardData, activeFlashcardSetName } = useStudySets(); // Get data from context
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [shuffledData, setShuffledData] = useState([]);
@@ -16,9 +19,9 @@ const FlashcardTab = ({ flashcardData, activeSetName }) => {
 
     // Shuffle cards when data changes or component mounts
     useEffect(() => {
-        if (flashcardData && flashcardData.length > 0) {
+        if (activeFlashcardData && activeFlashcardData.length > 0) {
             // Simple Fisher-Yates shuffle
-            const shuffled = [...flashcardData];
+            const shuffled = [...activeFlashcardData];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -29,7 +32,7 @@ const FlashcardTab = ({ flashcardData, activeSetName }) => {
         } else {
             setShuffledData([]); // Clear if no data
         }
-    }, [flashcardData]);
+    }, [activeFlashcardData]);
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
@@ -77,7 +80,7 @@ const FlashcardTab = ({ flashcardData, activeSetName }) => {
                     <EmptyFlashcardIcon />
                 </div>
                 <h3 className="text-xl font-medium text-gray-700 mb-4">Sin Flashcards</h3>
-                <p className="text-gray-600 mb-2">No hay flashcards en el set activo "{activeSetName}".</p>
+                <p className="text-gray-600 mb-2">No hay flashcards en el set activo "{activeFlashcardSetName}".</p>
                 <p className="text-gray-600 mb-6">Puedes añadir flashcards en la pestaña "Editor de Sets".</p>
                 
                 <div className="flex justify-center">
@@ -100,7 +103,7 @@ const FlashcardTab = ({ flashcardData, activeSetName }) => {
     return (
         <div className="flex flex-col items-center space-y-6 animate-fade-in">
             <h2 className="flex items-center gap-2 text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
-                <span className="text-gray-700">Flashcards:</span> {activeSetName}
+                <span className="text-gray-700">Flashcards:</span> {activeFlashcardSetName}
             </h2>
 
             {/* Flashcard Progress Bar */}

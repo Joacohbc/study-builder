@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
 import { shuffleArray } from '../utils/helpers';
 import CheckIcon from './icons/CheckIcon';
 import RefreshIcon from './icons/RefreshIcon';
@@ -8,7 +9,9 @@ import QuestionList from './QuestionList'; // Import the new QuestionList compon
 import QuizResults from './QuizResults'; // Import the new QuizResults component
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
-const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
+const QuizTab = ({ onQuizComplete }) => { // Removed quizData and activeSetName from props
+    const { activeQuizData, activeQuizSetName } = useStudySets(); // Get data from context
+
     // State for shuffled questions to display
     const [shuffledQuestions, setShuffledQuestions] = useState([]);
     // State to store user answers { questionId: answerValue }
@@ -20,16 +23,16 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
     // State to store feedback for individually checked questions
     const [individualFeedback, setIndividualFeedback] = useState({}); // { questionId: feedbackObject }
 
-    // Effect to shuffle questions when the component mounts or quizData changes
-    // Also reset state when quizData changes (meaning a new set was loaded)
+    // Effect to shuffle questions when the component mounts or activeQuizData changes
+    // Also reset state when activeQuizData changes (meaning a new set was loaded)
     useEffect(() => {
-        setShuffledQuestions(shuffleArray(quizData || [])); // Ensure quizData is an array
-        // Reset quiz state if quizData changes
+        setShuffledQuestions(shuffleArray(activeQuizData || [])); // Ensure activeQuizData is an array
+        // Reset quiz state if activeQuizData changes
         setAnswers({});
         setIsSubmitted(false);
         setResults(null);
         setIndividualFeedback({}); // Reset individual feedback
-    }, [quizData]); // Dependency on quizData
+    }, [activeQuizData]); // Dependency on activeQuizData
 
     // Callback to handle answer changes from single/multiple choice questions
     const handleAnswerChange = useCallback((questionId, value) => {
@@ -158,7 +161,7 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
 
     // Handle checking a single question
     const handleCheckSingleQuestion = useCallback((questionId) => {
-        const questionData = (quizData || []).find(q => q.id === questionId);
+        const questionData = (activeQuizData || []).find(q => q.id === questionId);
         const userAnswer = answers[questionId];
         if (questionData) {
             const feedback = evaluateSingleQuestion(questionData, userAnswer);
@@ -167,7 +170,7 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
                 [questionId]: feedback,
             }));
         }
-    }, [quizData, answers, evaluateSingleQuestion]);
+    }, [activeQuizData, answers, evaluateSingleQuestion]);
 
 
     // Handle form submission: calculate score and generate feedback
@@ -177,7 +180,7 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
 
         let score = 0;
         const detailedFeedback = {}; // Store feedback for each question
-        const currentQuestions = quizData || []; // Use the currently loaded data
+        const currentQuestions = activeQuizData || []; // Use the currently loaded data
 
         // Iterate over the current questions to evaluate
         currentQuestions.forEach(qData => {
@@ -205,7 +208,7 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
 
     // Handle the "Retry" button click
     const handleRetry = () => {
-        setShuffledQuestions(shuffleArray(quizData || [])); // Reshuffle questions from the current set
+        setShuffledQuestions(shuffleArray(activeQuizData || [])); // Reshuffle questions from the current set
         setAnswers({}); // Clear answers
         setIsSubmitted(false); // Reset submission state
         setResults(null); // Clear results
@@ -215,7 +218,7 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
 
     // Calcular el porcentaje de respuestas contestadas
     const calculateCompletionPercentage = () => {
-        if (!quizData || quizData.length === 0) return 0;
+        if (!activeQuizData || activeQuizData.length === 0) return 0;
         
         const answeredQuestions = shuffledQuestions.filter(q => 
             q.id && (
@@ -233,14 +236,14 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
     return (
         <div className="animate-fade-in">
             <QuizHeader
-                activeSetName={activeSetName}
-                quizData={quizData}
+                activeSetName={activeQuizSetName}
+                quizData={activeQuizData}
                 isSubmitted={isSubmitted}
                 completionPercentage={calculateCompletionPercentage()}
             />
 
-            {(!quizData || quizData.length === 0) ? (
-                <NoQuestions activeSetName={activeSetName} />
+            {(!activeQuizData || activeQuizData.length === 0) ? (
+                <NoQuestions activeSetName={activeQuizSetName} />
             ) : (
                 /* Render the quiz form */
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -275,7 +278,7 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
             {isSubmitted && results && (
                 <QuizResults
                     results={results}
-                    activeSetName={activeSetName}
+                    activeSetName={activeQuizSetName}
                     onRetry={handleRetry}
                     shuffledQuestions={shuffledQuestions}
                 />
