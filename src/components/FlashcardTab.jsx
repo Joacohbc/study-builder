@@ -5,6 +5,7 @@ import ArrowRightIcon from './icons/ArrowRightIcon'; // Corrected import
 import FlipIcon from './icons/FlipIcon'; // Corrected import
 import ShuffleIcon from './icons/ShuffleIcon'; // Corrected import
 import EmptyFlashcardIcon from './icons/EmptyFlashcardIcon'; // Corrected import
+import ProgressBar from './ProgressBar'; // Import the new ProgressBar component
 
 // FlashcardTab Component: Displays flashcards and handles navigation
 const FlashcardTab = ({ flashcardData, activeSetName }) => {
@@ -95,7 +96,6 @@ const FlashcardTab = ({ flashcardData, activeSetName }) => {
     }
 
     const currentCard = shuffledData[currentIndex];
-    const progressPercentage = ((currentIndex + 1) / shuffledData.length) * 100;
 
     return (
         <div className="flex flex-col items-center space-y-6 animate-fade-in">
@@ -104,16 +104,15 @@ const FlashcardTab = ({ flashcardData, activeSetName }) => {
             </h2>
 
             {/* Flashcard Progress Bar */}
-            <div className="flashcard-progress">
-                <span className="font-medium">{currentIndex + 1}/{shuffledData.length}</span>
-                <div className="flashcard-progress-bar">
-                    <div 
-                        className="flashcard-progress-fill" 
-                        style={{ width: `${progressPercentage}%` }}
-                    ></div>
+            {shuffledData && shuffledData.length > 0 && (
+                <div className="w-full max-w-xs sm:max-w-sm md:max-w-md"> 
+                    <ProgressBar 
+                        current={currentIndex + 1}
+                        total={shuffledData.length}
+                        label={`Tarjeta ${currentIndex + 1} de ${shuffledData.length}`}
+                    />
                 </div>
-                <span className="text-xs">{Math.round(progressPercentage)}%</span>
-            </div>
+            )}
 
             {/* Flashcard Display Area */}
             <div className={`w-full ${isShuffling ? 'animate-pulse' : ''}`}>

@@ -8,6 +8,7 @@ import CheckIcon from './icons/CheckIcon';
 import RefreshIcon from './icons/RefreshIcon';
 import QuestionIcon from './icons/QuestionIcon';
 import TrophyIcon from './icons/TrophyIcon';
+import ProgressBar from './ProgressBar'; // Import the new ProgressBar component
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
 const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
@@ -229,7 +230,8 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
             )
         );
         
-        return Math.round((answeredQuestions.length / shuffledQuestions.length) * 100);
+        // Return current and total for the ProgressBar component
+        return { current: answeredQuestions.length, total: shuffledQuestions.length };
     };
 
     return (
@@ -252,17 +254,12 @@ const QuizTab = ({ quizData, onQuizComplete, activeSetName }) => {
 
                 {/* Progress indicator */}
                 {!isSubmitted && quizData && quizData.length > 0 && (
-                    <div className="mt-4 md:mt-0 w-full md:w-60">
-                        <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
-                            <span>Progreso</span>
-                            <span>{calculateCompletionPercentage()}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                                className="bg-gradient-to-r from-indigo-600 to-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
-                                style={{ width: `${calculateCompletionPercentage()}%` }}
-                            ></div>
-                        </div>
+                    <div className="mt-4 md:mt-0">
+                        <ProgressBar 
+                            current={calculateCompletionPercentage().current}
+                            total={calculateCompletionPercentage().total}
+                            label="Progreso del Cuestionario"
+                        />
                     </div>
                 )}
             </div>
