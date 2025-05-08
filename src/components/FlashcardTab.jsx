@@ -16,23 +16,28 @@ const FlashcardTab = () => { // Removed flashcardData and activeSetName from pro
     const [isFlipped, setIsFlipped] = useState(false);
     const [shuffledData, setShuffledData] = useState([]);
     const [isShuffling, setIsShuffling] = useState(false);
+    const [isShuffleEnabled, setIsShuffleEnabled] = useState(true); // New state for shuffle preference
 
-    // Shuffle cards when data changes or component mounts
+    // Shuffle cards when data changes or component mounts, or shuffle preference changes
     useEffect(() => {
         if (activeFlashcardData && activeFlashcardData.length > 0) {
-            // Simple Fisher-Yates shuffle
-            const shuffled = [...activeFlashcardData];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            if (isShuffleEnabled) {
+                // Simple Fisher-Yates shuffle
+                const shuffled = [...activeFlashcardData];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                setShuffledData(shuffled);
+            } else {
+                setShuffledData([...activeFlashcardData]); // Use original order
             }
-            setShuffledData(shuffled);
             setCurrentIndex(0); // Reset index
             setIsFlipped(false); // Reset flip state
         } else {
             setShuffledData([]); // Clear if no data
         }
-    }, [activeFlashcardData]);
+    }, [activeFlashcardData, isShuffleEnabled]); // Add isShuffleEnabled to dependency array
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
@@ -53,7 +58,7 @@ const FlashcardTab = () => { // Removed flashcardData and activeSetName from pro
     };
 
     const handleReshuffle = () => {
-        if (shuffledData.length <= 1) return;
+        if (shuffledData.length <= 1 || !isShuffleEnabled) return; // Don't reshuffle if disabled
         
         // Visual indication of shuffling
         setIsShuffling(true);
@@ -150,8 +155,8 @@ const FlashcardTab = () => { // Removed flashcardData and activeSetName from pro
                 
                 <button
                     onClick={handleReshuffle}
-                    disabled={shuffledData.length <= 1 || isShuffling}
-                    className={`flashcard-control-btn ${(shuffledData.length <= 1 || isShuffling) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={shuffledData.length <= 1 || isShuffling || !isShuffleEnabled} // Disable if shuffle is not enabled
+                    className={`flashcard-control-btn ${(shuffledData.length <= 1 || isShuffling || !isShuffleEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     aria-label="Barajar tarjetas"
                 >
                     <ShuffleIcon />
@@ -167,6 +172,24 @@ const FlashcardTab = () => { // Removed flashcardData and activeSetName from pro
                 </button>
             </div>
             
+            {/* Shuffle Toggle Switch */}
+            <div className="flex items-center justify-center space-x-2 mt-4">
+                <label htmlFor="shuffle-toggle" className="text-sm text-gray-600">
+                    Barajar tarjetas:
+                </label>
+                <button
+                    id="shuffle-toggle"
+                    onClick={() => setIsShuffleEnabled(!isShuffleEnabled)}
+                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isShuffleEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                    aria-pressed={isShuffleEnabled}
+                >
+                    <span className="sr-only">Activar o desactivar barajado</span>
+                    <span
+                        className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${isShuffleEnabled ? 'translate-x-6' : 'translate-x-1'}`}
+                    />
+                </button>
+            </div>
+
             {/* Instructions */}
             <p className="text-sm text-center text-gray-500 max-w-md">
                 Haz clic en la tarjeta para voltearla, o usa los botones para navegar entre tarjetas.

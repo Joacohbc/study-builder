@@ -22,17 +22,22 @@ const QuizTab = ({ onQuizComplete }) => { // Removed quizData and activeSetName 
     const [results, setResults] = useState(null); // { score, total, feedback: { questionId: {...} } }
     // State to store feedback for individually checked questions
     const [individualFeedback, setIndividualFeedback] = useState({}); // { questionId: feedbackObject }
+    const [isShuffleEnabled, setIsShuffleEnabled] = useState(true); // New state for shuffle preference
 
     // Effect to shuffle questions when the component mounts or activeQuizData changes
     // Also reset state when activeQuizData changes (meaning a new set was loaded)
     useEffect(() => {
-        setShuffledQuestions(shuffleArray(activeQuizData || [])); // Ensure activeQuizData is an array
-        // Reset quiz state if activeQuizData changes
+        if (activeQuizData && activeQuizData.length > 0) {
+            setShuffledQuestions(isShuffleEnabled ? shuffleArray(activeQuizData) : [...activeQuizData]);
+        } else {
+            setShuffledQuestions([]);
+        }
+        // Reset quiz state if activeQuizData changes or shuffle preference changes
         setAnswers({});
         setIsSubmitted(false);
         setResults(null);
         setIndividualFeedback({}); // Reset individual feedback
-    }, [activeQuizData]); // Dependency on activeQuizData
+    }, [activeQuizData, isShuffleEnabled]); // Dependency on activeQuizData and isShuffleEnabled
 
     // Callback to handle answer changes from single/multiple choice questions
     const handleAnswerChange = useCallback((questionId, value) => {
@@ -208,7 +213,11 @@ const QuizTab = ({ onQuizComplete }) => { // Removed quizData and activeSetName 
 
     // Handle the "Retry" button click
     const handleRetry = () => {
-        setShuffledQuestions(shuffleArray(activeQuizData || [])); // Reshuffle questions from the current set
+        if (activeQuizData && activeQuizData.length > 0) {
+            setShuffledQuestions(isShuffleEnabled ? shuffleArray(activeQuizData) : [...activeQuizData]);
+        } else {
+            setShuffledQuestions([]);
+        }
         setAnswers({}); // Clear answers
         setIsSubmitted(false); // Reset submission state
         setResults(null); // Clear results
@@ -241,6 +250,24 @@ const QuizTab = ({ onQuizComplete }) => { // Removed quizData and activeSetName 
                 isSubmitted={isSubmitted}
                 completionPercentage={calculateCompletionPercentage()}
             />
+
+            {/* Shuffle Toggle Switch for Quiz */}
+            <div className="flex items-center justify-center space-x-2 my-4">
+                <label htmlFor="quiz-shuffle-toggle" className="text-sm text-gray-600">
+                    Barajar preguntas:
+                </label>
+                <button
+                    id="quiz-shuffle-toggle"
+                    onClick={() => setIsShuffleEnabled(!isShuffleEnabled)}
+                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isShuffleEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                    aria-pressed={isShuffleEnabled}
+                >
+                    <span className="sr-only">Activar o desactivar barajado de preguntas</span>
+                    <span
+                        className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${isShuffleEnabled ? 'translate-x-6' : 'translate-x-1'}`}
+                    />
+                </button>
+            </div>
 
             {(!activeQuizData || activeQuizData.length === 0) ? (
                 <NoQuestions activeSetName={activeQuizSetName} />
