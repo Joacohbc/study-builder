@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
 import { parseAndValidateSetData } from '../services/ValidationService';
+import { copyToClipboard, readFromClipboard } from '../utils/clipboardManager';
 import SetManagementControls from './editor/SetManagementControls';
 import ClipboardControls from './editor/ClipboardControls';
 import SaveActions from './editor/SaveActions';
@@ -58,7 +59,6 @@ const EditorTab = () => { // Removed all props
 
     const showClipboardStatus = (message, type) => {
         setClipboardMessage({ message, type });
-        setTimeout(() => setClipboardMessage({ message: '', type: '' }), 3000);
     };
 
     const validateAndPrepareData = () => {
@@ -84,51 +84,49 @@ const EditorTab = () => { // Removed all props
     };
 
     const handleDeleteSet = () => {
-        if (selectedSetToLoad && selectedSetToLoad !== defaultSetName) {
-            if (window.confirm(`¿Estás seguro de que quieres eliminar el set '${selectedSetToLoad}' (${setType})? Esta acción no se puede deshacer.`)) {
-                parentOnDeleteSet(setType, selectedSetToLoad); // Pass setType
-                showStatus(`Set '${selectedSetToLoad}' (${setType}) eliminado.`, 'info');
+        if (!selectedSetToLoad || selectedSetToLoad === defaultSetName) {
+            showStatus(`No puedes eliminar el set predeterminado o si no hay ninguno seleccionado.`, 'error');
+            return;
+        }
+        if (window.confirm(`¿Estás seguro de que quieres eliminar el set "${selectedSetToLoad}" (${setType})? Esta acción no se puede deshacer.`)) {
+            const success = parentOnDeleteSet(setType, selectedSetToLoad);
+            if (success) {
+                showStatus(`Set "${selectedSetToLoad}" (${setType}) eliminado.`, 'success');
+            } else {
+                showStatus(`Error al eliminar el set "${selectedSetToLoad}" (${setType}).`, 'error');
             }
-        } else if (selectedSetToLoad === defaultSetName) {
-            showStatus(`No se puede eliminar el set predeterminado "${defaultSetName}".`, 'error');
         }
     };
     
     const handleResetDefaultSet = () => {
-        if (window.confirm(`¿Estás seguro de que quieres restablecer el contenido del set "${defaultSetName}" (${setType}) a su estado original?`)) {
-            parentOnResetDefaultSet(setType); // Pass setType
-            showStatus(`Set "${defaultSetName}" (${setType}) restablecido.`, 'info');
+        if (window.confirm(`¿Estás seguro de que quieres restablecer el set predeterminado "${defaultSetName}" (${setType}) a su contenido original? Todos los cambios realizados en él se perderán.`)) {
+            const success = parentOnResetDefaultSet(setType);
+            if (success) {
+                showStatus(`Set predeterminado "${defaultSetName}" (${setType}) restablecido.`, 'success');
+            } else {
+                showStatus(`Error al restablecer el set predeterminado.`, 'error');
+            }
         }
     };
 
     // --- Handlers for Clipboard Operations (passed to ClipboardControls) ---
-    const handleCopyToClipboard = () => {
-        navigator.clipboard.writeText(jsonString).then(
-            () => showClipboardStatus('JSON copiado al portapapeles', 'success'),
-            (err) => {
-                console.error('Error al copiar al portapapeles:', err);
-                showClipboardStatus('Error al copiar. Intenta seleccionar y copiar manualmente (Ctrl+C)', 'error');
-            }
-        );
+    const handleCopyToClipboard = async () => {
+        const success = await copyToClipboard(jsonString);
+        if (success) {
+            showClipboardStatus('¡JSON copiado al portapapeles!', 'success');
+        } else {
+            showClipboardStatus('Error al copiar JSON al portapapeles.', 'error');
+        }
     };
 
-    const handlePasteFromClipboard = () => {
-        navigator.clipboard.readText().then(
-            (clipText) => {
-                try {
-                    JSON.parse(clipText); // Validate if it's JSON
-                    setJsonString(clipText);
-                    showClipboardStatus('JSON pegado desde el portapapeles', 'success');
-                } catch (err) {
-                    console.error('Error parsing pasted JSON:', err);
-                    showClipboardStatus('El contenido del portapapeles no es JSON válido', 'error');
-                }
-            },
-            (err) => {
-                console.error('Error al leer del portapapeles:', err);
-                showClipboardStatus('Error al pegar. Intenta seleccionar y pegar manualmente (Ctrl+V)', 'error');
-            }
-        );
+    const handlePasteFromClipboard = async () => {
+        const text = await readFromClipboard();
+        if (text !== null) {
+            setJsonString(text);
+            showClipboardStatus('JSON pegado desde el portapapeles.', 'success');
+        } else {
+            showClipboardStatus('Error al pegar JSON desde el portapapeles o el portapapeles está vacío.', 'error');
+        }
     };
 
     // --- Handlers for Saving (passed to SaveActions) ---
