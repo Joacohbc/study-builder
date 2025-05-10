@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
-import { parseAndValidateSetData } from '../services/ValidationService';
-import { copyToClipboard, readFromClipboard } from '../utils/clipboardManager';
+import { parseAndValidateSetData } from '../services/validationService';
+import { copyToClipboard, readFromClipboard } from '../services/clipboardManager';
 import SetManagementControls from './editor/SetManagementControls';
 import ClipboardControls from './editor/ClipboardControls';
 import SaveActions from './editor/SaveActions';
