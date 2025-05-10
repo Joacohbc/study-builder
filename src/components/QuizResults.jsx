@@ -5,20 +5,15 @@ import RefreshIcon from './icons/RefreshIcon';
 const QuizResults = ({ results, activeSetName, onRetry, shuffledQuestions }) => {
     if (!results) return null;
 
-    // Calculate clipPath for the score circle
-    const percentage = results.total > 0 ? Math.min(results.score / results.total, 1) : 0;
-    const angle = (percentage * 2 * Math.PI) - (Math.PI / 2); // Start from 12 o'clock
-    const Px = 50 + 50 * Math.cos(angle);
-    const Py = 50 + 50 * Math.sin(angle);
+    // Calculate for SVG circular progress bar
+    const rawPercentage = results.total > 0 ? Math.min(results.score / results.total, 1) : 0;
+    const displayPercentage = rawPercentage * 100;
 
-    let points = ['50% 50%', '50% 0%']; // Center, Top-Mid
-
-    if (percentage > 0.25) { points.push('100% 0%'); } // Past 1st quadrant (East)
-    if (percentage > 0.50) { points.push('100% 100%'); }  // Past 2nd quadrant (South)
-    if (percentage > 0.75) { points.push('0% 100%'); }   // Past 3rd quadrant (West)
-
-    points.push(`${Px}% ${Py}%`); // Final arc point
-    const clipPathValue = `polygon(${points.join(', ')})`;
+    const size = 128; // Corresponds to h-32 w-32 container
+    const strokeWidth = 16; // Thickness of the progress ring
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (displayPercentage / 100) * circumference;
 
     return (
         <div
@@ -41,18 +36,37 @@ const QuizResults = ({ results, activeSetName, onRetry, shuffledQuestions }) => 
             {/* Score display with visual graph */}
             <div className="flex flex-col items-center mb-8">
                 <div className="relative h-32 w-32">
-                    {/* Background circle */}
-                    <div className="absolute inset-0 rounded-full bg-gray-100"></div>
-
-                    {/* Score circle with animation */}
-                    <div
-                        className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600 to-blue-500 transition-all duration-1000 ease-out"
-                        style={{
-                            clipPath: clipPathValue
-                        }}
-                    ></div>
-
-                    {/* Inner white circle */}
+                    <svg width={size} height={size} className="absolute inset-0 transform -rotate-90">
+                        <defs>
+                            <linearGradient id="progressGradientCircular" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#4f46e5" /> {/* indigo-600 */}
+                                <stop offset="100%" stopColor="#3b82f6" /> {/* blue-500 */}
+                            </linearGradient>
+                        </defs>
+                        {/* Background Circle */}
+                        <circle
+                            strokeWidth={strokeWidth}
+                            stroke="rgb(229 231 235)" // Tailwind gray-200 for the track
+                            fill="transparent"
+                            r={radius}
+                            cx={size / 2}
+                            cy={size / 2}
+                        />
+                        {/* Progress Circle */}
+                        <circle
+                            strokeWidth={strokeWidth}
+                            strokeDasharray={circumference}
+                            strokeDashoffset={offset}
+                            strokeLinecap="round"
+                            stroke="url(#progressGradientCircular)"
+                            fill="transparent"
+                            r={radius}
+                            cx={size / 2}
+                            cy={size / 2}
+                            style={{ transition: 'stroke-dashoffset 1s ease-out' }}
+                        />
+                    </svg>
+                    {/* Inner white circle for text content (structurally same as original) */}
                     <div className="absolute inset-4 rounded-full bg-white flex items-center justify-center">
                         <div className="text-center">
                             <div className="text-2xl font-bold text-gray-800">{results.score}</div>
