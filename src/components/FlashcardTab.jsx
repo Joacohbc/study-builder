@@ -9,7 +9,6 @@ import { shuffleArray } from '../utils/helpers'; // Import shuffleArray
 const FlashcardTab = () => {
     const { activeFlashcardData, activeFlashcardSetName } = useStudySets();
 
-    const [currentIndex, setCurrentIndex] = useState(0);
     const [shuffledData, setShuffledData] = useState([]);
     const [isShuffling, setIsShuffling] = useState(false);
     const [isShuffleEnabled, setIsShuffleEnabled] = useState(true);
@@ -22,30 +21,18 @@ const FlashcardTab = () => {
             } else {
                 setShuffledData([...activeFlashcardData]); // Use original order
             }
-            setCurrentIndex(0); // Reset index
         } else {
             setShuffledData([]); // Clear if no data
         }
     }, [activeFlashcardData, isShuffleEnabled]);
 
-    const handleNext = () => {
-        if (shuffledData.length <= 1) return;
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % shuffledData.length);
-    };
-
-    const handlePrev = () => {
-        if (shuffledData.length <= 1) return;
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + shuffledData.length) % shuffledData.length);
-    };
-
     const handleReshuffle = () => {
-        if (shuffledData.length <= 1 || !isShuffleEnabled) return;
+        if (!activeFlashcardData || activeFlashcardData.length <= 1 || !isShuffleEnabled) return;
         
         setIsShuffling(true);
         
         setTimeout(() => {
             setShuffledData(shuffleArray(activeFlashcardData));
-            setCurrentIndex(0);
             setIsShuffling(false);
         }, 500);
     };
@@ -101,11 +88,8 @@ const FlashcardTab = () => {
             {viewMode === 'single' ? (
                 <SingleFlashcardView
                     shuffledData={shuffledData}
-                    currentIndex={currentIndex}
                     isShuffling={isShuffling}
                     isShuffleEnabled={isShuffleEnabled}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
                     handleReshuffle={handleReshuffle}
                     activeFlashcardSetName={activeFlashcardSetName}
                 />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect
+import React, { useState, useEffect } from 'react';
 import Flashcard from './Flashcard';
 import ArrowLeftIcon from './icons/ArrowLeftIcon';
 import ArrowRightIcon from './icons/ArrowRightIcon';
@@ -8,35 +8,39 @@ import ProgressBar from './ProgressBar';
 
 const SingleFlashcardView = ({
     shuffledData,
-    currentIndex,
     isShuffling,
     isShuffleEnabled,
-    handlePrev,
-    handleNext,
     handleReshuffle,
     activeFlashcardSetName,
 }) => {
-    const [isFlipped, setIsFlipped] = useState(false); // Local state for flip
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isFlipped, setIsFlipped] = useState(false);
 
-    const currentCard = shuffledData[currentIndex];
-
-    // Reset flip state when card changes
     useEffect(() => {
+        setCurrentIndex(0);
         setIsFlipped(false);
-    }, [currentIndex, shuffledData]);
+    }, [shuffledData]);
+
+    useEffect(() => {
+        if (shuffledData && shuffledData.length > 0) {
+            setIsFlipped(false);
+        }
+    }, [currentIndex]);
+
+    const currentCard = shuffledData && shuffledData.length > 0 ? shuffledData[currentIndex] : null;
 
     const handleLocalFlip = () => {
         setIsFlipped(!isFlipped);
     };
 
-    // Call parent's handlePrev and then reset flip state locally
-    const onPrev = () => {
-        handlePrev();
+    const localHandleNext = () => {
+        if (!shuffledData || shuffledData.length <= 1) return;
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % shuffledData.length);
     };
 
-    // Call parent's handleNext and then reset flip state locally
-    const onNext = () => {
-        handleNext();
+    const localHandlePrev = () => {
+        if (!shuffledData || shuffledData.length <= 1) return;
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + shuffledData.length) % shuffledData.length);
     };
 
     return (
@@ -62,7 +66,7 @@ const SingleFlashcardView = ({
                     <Flashcard
                         card={currentCard}
                         isFlipped={isFlipped}
-                        onFlip={handleLocalFlip} // Use local flip handler
+                        onFlip={handleLocalFlip}
                         index={currentIndex}
                     />
                 )}
@@ -71,7 +75,7 @@ const SingleFlashcardView = ({
             {/* Controls */}
             <div className="flashcard-controls">
                 <button
-                    onClick={onPrev} // Use wrapped handler
+                    onClick={localHandlePrev}
                     disabled={shuffledData.length <= 1}
                     className={`flashcard-control-btn ${shuffledData.length <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     aria-label="Tarjeta anterior"
@@ -80,7 +84,7 @@ const SingleFlashcardView = ({
                 </button>
 
                 <button
-                    onClick={handleLocalFlip} // Use local flip handler for the flip button
+                    onClick={handleLocalFlip}
                     className="flashcard-control-btn"
                     aria-label="Voltear tarjeta"
                 >
@@ -97,7 +101,7 @@ const SingleFlashcardView = ({
                 </button>
 
                 <button
-                    onClick={onNext} // Use wrapped handler
+                    onClick={localHandleNext}
                     disabled={shuffledData.length <= 1}
                     className={`flashcard-control-btn ${shuffledData.length <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     aria-label="Siguiente tarjeta"
