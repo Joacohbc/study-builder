@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
 import { parseAndValidateSetData } from '../services/validationService';
 import { copyToClipboard, readFromClipboard } from '../services/clipboardManager';
-import SetManagementControls from './editor/SetManagementControls';
-import ClipboardControls from './editor/ClipboardControls';
-import SaveActions from './editor/SaveActions';
+import SetManagementControls from '../components/editor/SetManagementControls';
+import ClipboardControls from '../components/editor/ClipboardControls';
+import SaveActions from '../components/editor/SaveActions';
 
 // Editor Tab Component: Allows editing the quiz questions and managing sets
 const EditorTab = () => { // Removed all props

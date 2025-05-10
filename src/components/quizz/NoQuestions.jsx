@@ -1,5 +1,5 @@
 import React from 'react';
-import QuestionIcon from '../icons/QuestionIcon';
+import QuestionIcon from '../../icons/QuestionIcon';
 
 const NoQuestions = ({ activeSetName }) => {
     return (

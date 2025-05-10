@@ -1,6 +1,6 @@
 import React from 'react';
-import TrophyIcon from '../icons/TrophyIcon';
-import RefreshIcon from '../icons/RefreshIcon';
+import TrophyIcon from '../../icons/TrophyIcon';
+import RefreshIcon from '../../icons/RefreshIcon';
 
 const QuizResults = ({ results, activeSetName, onRetry, shuffledQuestions }) => {
     if (!results) return null;

@@ -1,7 +1,7 @@
 // src/components/editor/ClipboardControls.jsx
 import React from 'react';
-import CopyIcon from '../icons/CopyIcon';
-import PasteIcon from '../icons/PasteIcon';
+import CopyIcon from '../../icons/CopyIcon';
+import PasteIcon from '../../icons/PasteIcon';
 
 const ClipboardControls = ({
     onCopyToClipboard,

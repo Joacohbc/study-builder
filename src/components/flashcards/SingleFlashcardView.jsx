@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Flashcard from './Flashcard';
-import ArrowLeftIcon from '../icons/ArrowLeftIcon';
-import ArrowRightIcon from '../icons/ArrowRightIcon';
-import FlipIcon from '../icons/FlipIcon';
-import ShuffleIcon from '../icons/ShuffleIcon';
+import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
+import ArrowRightIcon from '../../icons/ArrowRightIcon';
+import FlipIcon from '../../icons/FlipIcon';
+import ShuffleIcon from '../../icons/ShuffleIcon';
 import ProgressBar from '../ProgressBar';
 
 const SingleFlashcardView = ({

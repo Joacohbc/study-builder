@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
 import { shuffleArray } from '../utils/helpers';
 import { evaluateSingleQuestion } from '../services/evaluationService'; // Import the evaluation service
-import CheckIcon from './icons/CheckIcon';
-import RefreshIcon from './icons/RefreshIcon';
-import QuizHeader from './quizz/QuizHeader'; // Import the new QuizHeader component
-import NoQuestions from './quizz/NoQuestions'; // Import the new NoQuestions component
-import QuestionList from './quizz/QuestionList'; // Import the new QuestionList component
-import QuizResults from './quizz/QuizResults'; // Import the new QuizResults component
+import CheckIcon from '../icons/CheckIcon';
+import RefreshIcon from '../icons/RefreshIcon';
+import QuizHeader from '../components/quizz/QuizHeader'; // Import the new QuizHeader component
+import NoQuestions from '../components/quizz/NoQuestions'; // Import the new NoQuestions component
+import QuestionList from '../components/quizz/QuestionList'; // Import the new QuestionList component
+import QuizResults from '../components/quizz/QuizResults'; // Import the new QuizResults component
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
 const QuizTab = ({ onQuizComplete }) => { // Removed quizData and activeSetName from props

@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useStudySets } from './contexts/useStudySets'; // Corrected import path
-import QuizTab from './components/QuizTab';
-import EditorTab from './components/EditorTab';
-import HelpTab from './components/HelpTab';
-import FlashcardTab from './components/FlashcardTab';
-import GitHubIcon from './components/icons/GitHubIcon';
-import BookIcon from './components/icons/BookIcon';
-import QuizIcon from './components/icons/QuizIcon';
-import CardIcon from './components/icons/CardIcon';
-import EditIcon from './components/icons/EditIcon';
-import HelpIcon from './components/icons/HelpIcon';
-import ArrowUpIcon from './components/icons/ArrowUpIcon';
-import ArrowDownIcon from './components/icons/ArrowDownIcon';
-import QuestionIcon from './components/icons/QuestionIcon';
+import QuizTab from './tabs/QuizTab';
+import EditorTab from './tabs/EditorTab';
+import HelpTab from './tabs/HelpTab';
+import FlashcardTab from './tabs/FlashcardTab';
+import GitHubIcon from './icons/GitHubIcon';
+import BookIcon from './icons/BookIcon';
+import QuizIcon from './icons/QuizIcon';
+import CardIcon from './icons/CardIcon';
+import EditIcon from './icons/EditIcon';
+import HelpIcon from './icons/HelpIcon';
+import ArrowUpIcon from './icons/ArrowUpIcon';
+import ArrowDownIcon from './icons/ArrowDownIcon';
+import QuestionIcon from './icons/QuestionIcon';
 
 // --- Main App Component ---
 function App() {
