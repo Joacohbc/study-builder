@@ -4,6 +4,7 @@ import EmptyFlashcardIcon from '../icons/EmptyFlashcardIcon';
 import SingleFlashcardView from '../components/flashcards/SingleFlashcardView';
 import GridFlashcardView from '../components/flashcards/GridFlashcardView';
 import { shuffleArray } from '../utils/helpers'; // Import shuffleArray
+import EmptyFlashcardState from '../components/flashcards/EmptyFlashcardState'; // Import the new component
 
 // FlashcardTab Component: Displays flashcards and handles navigation
 const FlashcardTab = () => {
@@ -39,27 +40,7 @@ const FlashcardTab = () => {
 
     if (!activeFlashcardData || activeFlashcardData.length === 0) {
         return (
-            <div className="bg-gray-50 p-8 rounded-xl shadow-inner text-center">
-                {/* Icon for empty state */}
-                <div className="text-gray-400 flex justify-center mb-4">
-                    <EmptyFlashcardIcon />
-                </div>
-                <h3 className="text-xl font-medium text-gray-700 mb-4">Sin Flashcards</h3>
-                <p className="text-gray-600 mb-2">No hay flashcards en el set activo "{activeFlashcardSetName}".</p>
-                <p className="text-gray-600 mb-6">Puedes añadir flashcards en la pestaña "Editor de Sets".</p>
-                
-                <div className="flex justify-center">
-                    <button 
-                        onClick={() => {
-                            const tabButton = document.querySelector('button[class*="border-indigo-600"]');
-                            if (tabButton) tabButton.click();
-                        }}
-                        className="px-4 py-2 bg-indigo-100 text-indigo-700 font-medium rounded-lg hover:bg-indigo-200 transition-colors duration-200"
-                    >
-                        Ir al Editor
-                    </button>
-                </div>
-            </div>
+            <EmptyFlashcardState activeFlashcardSetName={activeFlashcardSetName} />
         );
     }
 
