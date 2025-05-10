@@ -10,6 +10,9 @@ import QuizIcon from './components/icons/QuizIcon';
 import CardIcon from './components/icons/CardIcon';
 import EditIcon from './components/icons/EditIcon';
 import HelpIcon from './components/icons/HelpIcon';
+import ArrowUpIcon from './components/icons/ArrowUpIcon';
+import ArrowDownIcon from './components/icons/ArrowDownIcon';
+import QuestionIcon from './components/icons/QuestionIcon';
 
 // --- Main App Component ---
 function App() {
@@ -22,6 +25,15 @@ function App() {
         setEditorContentType,
         isLoading
     } = useStudySets();
+
+    // --- Scroll Navigation Functions ---
+    const handleScrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleScrollToBottom = () => {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    };
 
     // --- Tab Configuration ---
     const uiTabs = [
@@ -165,6 +177,26 @@ function App() {
                     <p className="mb-1">Desarrollado con ❤️ para ayudarte a estudiar</p>
                     <p>© {new Date().getFullYear()} Study Builder</p>
                 </footer>
+            </div>
+
+            {/* Scroll Navigation Buttons - Fixed Position */}
+            <div className="fixed bottom-4 right-4 flex flex-col space-y-2 z-50">
+                <button
+                    type="button"
+                    onClick={handleScrollToTop}
+                    className="p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150"
+                    title="Ir arriba del todo"
+                >
+                    <ArrowUpIcon className="w-5 h-5" />
+                </button>
+                <button
+                    type="button"
+                    onClick={handleScrollToBottom}
+                    className="p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150"
+                    title="Ir abajo del todo"
+                >
+                    <ArrowDownIcon className="w-5 h-5" />
+                </button>
             </div>
         </div>
     );
