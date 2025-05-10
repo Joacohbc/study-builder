@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'; // Add React import
 import { useStudySets } from '../contexts/useStudySets';
 import EmptyFlashcardIcon from './icons/EmptyFlashcardIcon';
-import SingleFlashcardView from './SingleFlashcardView';
-import GridFlashcardView from './GridFlashcardView';
+import SingleFlashcardView from './flashcards/SingleFlashcardView';
+import GridFlashcardView from './flashcards/GridFlashcardView';
 import { shuffleArray } from '../utils/helpers'; // Import shuffleArray
 
 // FlashcardTab Component: Displays flashcards and handles navigation

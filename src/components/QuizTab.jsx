@@ -4,10 +4,10 @@ import { shuffleArray } from '../utils/helpers';
 import { evaluateSingleQuestion } from '../services/evaluationService'; // Import the evaluation service
 import CheckIcon from './icons/CheckIcon';
 import RefreshIcon from './icons/RefreshIcon';
-import QuizHeader from './QuizHeader'; // Import the new QuizHeader component
-import NoQuestions from './NoQuestions'; // Import the new NoQuestions component
-import QuestionList from './QuestionList'; // Import the new QuestionList component
-import QuizResults from './QuizResults'; // Import the new QuizResults component
+import QuizHeader from './quizz/QuizHeader'; // Import the new QuizHeader component
+import NoQuestions from './quizz/NoQuestions'; // Import the new NoQuestions component
+import QuestionList from './quizz/QuestionList'; // Import the new QuestionList component
+import QuizResults from './quizz/QuizResults'; // Import the new QuizResults component
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
 const QuizTab = ({ onQuizComplete }) => { // Removed quizData and activeSetName from props

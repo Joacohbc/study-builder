@@ -7,7 +7,7 @@ import {
     FLASHCARD_ACTIVE_SET_KEY,
     QUIZ_SETS_KEY,
     QUIZ_ACTIVE_SET_KEY
-} from '../constants';
+} from '../constants/localStorage';
 
 // --- Generic LocalStorage Interaction ---
 

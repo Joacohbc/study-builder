@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import './theme/Flashcard.css';
+import { useEffect, useRef } from 'react';
+import '../theme/Flashcard.css';
 
 const Flashcard = ({ card, isFlipped, onFlip, index }) => {
     const frontContentRef = useRef(null);
