@@ -85,23 +85,7 @@ const FlashcardTab = () => {
                 </button>
             </div>
 
-            {viewMode === 'single' ? (
-                <SingleFlashcardView
-                    shuffledData={shuffledData}
-                    isShuffling={isShuffling}
-                    isShuffleEnabled={isShuffleEnabled}
-                    handleReshuffle={handleReshuffle}
-                    activeFlashcardSetName={activeFlashcardSetName}
-                />
-            ) : (
-                <GridFlashcardView
-                    flashcards={shuffledData}
-                    activeFlashcardSetName={activeFlashcardSetName}
-                />
-            )}
-            
-            {/* Shuffle Toggle Switch - Common for both views, affects the data source */}
-            <div className="flex items-center justify-center space-x-2 mt-6 pt-4 border-t border-gray-200 w-full max-w-md">
+            <div className="flex items-center justify-center space-x-2 w-full max-w-md">
                 <label htmlFor="shuffle-toggle" className="text-sm text-gray-600">
                     Barajar tarjetas:
                 </label>
@@ -118,11 +102,20 @@ const FlashcardTab = () => {
                 </button>
             </div>
 
-            <p className="text-sm text-center text-gray-500 max-w-md mt-4">
-                {viewMode === 'single' 
-                    ? "Haz clic en la tarjeta para voltearla, o usa los botones para navegar entre tarjetas. El botón central permite barajar las tarjetas nuevamente."
-                    : "Haz clic en cualquier tarjeta para voltearla. Activa o desactiva \"Barajar tarjetas\" para cambiar el orden."}
-            </p>
+            {viewMode === 'single' ? (
+                <SingleFlashcardView
+                    shuffledData={shuffledData}
+                    isShuffling={isShuffling}
+                    isShuffleEnabled={isShuffleEnabled}
+                    handleReshuffle={handleReshuffle}
+                    activeFlashcardSetName={activeFlashcardSetName}
+                />
+            ) : (
+                <GridFlashcardView
+                    flashcards={shuffledData}
+                    activeFlashcardSetName={activeFlashcardSetName}
+                />
+            )}
         </div>
     );
 };
