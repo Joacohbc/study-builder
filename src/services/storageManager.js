@@ -6,7 +6,8 @@ import {
     FLASHCARD_SETS_KEY,
     FLASHCARD_ACTIVE_SET_KEY,
     QUIZ_SETS_KEY,
-    QUIZ_ACTIVE_SET_KEY
+    QUIZ_ACTIVE_SET_KEY,
+    QUIZ_PROGRESS_KEY // Import the new key
 } from '../constants/localStorage';
 
 // --- Generic LocalStorage Interaction ---
@@ -143,6 +144,76 @@ export const loadActiveSetName = (activeSetKey, loadedSets, defaultSetName) => {
  */
 export const saveActiveSetName = (activeSetKey, name) => {
     saveToLocalStorage(activeSetKey, name);
+};
+
+// --- Quiz Progress Management ---
+
+/**
+ * Saves the current quiz progress (e.g., answers and question order) to localStorage.
+ * @param {string} quizSetName - The name of the quiz set for which progress is being saved.
+ * @param {object} progressData - The progress data to save (e.g., { answers: {...}, questionOrder: [] }).
+ */
+export const saveQuizProgress = (quizSetName, progressData) => {
+    if (!quizSetName) {
+        console.error("Cannot save quiz progress without a quizSetName.");
+        return;
+    }
+    const allProgress = loadFromLocalStorage(QUIZ_PROGRESS_KEY, {});
+    // Ensure progressData contains answers and questionOrder
+    if (!progressData || typeof progressData.answers === 'undefined' || typeof progressData.questionOrder === 'undefined') {
+        console.error("Attempted to save progress without answers or questionOrder:", progressData);
+        // Potentially clear progress if it's in an invalid state or just return
+        // For now, let's prevent saving incomplete progress data.
+        return;
+    }
+    allProgress[quizSetName] = progressData;
+    saveToLocalStorage(QUIZ_PROGRESS_KEY, allProgress);
+    console.log(`Progress for quiz '${quizSetName}' saved with answers and question order.`);
+};
+
+/**
+ * Loads the quiz progress (answers and question order) for a specific quiz set from localStorage.
+ * @param {string} quizSetName - The name of the quiz set to load progress for.
+ * @returns {object|null} The saved progress data { answers, questionOrder }, or null if not found or error.
+ */
+export const loadQuizProgress = (quizSetName) => {
+    if (!quizSetName) {
+        console.warn("Cannot load quiz progress without a quizSetName.");
+        return null;
+    }
+    const allProgress = loadFromLocalStorage(QUIZ_PROGRESS_KEY, {});
+    if (allProgress && allProgress[quizSetName]) {
+        // Validate that the loaded progress has the expected structure
+        if (typeof allProgress[quizSetName].answers !== 'undefined' && Array.isArray(allProgress[quizSetName].questionOrder)) {
+            console.log(`Progress for quiz '${quizSetName}' loaded (includes answers and questionOrder).`);
+            return allProgress[quizSetName];
+        } else {
+            console.warn(`Loaded progress for quiz '${quizSetName}' has incorrect structure. Discarding.`);
+            // Optionally, clear this malformed progress
+            // delete allProgress[quizSetName];
+            // saveToLocalStorage(QUIZ_PROGRESS_KEY, allProgress);
+            return null;
+        }
+    }
+    console.log(`No saved progress found for quiz '${quizSetName}'.`);
+    return null;
+};
+
+/**
+ * Clears the quiz progress for a specific quiz set from localStorage.
+ * @param {string} quizSetName - The name of the quiz set to clear progress for.
+ */
+export const clearQuizProgress = (quizSetName) => {
+    if (!quizSetName) {
+        console.warn("Cannot clear quiz progress without a quizSetName.");
+        return;
+    }
+    const allProgress = loadFromLocalStorage(QUIZ_PROGRESS_KEY, {});
+    if (allProgress && allProgress[quizSetName]) {
+        delete allProgress[quizSetName];
+        saveToLocalStorage(QUIZ_PROGRESS_KEY, allProgress);
+        console.log(`Progress for quiz '${quizSetName}' cleared.`);
+    }
 };
 
 /**

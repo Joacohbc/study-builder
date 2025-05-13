@@ -48,6 +48,7 @@ export const defaultQuizData = [
 // LocalStorage keys for quizzes
 export const QUIZ_SETS_KEY = 'quizSetsReactGeneric';
 export const QUIZ_ACTIVE_SET_KEY = 'activeQuizSetNameReactGeneric';
+export const QUIZ_PROGRESS_KEY = 'quizProgressReactGeneric'; // Key for quiz progress
 
 // --- Flashcard Constants ---
 

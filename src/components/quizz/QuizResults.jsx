@@ -175,9 +175,9 @@ const QuizResults = ({ results, activeSetName, onRetry, shuffledQuestions }) => 
                 <button
                     id="retry-button"
                     onClick={onRetry}
-                    className="flex items-center bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-medium py-2 px-6 rounded-lg transition-all duration-200"
+                    className="flex items-center gap-2 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-medium py-2 px-6 rounded-lg transition-all duration-200"
                 >
-                    <RefreshIcon className="mr-2" />
+                    <RefreshIcon/>
                     Intentar de Nuevo
                 </button>
             </div>
