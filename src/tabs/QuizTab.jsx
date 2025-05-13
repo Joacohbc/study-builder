@@ -221,14 +221,12 @@ const QuizTab = ({ onQuizComplete }) => {
                         <button 
                             type="submit" 
                             disabled={isSubmitted} 
-                            className={`inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white font-medium py-3 px-8 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 ${
+                            className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white font-medium py-3 px-8 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 ${
                                 isSubmitted ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                         >
-                            <button className="flex items-center gap-2">
-                                <CheckIcon />
-                                {isSubmitted ? 'Respuestas Enviadas' : 'Enviar Respuestas'}
-                            </button>
+                            <CheckIcon />
+                            {isSubmitted ? 'Respuestas Enviadas' : 'Enviar Respuestas'}
                         </button>
                     </div>
                 </form>
