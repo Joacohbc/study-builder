@@ -5,13 +5,13 @@ const ProgressBar = ({ current, total, percentage, label = "Progreso" }) => {
 
     return (
         <div className="w-full">
-            <div className="flex justify-between text-xs font-medium text-gray-600 mb-1 gap-1">
+            <div className="flex justify-between text-xs font-medium text-gray-600 dark:text-gray-300 mb-1 gap-1">
                 <span>{label}</span>
                 <span>{calculatedPercentage}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
-                    className="bg-gradient-to-r from-indigo-600 to-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
+                    className="bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-500 dark:to-blue-400 h-2 rounded-full transition-all duration-500 ease-out"
                     style={{ width: `${calculatedPercentage}%` }}
                 ></div>
             </div>

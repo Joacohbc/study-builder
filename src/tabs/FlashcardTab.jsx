@@ -51,7 +51,7 @@ const FlashcardTab = () => {
                 <button
                     onClick={() => setViewMode('single')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
-                        viewMode === 'single' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        viewMode === 'single' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                     }`}
                 >
                     Ver Una
@@ -59,7 +59,7 @@ const FlashcardTab = () => {
                 <button
                     onClick={() => setViewMode('grid')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
-                        viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                     }`}
                 >
                     Ver Todas
@@ -67,13 +67,13 @@ const FlashcardTab = () => {
             </div>
 
             <div className="flex items-center justify-center space-x-2 w-full max-w-md">
-                <label htmlFor="shuffle-toggle" className="text-sm text-gray-600">
+                <label htmlFor="shuffle-toggle" className="text-sm text-gray-600 dark:text-gray-400">
                     Barajar tarjetas:
                 </label>
                 <button
                     id="shuffle-toggle"
                     onClick={() => setIsShuffleEnabled(!isShuffleEnabled)}
-                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isShuffleEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 ${isShuffleEnabled ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-gray-300 dark:bg-gray-700'}`}
                     aria-pressed={isShuffleEnabled}
                 >
                     <span className="sr-only">Activar o desactivar barajado</span>

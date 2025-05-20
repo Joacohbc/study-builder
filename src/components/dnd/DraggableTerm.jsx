@@ -25,7 +25,7 @@ const DraggableTerm = ({ term, questionId, isSubmitted }) => { // isSubmitted co
             draggable={!isSubmitted} // Use isSubmitted to control draggable attribute
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            className={`p-3 bg-blue-100 border border-blue-300 rounded-md ${isSubmitted ? 'cursor-not-allowed opacity-70' : 'cursor-grab draggable'} transition-opacity duration-200`}
+            className={`p-3 bg-blue-100 dark:bg-blue-800 border border-blue-300 dark:border-blue-600 rounded-md text-blue-800 dark:text-blue-100 ${isSubmitted ? 'cursor-not-allowed opacity-70' : 'cursor-grab draggable'} transition-opacity duration-200`}
         >
             {term}
         </div>

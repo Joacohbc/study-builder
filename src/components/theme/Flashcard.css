@@ -170,3 +170,64 @@
 .flashcard-enter-animation {
     animation: cardEntrance 0.4s ease-out forwards;
 }
+
+/* --- Dark Mode Styles --- */
+
+.dark .flashcard-inner {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 2px 10px -3px rgba(0, 0, 0, 0.3);
+}
+
+.dark .flashcard-inner:hover {
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6), 0 5px 15px -3px rgba(0, 0, 0, 0.35);
+}
+
+.dark .flashcard-front, 
+.dark .flashcard-back {
+    background-color: #1f2937; /* dark-gray-800 */
+    border: 1px solid #374151; /* dark-gray-700 */
+    /* More subtle gradients for dark mode, or remove with 'none' */
+    background-image: 
+        radial-gradient(circle at top left, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+}
+
+.dark .flashcard-back {
+    background-image: 
+        radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at top right, rgba(79, 70, 229, 0.06) 0%, transparent 50%);
+}
+
+.dark .flashcard-front .flashcard-content {
+    color: #f3f4f6; /* gray-100 */
+}
+
+.dark .flashcard-back .flashcard-content {
+    color: #d1d5db; /* gray-300 */
+}
+
+/* .flashcard-badge usually remains readable, but if card bg becomes very dark, badge gradient might need adjustment. Assuming current is fine. */
+
+.dark .flashcard-control-btn {
+    background-color: #374151; /* gray-700 */
+    color: #d1d5db; /* gray-300 */
+    border: 1px solid #4b5563; /* gray-600 */
+}
+
+.dark .flashcard-control-btn:hover {
+    background-color: #4b5563; /* gray-600 */
+    color: #818cf8; /* indigo-400, a lighter accent for hover */
+}
+
+.dark .flashcard-progress {
+    color: #9ca3af; /* gray-400 */
+}
+
+.dark .flashcard-progress-bar {
+    background-color: #374151; /* gray-700 */
+}
+
+/* .flashcard-progress-fill gradient is likely fine, but could be adjusted if needed:
+.dark .flashcard-progress-fill {
+    background: linear-gradient(to right, #6366f1, #a78bfa); // Example: indigo-500 to purple-400
+}
+*/

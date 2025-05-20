@@ -50,10 +50,10 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Available Terms Section */}
             <div className="space-y-3">
-                <h4 className="font-medium text-gray-600 mb-2">Términos (Arrastra desde aquí)</h4>
+                <h4 className="font-medium text-gray-600 dark:text-gray-300 mb-2">Términos (Arrastra desde aquí)</h4>
                 {/* Check if all original terms are used */}
                 {availableTerms.length === 0 && (questionData.terms || []).length > 0 && !isSubmitted && Object.keys(matches).length > 0 && (
-                    <p className="text-sm text-gray-500 italic">Todos los términos han sido usados.</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 italic">Todos los términos han sido usados.</p>
                 )}
                 {/* Display available terms derived from useMemo */}
                 {availableTerms.map(term => (
@@ -66,9 +66,9 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
                 ))}
                 {/* Feedback for unplaced terms */}
                 {shouldShowFeedback && feedback?.unplacedTerms?.length > 0 && (
-                    <div className="mt-4 p-2 border border-red-300 bg-red-50 rounded">
-                        <p className="text-sm font-semibold text-red-700">Términos no colocados:</p>
-                        <ul className="list-disc list-inside text-sm text-red-600">
+                    <div className="mt-4 p-2 border border-red-300 dark:border-red-500 bg-red-50 dark:bg-red-800 dark:bg-opacity-50 rounded">
+                        <p className="text-sm font-semibold text-red-700 dark:text-red-300">Términos no colocados:</p>
+                        <ul className="list-disc list-inside text-sm text-red-600 dark:text-red-400">
                             {feedback.unplacedTerms.map(term => <li key={term}>{term}</li>)}
                         </ul>
                     </div>
@@ -77,7 +77,7 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
 
             {/* Definitions Drop Zone Section */}
             <div className="space-y-3">
-                <h4 className="font-medium text-gray-600 mb-2">Definiciones (Suelta aquí)</h4>
+                <h4 className="font-medium text-gray-600 dark:text-gray-300 mb-2">Definiciones (Suelta aquí)</h4>
                 {/* Use shuffledDefinitions directly */}
                 {shuffledDefinitions.map(definition => {
                     const droppedTerm = matches[definition] || null;
@@ -97,7 +97,7 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
                                 <button
                                     type="button"
                                     onClick={() => returnTermToAvailable(droppedTerm)}
-                                    className="absolute top-1 right-1 bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full leading-none opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                                    className="absolute top-1 right-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full leading-none opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
                                     aria-label={`Devolver ${droppedTerm}`}
                                     title={`Devolver ${droppedTerm} a la lista`}
                                 >
@@ -106,7 +106,7 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
                             )}
                             {/* Feedback Hint for Incorrect Match */}
                             {shouldShowFeedback && definitionFeedback && !definitionFeedback.isCorrect && (
-                                <p className="text-xs text-red-600 mt-1">
+                                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                                     Correcto: "{definitionFeedback.correctTerm || 'N/A'}"
                                 </p>
                             )}

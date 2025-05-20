@@ -98,7 +98,7 @@ const Flashcard = ({ card, isFlipped, onFlip, index }) => {
                     >
                         {card.front}
                     </div>
-                    <div className="absolute bottom-4 text-xs text-gray-400">
+                    <div className="absolute bottom-4 text-xs text-gray-400 dark:text-gray-500">
                         Clic para ver la definición
                     </div>
                 </div>
@@ -112,7 +112,7 @@ const Flashcard = ({ card, isFlipped, onFlip, index }) => {
                     >
                         {card.back}
                     </div>
-                    <div className="absolute bottom-4 text-xs text-gray-400">
+                    <div className="absolute bottom-4 text-xs text-gray-400 dark:text-gray-500">
                         Clic para ver el término
                     </div>
                 </div>

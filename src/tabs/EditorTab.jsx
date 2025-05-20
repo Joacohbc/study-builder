@@ -190,11 +190,11 @@ const EditorTab = () => { // Removed all props
                 setType={setType}
             />
 
-            <div className="p-4 border rounded-lg space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700">
-                    Editando Set ({setType}): <span className="font-bold text-indigo-700">{activeSetName || 'N/A'}</span>
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4 bg-white dark:bg-gray-800 shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                    Editando Set ({setType}): <span className="font-bold text-indigo-700 dark:text-indigo-400">{activeSetName || 'N/A'}</span>
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                     Modifica el JSON a continuación. Asegúrate de que el formato sea válido para el tipo '{setType}' y que cada item tenga un `id` único.
                     {setType === 'flashcard' && <span> Cada flashcard debe tener las propiedades `front` y `back`.</span>}
                 </p>
@@ -209,7 +209,7 @@ const EditorTab = () => { // Removed all props
                 <textarea
                     id="json-editor"
                     spellCheck="false"
-                    className="font-mono min-h-[400px] border border-gray-300 p-3 rounded-md w-full box-sizing-border focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                    className="font-mono min-h-[400px] border border-gray-300 dark:border-gray-600 p-3 rounded-md w-full box-sizing-border focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                     value={jsonString}
                     onChange={(e) => setJsonString(e.target.value)}
                     aria-label={`Editor JSON para el set ${activeSetName} (${setType})`}
@@ -226,7 +226,11 @@ const EditorTab = () => { // Removed all props
                 />
                 
                 {statusMessage.message && (
-                    <div className={`mt-4 text-sm p-2 rounded border ${statusMessage.type === 'success' ? 'bg-green-50 border-green-300 text-green-700' : statusMessage.type === 'error' ? 'bg-red-50 border-red-300 text-red-700' : 'bg-blue-50 border-blue-300 text-blue-700'}`} role="alert">
+                    <div className={`mt-4 text-sm p-2 rounded border ${
+                        statusMessage.type === 'success' ? 'bg-green-50 border-green-300 text-green-700 dark:bg-green-800 dark:bg-opacity-50 dark:border-green-700 dark:text-green-300' : 
+                        statusMessage.type === 'error' ? 'bg-red-50 border-red-300 text-red-700 dark:bg-red-800 dark:bg-opacity-50 dark:border-red-700 dark:text-red-300' : 
+                        'bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-800 dark:bg-opacity-50 dark:border-blue-700 dark:text-blue-300'
+                    }`} role="alert">
                         {statusMessage.message}
                     </div>
                 )}

@@ -184,13 +184,13 @@ const QuizTab = ({ onQuizComplete }) => {
 
             {/* Shuffle Toggle Switch for Quiz */}
             <div className="flex items-center justify-center space-x-2 my-4">
-                <label htmlFor="quiz-shuffle-toggle" className="text-sm text-gray-600">
+                <label htmlFor="quiz-shuffle-toggle" className="text-sm text-gray-600 dark:text-gray-400">
                     Barajar preguntas:
                 </label>
                 <button
                     id="quiz-shuffle-toggle"
                     onClick={handleToggleShuffle} // Use new handler
-                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isShuffleEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 ${isShuffleEnabled ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-gray-300 dark:bg-gray-700'}`}
                     aria-pressed={isShuffleEnabled}
                 >
                     <span className="sr-only">Activar o desactivar barajado de preguntas</span>

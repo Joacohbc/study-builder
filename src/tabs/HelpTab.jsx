@@ -5,8 +5,8 @@ import { copyToClipboard } from '../services/clipboardManager';
 // Help Tab Component: Displays static help content using JSX and adds Copy Prompt button
 const HelpTab = () => {
     // Define styles for code blocks and inline code
-    const codeBlockStyle = "bg-gray-100 p-3 rounded-md overflow-x-auto my-2 font-mono text-sm whitespace-pre-wrap break-words";
-    const inlineCodeStyle = "bg-gray-200 text-sm px-1 py-0.5 rounded font-mono";
+    const codeBlockStyle = "bg-gray-100 dark:bg-gray-800 dark:text-gray-300 p-3 rounded-md overflow-x-auto my-2 font-mono text-sm whitespace-pre-wrap break-words";
+    const inlineCodeStyle = "bg-gray-200 dark:bg-gray-700 dark:text-gray-300 text-sm px-1 py-0.5 rounded font-mono";
     // State for copy confirmation message
     const [copySuccess, setCopySuccess] = useState('');
 
@@ -41,17 +41,17 @@ const HelpTab = () => {
                 </button>
                 {/* Display copy success/error message */}
                 {copySuccess && (
-                    <p className={`mt-2 text-sm ${copySuccess.includes('Error') ? 'text-red-600' : 'text-green-600'}`}>
+                    <p className={`mt-2 text-sm ${copySuccess.includes('Error') ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
                         {copySuccess}
                     </p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {HELP_TAB_CONTENT.copyPromptSubText}
                 </p>
             </div>
 
             {/* Static help content */}
-            <div id="explanation-content" className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none space-y-3 border-t pt-6">
+            <div id="explanation-content" className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert max-w-none space-y-3 border-t pt-6">
                 {/* Updated title */}
                 <h2 className="text-xl md:text-2xl font-semibold mt-4 mb-2">{HELP_TAB_CONTENT.studyBuilderTitle}</h2>
                 <p className="mb-4">

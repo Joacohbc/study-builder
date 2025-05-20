@@ -45,8 +45,8 @@ const SingleFlashcardView = ({
 
     return (
         <div className="flex flex-col items-center space-y-6 animate-fade-in  w-full">
-            <h2 className="flex items-center gap-2 text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
-                <span className="text-gray-700">Flashcards:</span> {activeFlashcardSetName}
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-300">
+                <span className="text-gray-700 dark:text-gray-200">Flashcards:</span> {activeFlashcardSetName}
             </h2>
 
             {/* Flashcard Progress Bar */}

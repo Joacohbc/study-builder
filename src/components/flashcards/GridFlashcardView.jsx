@@ -27,15 +27,16 @@ const GridFlashcardView = ({ flashcards, activeFlashcardSetName }) => {
     };
 
     if (!flashcards || flashcards.length === 0) {
-        return <p className="text-center text-gray-500">No hay flashcards para mostrar en la cuadrícula.</p>;
+        return <p className="text-center text-gray-500 dark:text-gray-400">No hay flashcards para mostrar en la cuadrícula.</p>;
     }
 
     return (
         <div className="animate-fade-in flex flex-col items-center space-y-6 w-full">
-            <h2 className="flex items-center justify-center gap-2 text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 mb-6">
-                <span className="text-gray-700">Todas las Flashcards:</span> {activeFlashcardSetName}
+            <h2 className="flex items-center justify-center gap-2 text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-300 mb-6">
+                <span className="text-gray-700 dark:text-gray-200">Todas las Flashcards:</span> {activeFlashcardSetName}
             </h2>
             <div className="flex space-x-2 mb-4">
+                {/* Assuming flashcard-control-btn handles its dark mode styling via CSS or its definition already includes dark mode variants if it uses Tailwind */}
                 <button
                     onClick={showAllBacks}
                     className="flashcard-control-btn"
