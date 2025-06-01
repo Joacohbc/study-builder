@@ -3,6 +3,7 @@ import { useStudySets } from '../contexts/useStudySets';
 import EmptyFlashcardIcon from '../icons/EmptyFlashcardIcon';
 import SingleFlashcardView from '../components/flashcards/SingleFlashcardView';
 import GridFlashcardView from '../components/flashcards/GridFlashcardView';
+import ShuffleControls from '../components/common/ShuffleControls';
 import { useShuffle } from '../hooks/useShuffle';
 import EmptyFlashcardState from '../components/flashcards/EmptyFlashcardState';
 
@@ -89,22 +90,14 @@ const FlashcardTab = () => {
             </div>
 
             {/* Shuffle Controls */}
-            <div className="flex items-center justify-center space-x-4 w-full max-w-md">
-                <button
-                    onClick={handleShuffle}
-                    className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-                >
-                    Barajar tarjetas
-                </button>
-                {!isInOriginalOrder && (
-                    <button
-                        onClick={handleResetOrder}
-                        className="px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
-                    >
-                        Orden original
-                    </button>
-                )}
-            </div>
+            <ShuffleControls
+                onShuffle={handleShuffle}
+                onResetOrder={handleResetOrder}
+                isInOriginalOrder={isInOriginalOrder}
+                shuffleLabel="Barajar tarjetas"
+                resetLabel="Orden original"
+                className="w-full max-w-md"
+            />
 
             {viewMode === 'single' ? (
                 <SingleFlashcardView

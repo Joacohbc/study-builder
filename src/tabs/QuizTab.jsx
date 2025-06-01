@@ -5,10 +5,9 @@ import QuizHeader from '../components/quizz/QuizHeader';
 import NoQuestions from '../components/quizz/NoQuestions';
 import QuestionList from '../components/quizz/QuestionList';
 import QuizResults from '../components/quizz/QuizResults';
+import ShuffleControls from '../components/common/ShuffleControls';
 import { useQuizProgress } from '../hooks/useQuizProgress';
 import CheckIcon from '../icons/CheckIcon';
-import ShuffleIcon from '../icons/ShuffleIcon';
-import ResetIcon from '../icons/ResetIcon';
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
 const QuizTab = ({ onQuizComplete }) => {
@@ -175,24 +174,13 @@ const QuizTab = ({ onQuizComplete }) => {
             />
 
             {/* Shuffle Controls for Quiz */}
-            <div className="flex items-center justify-center space-x-4 my-4">
-                <button
-                    onClick={handleShuffle}
-                    className="inline-flex gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
-                >
-                    <ShuffleIcon />
-                    Barjar preguntas
-                </button>
-                {!isInOriginalOrder && (
-                    <button
-                        onClick={handleResetOrder}
-                        className="inline-flex gap-2 px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
-                    >
-                        <ResetIcon />
-                        Orden original
-                    </button>
-                )}
-            </div>
+            <ShuffleControls
+                onShuffle={handleShuffle}
+                onResetOrder={handleResetOrder}
+                isInOriginalOrder={isInOriginalOrder}
+                shuffleLabel="Barjar preguntas"
+                resetLabel="Orden original"
+            />
 
             {(!processedQuestions || processedQuestions.length === 0) ? (
                 <NoQuestions activeSetName={activeQuizSetName} />
