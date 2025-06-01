@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
 import { parseAndValidateSetData } from '../services/validationService';
 import { copyToClipboard, readFromClipboard } from '../services/clipboardManager';
+import { loadQuizProgress, clearQuizProgress } from '../services/storageManager';
+import { calculateProgressPercentage } from '../utils/progressUtils';
 import SetManagementControls from '../components/editor/SetManagementControls';
 import ClipboardControls from '../components/editor/ClipboardControls';
 import SaveActions from '../components/editor/SaveActions';
@@ -59,6 +61,15 @@ const EditorTab = () => { // Removed all props
 
     const showClipboardStatus = (message, type) => {
         setClipboardMessage({ message, type });
+    };
+
+    const checkQuizProgressAndConfirm = (setName, progressPercentage, actionDescription) => {
+        const confirmMessage = `El set "${setName}" tiene un progreso del ${progressPercentage}% completado. ${actionDescription} sobrescribirá este progreso y se perderán las respuestas guardadas. ¿Estás seguro de que quieres continuar?`;
+        const confirmed = window.confirm(confirmMessage);
+        if (confirmed) {
+            showStatus(`Progreso del cuestionario "${setName}" eliminado.`, 'info');
+        }
+        return confirmed;
     };
 
     const validateAndPrepareData = () => {
@@ -135,9 +146,22 @@ const EditorTab = () => { // Removed all props
             showStatus(`No se pueden guardar cambios directamente en el set predeterminado "${defaultSetName}". Usa "Guardar Como Nuevo Set".`, 'error');
             return;
         }
+
+        if (setType === 'quiz') {
+            const savedProgress = loadQuizProgress(activeSetName);
+            const progressPercentage = calculateProgressPercentage(savedProgress);
+            if (progressPercentage > 0) {
+                let accept = checkQuizProgressAndConfirm(activeSetName, progressPercentage, 'Guardar los cambios');
+                if (!accept) {
+                    return;
+                }
+            }
+        }
+
         const parsedData = validateAndPrepareData();
         if (parsedData) {
             const success = parentOnSaveChanges(setType, activeSetName, parsedData); // Pass setType
+            clearQuizProgress(activeSetName); // To ensures the consistency of the active quiz data
             if (success) {
                 showStatus(`Cambios guardados en el set '${activeSetName}' (${setType}).`, 'success');
             } else {
@@ -159,6 +183,10 @@ const EditorTab = () => { // Removed all props
         if (allSets && allSets[newName]) { // Use allSets
             if (!window.confirm(`El set '${newName}' (${setType}) ya existe. ¿Quieres sobrescribirlo?`)) {
                 return;
+            }
+            // Check for existing quiz progress when overwriting
+            if (!checkQuizProgressAndConfirm(newName, 'Sobrescribir el set')) {
+                return; // User cancelled, don't proceed with save
             }
         }
         const parsedData = validateAndPrepareData();
