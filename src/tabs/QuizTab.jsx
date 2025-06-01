@@ -1,24 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
-import { evaluateSingleQuestion } from '../services/evaluationService'; // Import the evaluation service
-import QuizHeader from '../components/quizz/QuizHeader'; // Import the new QuizHeader component
-import NoQuestions from '../components/quizz/NoQuestions'; // Import the new NoQuestions component
-import QuestionList from '../components/quizz/QuestionList'; // Import the new QuestionList component
-import QuizResults from '../components/quizz/QuizResults'; // Import the new QuizResults component
-import { useQuizProgress } from '../hooks/useQuizProgress'; // Added import
+import { useStudySets } from '../contexts/useStudySets';
+import { evaluateSingleQuestion } from '../services/evaluationService';
+import QuizHeader from '../components/quizz/QuizHeader';
+import NoQuestions from '../components/quizz/NoQuestions';
+import QuestionList from '../components/quizz/QuestionList';
+import QuizResults from '../components/quizz/QuizResults';
+import { useQuizProgress } from '../hooks/useQuizProgress';
 import CheckIcon from '../icons/CheckIcon';
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
 const QuizTab = ({ onQuizComplete }) => {
     const { 
         activeQuizData, 
-        activeQuizSetName, 
-        // shuffledQuizData, // No longer directly used for rendering, processedQuestions will be used
-        isShuffleEnabled, 
-        toggleShuffle: toggleShuffleInStudySets // Renamed to avoid conflict
+        activeQuizSetName
     } = useStudySets();
-    // State to store user answers { questionId: answerValue } - REMOVED, now from useQuizProgress
-    // const [answers, setAnswers] = useState({});
 
     // State to track if the quiz has been submitted
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -32,22 +27,21 @@ const QuizTab = ({ onQuizComplete }) => {
     const {
         answers,
         setAnswers,
-        processedQuestions, // This will be used instead of shuffledQuizData
-        clearCurrentSavedProgress,
-        discardLoadedOrderAndShuffle
-    } = useQuizProgress(activeQuizSetName, activeQuizData, isShuffleEnabled, isSubmitted);
+        processedQuestions,
+        isInOriginalOrder,
+        shuffle,
+        resetOrder,
+        clearCurrentSavedProgress
+    } = useQuizProgress(activeQuizSetName, activeQuizData, isSubmitted);
 
 
-    // Effect to shuffle questions when the component mounts or activeQuizData changes - REMOVED, logic moved to context/useQuizProgress
-    // Also reset state when activeQuizData changes (meaning a new set was loaded)
+    // Effect to reset state when activeQuizSetName changes
     useEffect(() => {
-        // console.log("QuizTab: activeQuizSetName changed, resetting tab-specific state.");
         setIsSubmitted(false);
         setResults(null);
         setIndividualFeedback({});
-        // Answers and question order are reset by useQuizProgress based on activeQuizSetName
         window.scrollTo(0, 0);
-    }, [activeQuizSetName]); // Listen to activeQuizSetName
+    }, [activeQuizSetName]);
 
     // Callback to handle answer changes from single/multiple choice questions
     const handleAnswerChange = useCallback((questionId, value) => {
@@ -88,7 +82,7 @@ const QuizTab = ({ onQuizComplete }) => {
 
     // Handle checking a single question
     const handleCheckSingleQuestion = useCallback((questionId) => {
-        const question = processedQuestions.find(q => q.id === questionId); // Use processedQuestions
+        const question = processedQuestions.find(q => q.id === questionId);
         if (!question) return;
 
         const answer = answers[questionId];
@@ -99,7 +93,7 @@ const QuizTab = ({ onQuizComplete }) => {
                 [questionId]: feedback
             }));
         }
-    }, [processedQuestions, answers, evaluateSingleQuestion]); // Dependency updated
+    }, [processedQuestions, answers]);
 
 
     // Handle form submission: calculate score and generate feedback
@@ -138,18 +132,18 @@ const QuizTab = ({ onQuizComplete }) => {
 
     // Handle the "Retry" button click
     const handleRetry = () => {
-        clearCurrentSavedProgress(); // Clears saved progress and resets answers/order in useQuizProgress
-        setIsSubmitted(false); // Reset submission state
-        setResults(null); // Clear results
-        setIndividualFeedback({}); // Clear individual feedback
-        window.scrollTo(0, 0); // Scroll to the top of the page
+        clearCurrentSavedProgress();
+        setIsSubmitted(false);
+        setResults(null);
+        setIndividualFeedback({});
+        window.scrollTo(0, 0);
     };
 
-    // Calcular el porcentaje de respuestas contestadas
+    // Calculate completion percentage
     const calculateCompletionPercentage = () => {
-        if (!processedQuestions || processedQuestions.length === 0) return { current: 0, total: 0 }; // Use processedQuestions
+        if (!processedQuestions || processedQuestions.length === 0) return { current: 0, total: 0 };
         
-        const answeredQuestions = processedQuestions.filter(q =>  // Use processedQuestions
+        const answeredQuestions = processedQuestions.filter(q => 
             q.id && (
                 answers[q.id] !== undefined && 
                 answers[q.id] !== null && 
@@ -158,19 +152,15 @@ const QuizTab = ({ onQuizComplete }) => {
             )
         );
         
-        return { current: answeredQuestions.length, total: processedQuestions.length }; // Use processedQuestions
+        return { current: answeredQuestions.length, total: processedQuestions.length };
     };
 
-    const handleToggleShuffle = () => {
-        const newShuffleState = !isShuffleEnabled;
-        toggleShuffleInStudySets(); // Update context state
+    const handleShuffle = () => {
+        shuffle(); // Always shuffle when button is clicked
+    };
 
-        if (newShuffleState) {
-            // If shuffle is being turned ON, discard any loaded order to force a fresh shuffle.
-            discardLoadedOrderAndShuffle();
-        }
-        // If shuffle is turned OFF, useQuizProgress will use its logic to determine order
-        // (either loaded order if available and not shuffled, or original order).
+    const handleResetOrder = () => {
+        resetOrder(); // Reset to original order
     };
 
     return (
@@ -182,30 +172,30 @@ const QuizTab = ({ onQuizComplete }) => {
                 completionPercentage={calculateCompletionPercentage()}
             />
 
-            {/* Shuffle Toggle Switch for Quiz */}
-            <div className="flex items-center justify-center space-x-2 my-4">
-                <label htmlFor="quiz-shuffle-toggle" className="text-sm text-gray-600">
-                    Barajar preguntas:
-                </label>
+            {/* Shuffle Controls for Quiz */}
+            <div className="flex items-center justify-center space-x-4 my-4">
                 <button
-                    id="quiz-shuffle-toggle"
-                    onClick={handleToggleShuffle} // Use new handler
-                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isShuffleEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
-                    aria-pressed={isShuffleEnabled}
+                    onClick={handleShuffle}
+                    className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
                 >
-                    <span className="sr-only">Activar o desactivar barajado de preguntas</span>
-                    <span
-                        className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${isShuffleEnabled ? 'translate-x-6' : 'translate-x-1'}`}
-                    />
+                    Barajar preguntas
                 </button>
+                {!isInOriginalOrder && (
+                    <button
+                        onClick={handleResetOrder}
+                        className="px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
+                    >
+                        Orden original
+                    </button>
+                )}
             </div>
 
-            {(!processedQuestions || processedQuestions.length === 0) ? ( // Use processedQuestions
+            {(!processedQuestions || processedQuestions.length === 0) ? (
                 <NoQuestions activeSetName={activeQuizSetName} />
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-8">
                     <QuestionList
-                        questions={processedQuestions} // Use processedQuestions
+                        questions={processedQuestions}
                         answers={answers}
                         individualFeedback={individualFeedback}
                         isSubmitted={isSubmitted}
@@ -237,7 +227,7 @@ const QuizTab = ({ onQuizComplete }) => {
                     results={results}
                     activeSetName={activeQuizSetName}
                     onRetry={handleRetry}
-                    shuffledQuestions={processedQuestions} // Use processedQuestions, consider renaming prop later
+                    shuffledQuestions={processedQuestions}
                 />
             )}
         </div>

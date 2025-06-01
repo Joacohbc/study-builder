@@ -1,11 +1,38 @@
 import { useState, useEffect, useCallback } from 'react';
 import { saveQuizProgress, loadQuizProgress, clearQuizProgress } from '../services/storageManager';
-import { shuffleArray } from '../utils/helpers';
+import { useShuffle } from './useShuffle';
 
-export const useQuizProgress = (activeQuizSetName, originalQuestions, isShuffleEnabled, isSubmitted) => {
+export const useQuizProgress = (activeQuizSetName, originalQuestions, isSubmitted) => {
     const [answers, setAnswers] = useState({});
     const [initialLoadedQuestionOrder, setInitialLoadedQuestionOrder] = useState(null);
     const [processedQuestions, setProcessedQuestions] = useState([]);
+    
+    // Use the shuffle hook for order detection and shuffle functions
+    const { 
+        isInOriginalOrder,
+        shuffle: shuffleFunction,
+        resetOrder: resetOrderFunction 
+    } = useShuffle(originalQuestions, processedQuestions);
+
+    // Initialize processed questions
+    useEffect(() => {
+        if (initialLoadedQuestionOrder) {
+            setProcessedQuestions(initialLoadedQuestionOrder);
+        } else if (originalQuestions) {
+            setProcessedQuestions([...originalQuestions]);
+        }
+    }, [initialLoadedQuestionOrder, originalQuestions]);
+
+    // Wrapper functions that update the processed questions state
+    const shuffle = useCallback(() => {
+        const shuffledData = shuffleFunction();
+        setProcessedQuestions(shuffledData);
+    }, [shuffleFunction]);
+
+    const resetOrder = useCallback(() => {
+        const resetData = resetOrderFunction();
+        setProcessedQuestions(resetData);
+    }, [resetOrderFunction]);
 
     // Effect to load progress when the active quiz set name changes
     useEffect(() => {
@@ -15,67 +42,38 @@ export const useQuizProgress = (activeQuizSetName, originalQuestions, isShuffleE
             if (savedProgress && savedProgress.questionOrder) {
                 setAnswers(savedProgress.answers || {});
                 setInitialLoadedQuestionOrder(savedProgress.questionOrder);
-                // console.log(`useQuizProgress: Loaded progress for ${activeQuizSetName}. Answers:`, savedProgress.answers, "Order:", savedProgress.questionOrder);
             } else {
-                setAnswers({}); // Reset if no progress found or order is missing
+                setAnswers({});
                 setInitialLoadedQuestionOrder(null);
-                // console.log(`useQuizProgress: No valid progress found for ${activeQuizSetName}, resetting answers and order.`);
             }
         } else {
-            setAnswers({}); // Reset if no active quiz set name
+            setAnswers({});
             setInitialLoadedQuestionOrder(null);
-            // console.log("useQuizProgress: No activeQuizSetName, resetting answers and order.");
         }
     }, [activeQuizSetName]);
 
-    // Effect to determine and set the order of questions
+    // Effect to save progress when answers or processedQuestions change
     useEffect(() => {
-        if (!originalQuestions || originalQuestions.length === 0) {
-            setProcessedQuestions([]);
-            return;
-        }
-
-        if (initialLoadedQuestionOrder && initialLoadedQuestionOrder.length > 0) {
-            // console.log("useQuizProgress: Using initial loaded question order", initialLoadedQuestionOrder);
-            setProcessedQuestions(initialLoadedQuestionOrder);
-        } else if (isShuffleEnabled) {
-            // console.log("useQuizProgress: Shuffling original questions", originalQuestions);
-            setProcessedQuestions(shuffleArray(originalQuestions));
-        } else {
-            // console.log("useQuizProgress: Using original question order", originalQuestions);
-            setProcessedQuestions(originalQuestions);
-        }
-    }, [originalQuestions, initialLoadedQuestionOrder, isShuffleEnabled]);
-
-
-    // Effect to save progress when answers or processedQuestions change,
-    // if the quiz is active and not submitted.
-    useEffect(() => {
-        // Save progress if we have an active set, it's not submitted, and there are processed questions.
         if (activeQuizSetName && !isSubmitted && processedQuestions && processedQuestions.length > 0) {
-            // console.log(`useQuizProgress: Saving progress for ${activeQuizSetName}. Answers:`, answers, "Order:", processedQuestions);
             saveQuizProgress(activeQuizSetName, { answers, questionOrder: processedQuestions });
-        } else if (activeQuizSetName && !isSubmitted && (!processedQuestions || processedQuestions.length === 0)) {
-            // This case might occur if a quiz is loaded that has no questions.
-            // We probably don't want to save progress for an empty quiz or if the order is somehow lost.
-            // console.log(`useQuizProgress: Not saving progress for ${activeQuizSetName} due to empty/invalid processed questions.`);
         }
     }, [answers, processedQuestions, activeQuizSetName, isSubmitted]);
 
     const clearCurrentSavedProgress = useCallback(() => {
         if (activeQuizSetName) {
-            // console.log(`useQuizProgress: Clearing saved progress for ${activeQuizSetName}`);
             clearQuizProgress(activeQuizSetName);
             setAnswers({});
-            setInitialLoadedQuestionOrder(null); // This will trigger re-evaluation of processedQuestions
+            setInitialLoadedQuestionOrder(null);
         }
     }, [activeQuizSetName]);
 
-    // Function to explicitly discard loaded order, e.g., when user toggles shuffle ON
-    const discardLoadedOrderAndShuffle = useCallback(() => {
-        setInitialLoadedQuestionOrder(null);
-        // The useEffect for processedQuestions will then re-shuffle if isShuffleEnabled is true
-    }, []);
-
-    return { answers, setAnswers, processedQuestions, clearCurrentSavedProgress, discardLoadedOrderAndShuffle };
+    return { 
+        answers, 
+        setAnswers, 
+        processedQuestions, 
+        isInOriginalOrder,
+        shuffle,
+        resetOrder,
+        clearCurrentSavedProgress 
+    };
 };

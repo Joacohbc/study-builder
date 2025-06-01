@@ -65,9 +65,6 @@ export const StudySetProvider = ({ children }) => {
         quizSets: quizHookData.quizSets,
         activeQuizSetName: quizHookData.activeQuizSetName,
         activeQuizData: quizHookData.activeQuizData,
-        shuffledQuizData: quizHookData.shuffledQuizData,
-        isShuffleEnabled: quizHookData.isShuffleEnabled,
-        toggleShuffle: quizHookData.toggleShuffle,
         isLoadingQuiz: quizHookData.isLoadingQuiz,
         quizDefaults: quizHookData.quizDefaults,
 

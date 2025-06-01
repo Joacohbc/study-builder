@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { loadAllSets, saveAllSets, loadActiveSetName, saveActiveSetName, getDefaultsForType } from '../services/storageManager';
-import { shuffleArray } from '../utils/helpers';
 
 const quizDefaults = getDefaultsForType('quiz');
 
@@ -8,8 +7,6 @@ export const useQuizData = () => {
     const [quizSets, setQuizSets] = useState(null);
     const [activeQuizSetName, setActiveQuizSetName] = useState('');
     const [activeQuizData, setActiveQuizData] = useState([]);
-    const [shuffledQuizData, setShuffledQuizData] = useState([]);
-    const [isShuffleEnabled, setIsShuffleEnabled] = useState(false);
     const [isLoadingQuiz, setIsLoadingQuiz] = useState(true);
 
     useEffect(() => {
@@ -20,21 +17,8 @@ export const useQuizData = () => {
         setActiveQuizSetName(currentActiveQuizSetName);
         const currentActiveQuizData = loadedQuizSets[currentActiveQuizSetName] || [];
         setActiveQuizData(currentActiveQuizData);
-        setShuffledQuizData(isShuffleEnabled ? shuffleArray(currentActiveQuizData) : [...currentActiveQuizData]);
         setIsLoadingQuiz(false);
         console.log("Quiz loaded via useQuizData. Active:", currentActiveQuizSetName, "Total:", Object.keys(loadedQuizSets).length);
-    }, [isShuffleEnabled]); // Dependency on isShuffleEnabled to re-shuffle when toggled during initial load or if data changes
-
-    useEffect(() => {
-        if (activeQuizData && activeQuizData.length > 0) {
-            setShuffledQuizData(isShuffleEnabled ? shuffleArray([...activeQuizData]) : [...activeQuizData]);
-        } else {
-            setShuffledQuizData([]);
-        }
-    }, [activeQuizData, isShuffleEnabled]);
-
-    const toggleShuffle = useCallback(() => {
-        setIsShuffleEnabled(prev => !prev);
     }, []);
 
     const updateQuizSets = (newSets) => {
@@ -47,13 +31,12 @@ export const useQuizData = () => {
             setActiveQuizSetName(setName);
             const newActiveData = quizSets[setName] || [];
             setActiveQuizData(newActiveData);
-            // Shuffled data is updated by the useEffect watching activeQuizData and isShuffleEnabled
             saveActiveSetName(quizDefaults.activeSetKey, setName);
             console.log(`Quiz set '${setName}' loaded via useQuizData.`);
         } else {
             console.error(`Attempted to load non-existent quiz set: ${setName}`);
         }
-    }, [quizSets, isShuffleEnabled]);
+    }, [quizSets]);
 
     const saveQuizChanges = useCallback((setName, updatedData) => {
         if (setName === quizDefaults.defaultSetName) {
@@ -65,14 +48,13 @@ export const useQuizData = () => {
             updateQuizSets(newSets);
             if (activeQuizSetName === setName) {
                 setActiveQuizData(updatedData);
-                // Shuffled data is updated by the useEffect watching activeQuizData and isShuffleEnabled
             }
             console.log(`Changes saved to quiz set '${setName}' via useQuizData.`);
             return true;
         }
         console.error(`Attempted to save changes to non-existent quiz set: ${setName}`);
         return false;
-    }, [quizSets, activeQuizSetName, isShuffleEnabled]);
+    }, [quizSets, activeQuizSetName]);
 
     const saveAsNewQuizSet = useCallback((newSetName, dataToSave) => {
         if (!newSetName || newSetName.trim() === '') {
@@ -89,12 +71,11 @@ export const useQuizData = () => {
 
         setActiveQuizSetName(newSetName);
         setActiveQuizData(dataToSave);
-        // Shuffled data is updated by the useEffect watching activeQuizData and isShuffleEnabled
         saveActiveSetName(quizDefaults.activeSetKey, newSetName);
 
         console.log(`Quiz set saved as '${newSetName}' and activated via useQuizData.`);
         return true;
-    }, [quizSets, isShuffleEnabled]);
+    }, [quizSets]);
 
     const deleteQuizSet = useCallback((setNameToDelete) => {
         if (!setNameToDelete || setNameToDelete === quizDefaults.defaultSetName) {
@@ -124,18 +105,14 @@ export const useQuizData = () => {
             console.log(`Quiz set '${quizDefaults.defaultSetName}' reset to defaults via useQuizData.`);
             if (activeQuizSetName === quizDefaults.defaultSetName) {
                 setActiveQuizData(defaultDataWithIds);
-                // Shuffled data is updated by the useEffect watching activeQuizData and isShuffleEnabled
             }
         }
-    }, [quizSets, activeQuizSetName, isShuffleEnabled]);
+    }, [quizSets, activeQuizSetName]);
 
     return {
         quizSets,
         activeQuizSetName,
         activeQuizData,
-        shuffledQuizData,
-        isShuffleEnabled,
-        toggleShuffle,
         loadQuizSet,
         saveQuizChanges,
         saveAsNewQuizSet,

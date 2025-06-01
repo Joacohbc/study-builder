@@ -1,41 +1,63 @@
-import React, { useState, useEffect } from 'react'; // Add React import
+import React, { useState, useEffect } from 'react';
 import { useStudySets } from '../contexts/useStudySets';
 import EmptyFlashcardIcon from '../icons/EmptyFlashcardIcon';
 import SingleFlashcardView from '../components/flashcards/SingleFlashcardView';
 import GridFlashcardView from '../components/flashcards/GridFlashcardView';
-import { shuffleArray } from '../utils/helpers'; // Import shuffleArray
-import EmptyFlashcardState from '../components/flashcards/EmptyFlashcardState'; // Import the new component
+import { useShuffle } from '../hooks/useShuffle';
+import EmptyFlashcardState from '../components/flashcards/EmptyFlashcardState';
 
 // FlashcardTab Component: Displays flashcards and handles navigation
 const FlashcardTab = () => {
     const { activeFlashcardData, activeFlashcardSetName } = useStudySets();
 
-    const [shuffledData, setShuffledData] = useState([]);
     const [isShuffling, setIsShuffling] = useState(false);
-    const [isShuffleEnabled, setIsShuffleEnabled] = useState(true);
     const [viewMode, setViewMode] = useState('single'); // 'single' or 'grid'
+    const [shuffledData, setShuffledData] = useState([]);
 
+    // Use the shuffle hook for order detection and shuffle functions
+    const { 
+        isInOriginalOrder,
+        shuffle: shuffleFunction,
+        resetOrder: resetOrderFunction 
+    } = useShuffle(activeFlashcardData, shuffledData);
+
+    // Initialize shuffled data when activeFlashcardData changes
     useEffect(() => {
-        if (activeFlashcardData && activeFlashcardData.length > 0) {
-            if (isShuffleEnabled) {
-                setShuffledData(shuffleArray(activeFlashcardData));
-            } else {
-                setShuffledData([...activeFlashcardData]); // Use original order
-            }
+        if (activeFlashcardData) {
+            setShuffledData([...activeFlashcardData]);
         } else {
-            setShuffledData([]); // Clear if no data
+            setShuffledData([]);
         }
-    }, [activeFlashcardData, isShuffleEnabled]);
+    }, [activeFlashcardData]);
+
+    // Wrapper functions that update the shuffled data state
+    const shuffle = () => {
+        const newShuffledData = shuffleFunction();
+        setShuffledData(newShuffledData);
+    };
+
+    const resetOrder = () => {
+        const resetData = resetOrderFunction();
+        setShuffledData(resetData);
+    };
 
     const handleReshuffle = () => {
-        if (!activeFlashcardData || activeFlashcardData.length <= 1 || !isShuffleEnabled) return;
+        if (!activeFlashcardData || activeFlashcardData.length <= 1) return;
         
         setIsShuffling(true);
         
         setTimeout(() => {
-            setShuffledData(shuffleArray(activeFlashcardData));
+            shuffle(); // Always shuffle when reshuffle is clicked
             setIsShuffling(false);
         }, 500);
+    };
+
+    const handleShuffle = () => {
+        shuffle(); // Always shuffle when button is clicked
+    };
+
+    const handleResetOrder = () => {
+        resetOrder(); // Reset to original order
     };
 
     if (!activeFlashcardData || activeFlashcardData.length === 0) {
@@ -66,28 +88,28 @@ const FlashcardTab = () => {
                 </button>
             </div>
 
-            <div className="flex items-center justify-center space-x-2 w-full max-w-md">
-                <label htmlFor="shuffle-toggle" className="text-sm text-gray-600">
-                    Barajar tarjetas:
-                </label>
+            {/* Shuffle Controls */}
+            <div className="flex items-center justify-center space-x-4 w-full max-w-md">
                 <button
-                    id="shuffle-toggle"
-                    onClick={() => setIsShuffleEnabled(!isShuffleEnabled)}
-                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isShuffleEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
-                    aria-pressed={isShuffleEnabled}
+                    onClick={handleShuffle}
+                    className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
                 >
-                    <span className="sr-only">Activar o desactivar barajado</span>
-                    <span
-                        className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${isShuffleEnabled ? 'translate-x-6' : 'translate-x-1'}`}
-                    />
+                    Barajar tarjetas
                 </button>
+                {!isInOriginalOrder && (
+                    <button
+                        onClick={handleResetOrder}
+                        className="px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
+                    >
+                        Orden original
+                    </button>
+                )}
             </div>
 
             {viewMode === 'single' ? (
                 <SingleFlashcardView
                     shuffledData={shuffledData}
                     isShuffling={isShuffling}
-                    isShuffleEnabled={isShuffleEnabled}
                     handleReshuffle={handleReshuffle}
                     activeFlashcardSetName={activeFlashcardSetName}
                 />

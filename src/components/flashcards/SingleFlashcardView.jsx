@@ -9,7 +9,6 @@ import ProgressBar from '../ProgressBar';
 const SingleFlashcardView = ({
     shuffledData,
     isShuffling,
-    isShuffleEnabled,
     handleReshuffle,
     activeFlashcardSetName,
 }) => {
@@ -93,8 +92,8 @@ const SingleFlashcardView = ({
 
                 <button
                     onClick={handleReshuffle}
-                    disabled={shuffledData.length <= 1 || isShuffling || !isShuffleEnabled}
-                    className={`flashcard-control-btn ${(shuffledData.length <= 1 || isShuffling || !isShuffleEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={shuffledData.length <= 1 || isShuffling}
+                    className={`flashcard-control-btn ${(shuffledData.length <= 1 || isShuffling) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     aria-label="Barajar tarjetas"
                 >
                     <ShuffleIcon />
