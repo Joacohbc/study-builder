@@ -27,6 +27,24 @@ const QuestionList = ({
                 const questionFeedback = individualFeedback[qData.id] || (isSubmitted ? results?.feedback?.[qData.id] : null);
                 const isDisabled = isSubmitted || isIndividuallyChecked;
 
+                // Determine if question is answered
+                // Check if there's an actual answer provided by the user
+                let hasUserAnswer = false;
+                const userAnswer = answers[qData.id];
+                
+                if (qData.type === 'single') {
+                    hasUserAnswer = userAnswer !== undefined && userAnswer !== null && userAnswer !== '';
+                } else if (qData.type === 'multiple') {
+                    hasUserAnswer = Array.isArray(userAnswer) && userAnswer.length > 0;
+                } else if (qData.type === 'matching') {
+                    hasUserAnswer = userAnswer && typeof userAnswer === 'object' && Object.keys(userAnswer).length > 0;
+                } else if (qData.type === 'fill-in-the-blanks') {
+                    hasUserAnswer = userAnswer && typeof userAnswer === 'object' && 
+                        Object.values(userAnswer).some(val => val !== undefined && val !== null && val !== '');
+                }
+
+                const isAnswered = hasUserAnswer || (questionFeedback?.isAnswered || false);
+
                 let questionStatus = '';
                 let statusBgClass = 'bg-white';
                 let statusBorderClass = 'border-gray-200';
@@ -52,6 +70,7 @@ const QuestionList = ({
                         key={qData.id}
                         className={`p-6 rounded-xl shadow-sm border transition-all duration-300 ${statusBgClass} ${statusBorderClass} hover:shadow-md`}
                         data-question-index={index}
+                        data-answered={isAnswered}
                     >
                         <div className="flex flex-wrap justify-between items-start mb-4">
                             <div className="flex items-center mb-2 md:mb-0">

@@ -28,11 +28,86 @@ function App() {
 
     // --- Scroll Navigation Functions ---
     const handleScrollToTop = () => {
+        // Check if we're in the quiz tab and have answered questions
+        if (activeUITab === 'quiz') {
+            const answeredQuestions = findAnsweredQuestions();
+            if (answeredQuestions.length > 0) {
+                scrollToPreviousAnsweredQuestion();
+                return;
+            }
+        }
+        // Fall back to scrolling to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleScrollToBottom = () => {
+        // Check if we're in the quiz tab and have answered questions
+        if (activeUITab === 'quiz') {
+            const answeredQuestions = findAnsweredQuestions();
+            if (answeredQuestions.length > 0) {
+                scrollToNextAnsweredQuestion();
+                return;
+            }
+        }
+        // Fall back to scrolling to bottom
         window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    };
+
+    // Helper function to find answered questions
+    const findAnsweredQuestions = () => {
+        const questionElements = document.querySelectorAll('[data-question-index]');
+        const answeredElements = Array.from(questionElements).filter(el => {
+            // Check the data-answered attribute
+            return el.getAttribute('data-answered') === 'true';
+        });
+        return answeredElements;
+    };
+
+    // Helper function to scroll to the next answered question
+    const scrollToNextAnsweredQuestion = () => {
+        const answeredQuestions = findAnsweredQuestions();
+        if (answeredQuestions.length === 0) return;
+
+        const currentScrollY = window.scrollY;
+        const viewportMiddle = currentScrollY + window.innerHeight / 2;
+        
+        // Find the next question that's below the current viewport middle
+        const nextQuestion = answeredQuestions.find(el => {
+            const rect = el.getBoundingClientRect();
+            const elementTop = rect.top + currentScrollY;
+            return elementTop > viewportMiddle + 50; // 50px buffer
+        });
+
+        if (nextQuestion) {
+            nextQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            // If no next question found, wrap to the first answered question
+            answeredQuestions[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+
+    // Helper function to scroll to the previous answered question
+    const scrollToPreviousAnsweredQuestion = () => {
+        const answeredQuestions = findAnsweredQuestions();
+        if (answeredQuestions.length === 0) return;
+
+        const currentScrollY = window.scrollY;
+        const viewportTop = currentScrollY;
+        
+        // Find the previous question that's above the current viewport top with a larger buffer
+        const reversedQuestions = [...answeredQuestions].reverse();
+        const prevQuestion = reversedQuestions.find(el => {
+            const rect = el.getBoundingClientRect();
+            const elementTop = rect.top + currentScrollY;
+            return elementTop < viewportTop - 100; // Increased buffer to 100px to avoid finding current question
+        });
+
+        if (prevQuestion) {
+            prevQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            // If no previous question found, wrap to the last answered question
+            answeredQuestions[answeredQuestions.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     };
 
     // --- Tab Configuration ---
@@ -185,7 +260,7 @@ function App() {
                     type="button"
                     onClick={handleScrollToTop}
                     className="p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150"
-                    title="Ir arriba del todo"
+                    title={activeUITab === 'quiz' ? "Pregunta respondida anterior (o ir arriba)" : "Ir arriba del todo"}
                 >
                     <ArrowUpIcon className="w-5 h-5" />
                 </button>
@@ -193,7 +268,7 @@ function App() {
                     type="button"
                     onClick={handleScrollToBottom}
                     className="p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150"
-                    title="Ir abajo del todo"
+                    title={activeUITab === 'quiz' ? "Siguiente pregunta respondida (o ir abajo)" : "Ir abajo del todo"}
                 >
                     <ArrowDownIcon className="w-5 h-5" />
                 </button>
