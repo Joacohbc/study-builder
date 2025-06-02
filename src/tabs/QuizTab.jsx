@@ -171,6 +171,7 @@ const QuizTab = ({ onQuizComplete }) => {
                 quizData={processedQuestions} // Use processedQuestions
                 isSubmitted={isSubmitted}
                 completionPercentage={calculateCompletionPercentage()}
+                onClearProgress={clearCurrentSavedProgress}
             />
 
             {/* Shuffle Controls for Quiz */}
