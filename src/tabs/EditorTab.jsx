@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
+import { useGlobalConfirmation } from '../contexts/ConfirmationModalContext';
 import { parseAndValidateSetData } from '../services/validationService';
 import { copyToClipboard, readFromClipboard } from '../services/clipboardManager';
 import { loadQuizProgress, clearQuizProgress } from '../services/storageManager';
@@ -26,6 +27,9 @@ const EditorTab = () => { // Removed all props
         handleDeleteSet: parentOnDeleteSet,
         handleResetDefaultSet: parentOnResetDefaultSet
     } = useStudySets();
+
+    // Initialize confirmation modal hook
+    const { showConfirmation, confirmDanger, confirmWarning } = useGlobalConfirmation();
 
     // Determine current set type and data based on editorContentType
     const setType = editorContentType;
@@ -63,9 +67,14 @@ const EditorTab = () => { // Removed all props
         setClipboardMessage({ message, type });
     };
 
-    const checkQuizProgressAndConfirm = (setName, progressPercentage, actionDescription) => {
+    const checkQuizProgressAndConfirm = async (setName, progressPercentage, actionDescription) => {
         const confirmMessage = `El set "${setName}" tiene un progreso del ${progressPercentage}% completado. ${actionDescription} sobrescribirá este progreso y se perderán las respuestas guardadas. ¿Estás seguro de que quieres continuar?`;
-        const confirmed = window.confirm(confirmMessage);
+        const confirmed = await confirmWarning({
+            title: 'Progreso del cuestionario se perderá',
+            message: confirmMessage,
+            confirmText: 'Sí, continuar',
+            cancelText: 'Cancelar'
+        });
         if (confirmed) {
             showStatus(`Progreso del cuestionario "${setName}" eliminado.`, 'info');
         }
@@ -94,12 +103,18 @@ const EditorTab = () => { // Removed all props
         }
     };
 
-    const handleDeleteSet = () => {
+    const handleDeleteSet = async () => {
         if (!selectedSetToLoad || selectedSetToLoad === defaultSetName) {
             showStatus(`No puedes eliminar el set predeterminado o si no hay ninguno seleccionado.`, 'error');
             return;
         }
-        if (window.confirm(`¿Estás seguro de que quieres eliminar el set "${selectedSetToLoad}" (${setType})? Esta acción no se puede deshacer.`)) {
+        const confirmed = await confirmDanger({
+            title: 'Eliminar set',
+            message: `¿Estás seguro de que quieres eliminar el set "${selectedSetToLoad}" (${setType})? Esta acción no se puede deshacer.`,
+            confirmText: 'Eliminar',
+            cancelText: 'Cancelar'
+        });
+        if (confirmed) {
             const success = parentOnDeleteSet(setType, selectedSetToLoad);
             if (success) {
                 showStatus(`Set "${selectedSetToLoad}" (${setType}) eliminado.`, 'success');
@@ -109,8 +124,14 @@ const EditorTab = () => { // Removed all props
         }
     };
     
-    const handleResetDefaultSet = () => {
-        if (window.confirm(`¿Estás seguro de que quieres restablecer el set predeterminado "${defaultSetName}" (${setType}) a su contenido original? Todos los cambios realizados en él se perderán.`)) {
+    const handleResetDefaultSet = async () => {
+        const confirmed = await confirmWarning({
+            title: 'Restablecer set predeterminado',
+            message: `¿Estás seguro de que quieres restablecer el set predeterminado "${defaultSetName}" (${setType}) a su contenido original? Todos los cambios realizados en él se perderán.`,
+            confirmText: 'Restablecer',
+            cancelText: 'Cancelar'
+        });
+        if (confirmed) {
             const success = parentOnResetDefaultSet(setType);
             if (success) {
                 showStatus(`Set predeterminado "${defaultSetName}" (${setType}) restablecido.`, 'success');
@@ -141,7 +162,7 @@ const EditorTab = () => { // Removed all props
     };
 
     // --- Handlers for Saving (passed to SaveActions) ---
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
         if (activeSetName === defaultSetName) {
             showStatus(`No se pueden guardar cambios directamente en el set predeterminado "${defaultSetName}". Usa "Guardar Como Nuevo Set".`, 'error');
             return;
@@ -151,7 +172,7 @@ const EditorTab = () => { // Removed all props
             const savedProgress = loadQuizProgress(activeSetName);
             const progressPercentage = calculateProgressPercentage(savedProgress);
             if (progressPercentage > 0) {
-                let accept = checkQuizProgressAndConfirm(activeSetName, progressPercentage, 'Guardar los cambios');
+                const accept = await checkQuizProgressAndConfirm(activeSetName, progressPercentage, 'Guardar los cambios');
                 if (!accept) {
                     return;
                 }
@@ -170,7 +191,7 @@ const EditorTab = () => { // Removed all props
         }
     };
 
-    const handleSaveAsNew = () => {
+    const handleSaveAsNew = async () => {
         const newName = newSetNameInput.trim();
         if (!newName) {
             showStatus('Por favor, introduce un nombre para el nuevo set.', 'error');
@@ -181,11 +202,18 @@ const EditorTab = () => { // Removed all props
             return;
         }
         if (allSets && allSets[newName]) { // Use allSets
-            if (!window.confirm(`El set '${newName}' (${setType}) ya existe. ¿Quieres sobrescribirlo?`)) {
+            const confirmed = await showConfirmation({
+                title: 'Set ya existe',
+                message: `El set '${newName}' (${setType}) ya existe. ¿Quieres sobrescribirlo?`,
+                confirmText: 'Sobrescribir',
+                cancelText: 'Cancelar'
+            });
+            if (!confirmed) {
                 return;
             }
             // Check for existing quiz progress when overwriting
-            if (!checkQuizProgressAndConfirm(newName, 'Sobrescribir el set')) {
+            const progressConfirmed = await checkQuizProgressAndConfirm(newName, 'Sobrescribir el set');
+            if (!progressConfirmed) {
                 return; // User cancelled, don't proceed with save
             }
         }

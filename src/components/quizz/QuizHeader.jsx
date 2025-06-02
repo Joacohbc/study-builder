@@ -2,8 +2,23 @@ import React from 'react';
 import QuestionIcon from '../../icons/QuestionIcon';
 import ResetIcon from '../../icons/ResetIcon';
 import ProgressBar from '../ProgressBar';
+import { useGlobalConfirmation } from '../../contexts/ConfirmationModalContext';
 
 const QuizHeader = ({ activeSetName, quizData, isSubmitted, completionPercentage, onClearProgress }) => {
+    const { confirmDanger } = useGlobalConfirmation();
+
+    const handleClearProgress = async () => {
+        const confirmed = await confirmDanger({
+            title: 'Limpiar progreso del cuestionario',
+            message: '¿Estás seguro de que quieres limpiar todo el progreso? Se perderán todas las respuestas guardadas.',
+            confirmText: 'Limpiar progreso',
+            cancelText: 'Cancelar'
+        });
+
+        if (confirmed) {
+            onClearProgress();
+        }
+    };
     return (
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b border-gray-200">
             <div>
@@ -32,11 +47,7 @@ const QuizHeader = ({ activeSetName, quizData, isSubmitted, completionPercentage
                     {completionPercentage.current > 0 && onClearProgress && (
                         <button
                             type="button"
-                            onClick={() => {
-                                if (window.confirm('¿Estás seguro de que quieres limpiar todo el progreso? Se perderán todas las respuestas guardadas.')) {
-                                    onClearProgress();
-                                }
-                            }}
+                            onClick={handleClearProgress}
                             className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-200"
                             title="Limpiar progreso del cuestionario"
                         >
