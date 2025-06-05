@@ -14,7 +14,8 @@ const QuestionList = ({
     handleAnswerChange,
     handleMatchChange,
     handleFillInTheBlanksChange,
-    handleCheckSingleQuestion
+    handleCheckSingleQuestion,
+    currentQuestionIndex // Add this
 }) => {
     return (
         <div id="quiz-container" className="space-y-8">
@@ -69,13 +70,13 @@ const QuestionList = ({
                     <div
                         key={qData.id}
                         className={`p-6 rounded-xl shadow-sm border transition-all duration-300 ${statusBgClass} ${statusBorderClass} hover:shadow-md`}
-                        data-question-index={index}
+                        data-question-index={currentQuestionIndex}
                         data-answered={isAnswered}
                     >
                         <div className="flex flex-wrap justify-between items-start mb-4">
                             <div className="flex items-center mb-2 md:mb-0">
                                 <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-indigo-100 text-indigo-800 font-medium text-sm mr-3">
-                                    {index + 1}
+                                    {currentQuestionIndex + 1}
                                 </span>
                                 <h3 className="text-lg font-semibold text-gray-800">
                                     {qData.type === 'fill-in-the-blanks' ? "Completa la frase:" : qData.question}
@@ -94,7 +95,7 @@ const QuestionList = ({
                             {qData.type === 'single' && (
                                 <SingleChoiceQuestion
                                     questionData={qData}
-                                    questionIndex={index}
+                                    questionIndex={currentQuestionIndex}
                                     selectedAnswer={answers[qData.id] || ''}
                                     onChange={handleAnswerChange}
                                     isSubmitted={isDisabled}
@@ -105,7 +106,7 @@ const QuestionList = ({
                             {qData.type === 'multiple' && (
                                 <MultipleChoiceQuestion
                                     questionData={qData}
-                                    questionIndex={index}
+                                    questionIndex={currentQuestionIndex}
                                     selectedAnswers={answers[qData.id] || []}
                                     onChange={handleAnswerChange}
                                     isSubmitted={isDisabled}
@@ -116,7 +117,7 @@ const QuestionList = ({
                             {qData.type === 'matching' && (
                                 <MatchingQuestion
                                     questionData={qData}
-                                    questionIndex={index}
+                                    questionIndex={currentQuestionIndex}
                                     matches={answers[qData.id] || {}}
                                     onMatchChange={handleMatchChange}
                                     isSubmitted={isDisabled}
@@ -127,7 +128,7 @@ const QuestionList = ({
                             {qData.type === 'fill-in-the-blanks' && (
                                 <FillInTheBlanksQuestion
                                     questionData={qData}
-                                    questionIndex={index}
+                                    questionIndex={currentQuestionIndex}
                                     selectedAnswers={answers[qData.id] || {}}
                                     onChange={handleFillInTheBlanksChange}
                                     isSubmitted={isDisabled}

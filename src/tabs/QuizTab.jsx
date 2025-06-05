@@ -4,6 +4,7 @@ import { evaluateSingleQuestion } from '../services/evaluationService';
 import QuizHeader from '../components/quizz/QuizHeader';
 import NoQuestions from '../components/quizz/NoQuestions';
 import QuestionList from '../components/quizz/QuestionList';
+import QuizNavigation from '../components/quizz/QuizNavigation';
 import QuizResults from '../components/quizz/QuizResults';
 import ShuffleControls from '../components/common/ShuffleControls';
 import { useQuizProgress } from '../hooks/useQuizProgress';
@@ -25,6 +26,8 @@ const QuizTab = ({ onQuizComplete }) => {
     // State to store feedback for individually checked questions
     const [individualFeedback, setIndividualFeedback] = useState({});
 
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
     const {
         answers,
         setAnswers,
@@ -41,6 +44,7 @@ const QuizTab = ({ onQuizComplete }) => {
         setIsSubmitted(false);
         setResults(null);
         setIndividualFeedback({});
+        setCurrentQuestionIndex(0); // Add this line
         window.scrollTo(0, 0);
     }, [activeQuizSetName]);
 
@@ -80,6 +84,34 @@ const QuizTab = ({ onQuizComplete }) => {
 
 
     // --- Evaluation Logic ---
+
+    const handleNextQuestion = useCallback(() => {
+        setCurrentQuestionIndex(prevIndex => {
+            if (processedQuestions && prevIndex < processedQuestions.length - 1) {
+                return prevIndex + 1;
+            }
+            return prevIndex;
+        });
+    }, [processedQuestions]);
+
+    const handlePreviousQuestion = useCallback(() => {
+        setCurrentQuestionIndex(prevIndex => {
+            if (prevIndex > 0) {
+                return prevIndex - 1;
+            }
+            return prevIndex;
+        });
+    }, []);
+
+    const handleGoToFirstQuestion = useCallback(() => {
+        setCurrentQuestionIndex(0);
+    }, []);
+
+    const handleGoToLastQuestion = useCallback(() => {
+        if (processedQuestions && processedQuestions.length > 0) {
+            setCurrentQuestionIndex(processedQuestions.length - 1);
+        }
+    }, [processedQuestions]);
 
     // Handle checking a single question
     const handleCheckSingleQuestion = useCallback((questionId) => {
@@ -164,6 +196,10 @@ const QuizTab = ({ onQuizComplete }) => {
         resetOrder(); // Reset to original order
     };
 
+    const currentQuestionData = processedQuestions && processedQuestions.length > 0
+                               ? processedQuestions[currentQuestionIndex]
+                               : null;
+
     return (
         <div className="animate-fade-in">
             <QuizHeader
@@ -188,7 +224,7 @@ const QuizTab = ({ onQuizComplete }) => {
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-8">
                     <QuestionList
-                        questions={processedQuestions}
+                        questions={currentQuestionData ? [currentQuestionData] : []} // Pass only the current question as an array
                         answers={answers}
                         individualFeedback={individualFeedback}
                         isSubmitted={isSubmitted}
@@ -197,7 +233,19 @@ const QuizTab = ({ onQuizComplete }) => {
                         handleMatchChange={handleMatchChange}
                         handleFillInTheBlanksChange={handleFillInTheBlanksChange}
                         handleCheckSingleQuestion={handleCheckSingleQuestion}
+                        currentQuestionIndex={currentQuestionIndex} // Add this prop
                     />
+
+                    {currentQuestionData && !isSubmitted && (
+                        <QuizNavigation
+                            currentQuestionIndex={currentQuestionIndex}
+                            totalQuestions={processedQuestions.length}
+                            onNext={handleNextQuestion}
+                            onPrevious={handlePreviousQuestion}
+                            onGoToFirst={handleGoToFirstQuestion}
+                            onGoToLast={handleGoToLastQuestion}
+                        />
+                    )}
 
                     {/* Submit Button */}
                     <div className="mt-10 text-center">
