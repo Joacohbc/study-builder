@@ -286,7 +286,9 @@ export const HELP_TAB_CONTENT = {
     matchingTypeList: [
         "terms: Array de strings (términos a arrastrar).",
         "definitions: Array de strings (definiciones/zonas de soltar).",
-        "correctMatches: Objeto { término: definición_correcta }."
+        "correctMatches: Objeto con dos formatos posibles:",
+        "  • Formato 1 (tradicional): { término: definición_correcta }",
+        "  • Formato 2 (múltiples términos): { definición: [término1, término2] } o { definición: término }"
     ],
     matchingTypeExample: `{
     "id": "q_match_example",
@@ -294,15 +296,16 @@ export const HELP_TAB_CONTENT = {
     "question": "Une conceptos",
     "terms": [
         "Término A",
-        "Término B"
+        "Término B",
+        "Término C"
     ],
     "definitions": [
         "Definición A",
         "Definición B"
     ],
     "correctMatches": {
-        "Término A": "Definición A",
-        "Término B": "Definición B"
+        "Definición A": ["Término A", "Término B"],
+        "Definición B": "Término C"
     }
 }`,
     fillInTheBlanksTitle: "Tipo 'fill-in-the-blanks'",

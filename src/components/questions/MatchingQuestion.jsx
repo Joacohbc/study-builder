@@ -25,25 +25,68 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
     // Derive available terms based on shuffledTerms and current matches
     // useMemo ensures this calculation only runs when dependencies change, preventing unnecessary shuffling
     const availableTerms = useMemo(() => {
-        const termsInUse = new Set(Object.values(matches)); // Use Set for efficient lookup
+        const termsInUse = new Set();
+        // Collect all terms that are currently in use (supports multiple terms per definition)
+        Object.values(matches).forEach(value => {
+            if (Array.isArray(value)) {
+                value.forEach(term => termsInUse.add(term));
+            } else if (value) {
+                termsInUse.add(value);
+            }
+        });
         return shuffledTerms.filter(term => !termsInUse.has(term));
     }, [shuffledTerms, matches]); // Depends only on the shuffled list and the current matches
 
     const handleDrop = useCallback((definition, term) => {
         if (isSubmitted) return;
-        onMatchChange(questionData.id, definition, term);
-    }, [isSubmitted, onMatchChange, questionData.id]);
-
-    const returnTermToAvailable = useCallback((term) => {
-        if (isSubmitted || !term) return;
-        const definitionToRemoveMatch = Object.keys(matches).find(def => matches[def] === term);
-        if (definitionToRemoveMatch) {
-            // Setting match to null will trigger update in `availableTerms` via useMemo
-            onMatchChange(questionData.id, definitionToRemoveMatch, null);
+        
+        // Get current matches for this definition
+        const currentMatches = matches[definition];
+        let newMatches;
+        
+        if (Array.isArray(currentMatches)) {
+            // If already an array, add the new term if it's not already there
+            if (!currentMatches.includes(term)) {
+                newMatches = [...currentMatches, term];
+            } else {
+                return; // Term already exists in this definition
+            }
+        } else if (currentMatches) {
+            // If there's already a single term, convert to array
+            if (currentMatches !== term) {
+                newMatches = [currentMatches, term];
+            } else {
+                return; // Same term already exists
+            }
+        } else {
+            // First term for this definition
+            newMatches = term;
         }
-        // No need for fallback logic to manually add back to availableTerms,
-        // useMemo handles deriving the list correctly based on matches.
-    }, [isSubmitted, matches, onMatchChange, questionData.id]); // Removed availableTerms dependency
+        
+        onMatchChange(questionData.id, definition, newMatches);
+    }, [isSubmitted, onMatchChange, questionData.id, matches]);
+
+    const returnTermToAvailable = useCallback((term, definition) => {
+        if (isSubmitted || !term) return;
+        
+        const currentMatches = matches[definition];
+        let newMatches = null;
+        
+        if (Array.isArray(currentMatches)) {
+            // Remove the specific term from the array
+            const filteredTerms = currentMatches.filter(t => t !== term);
+            if (filteredTerms.length > 1) {
+                newMatches = filteredTerms;
+            } else if (filteredTerms.length === 1) {
+                newMatches = filteredTerms[0];
+            }
+            // If filteredTerms.length === 0, newMatches stays null
+        } else if (currentMatches === term) {
+            newMatches = null;
+        }
+        
+        onMatchChange(questionData.id, definition, newMatches);
+    }, [isSubmitted, matches, onMatchChange, questionData.id]);
 
     const shouldShowFeedback = (isSubmitted || isIndividuallyChecked) && feedback;
 
@@ -92,34 +135,46 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
                 <h4 className="font-medium text-gray-600 mb-2">Definiciones (Suelta aquí)</h4>
                 {/* Use shuffledDefinitions directly */}
                 {shuffledDefinitions.map(definition => {
-                    const droppedTerm = matches[definition] || null;
+                    const droppedTerms = matches[definition] || null;
                     const definitionFeedback = shouldShowFeedback ? (feedback?.definitionFeedback?.[definition] ?? null) : null;
+                    
+                    // Convert single term to array for consistent handling
+                    const termsArray = droppedTerms ? (Array.isArray(droppedTerms) ? droppedTerms : [droppedTerms]) : [];
+                    
                     return (
                         <div key={definition} className="relative group">
                             <DropZoneDefinition
                                 definition={definition}
                                 questionId={questionData.id}
-                                droppedTerm={droppedTerm}
+                                droppedTerms={termsArray}
                                 onDrop={handleDrop}
                                 isSubmitted={isSubmitted}
                                 feedback={definitionFeedback}
                             />
-                            {/* Return Term Button */}
-                            {droppedTerm && !isSubmitted && (
-                                <button
-                                    type="button"
-                                    onClick={() => returnTermToAvailable(droppedTerm)}
-                                    className="absolute top-1 right-1 bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full leading-none opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
-                                    aria-label={`Devolver ${droppedTerm}`}
-                                    title={`Devolver ${droppedTerm} a la lista`}
-                                >
-                                    ✕
-                                </button>
+                            {/* Return Term Buttons */}
+                            {termsArray.length > 0 && !isSubmitted && (
+                                <div className="absolute top-1 right-1 flex flex-wrap gap-1">
+                                    {termsArray.map((term, index) => (
+                                        <button
+                                            key={`${term}-${index}`}
+                                            type="button"
+                                            onClick={() => returnTermToAvailable(term, definition)}
+                                            className="bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full leading-none opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                                            aria-label={`Devolver ${term}`}
+                                            title={`Devolver ${term} a la lista`}
+                                        >
+                                            ✕
+                                        </button>
+                                    ))}
+                                </div>
                             )}
                             {/* Feedback Hint for Incorrect Match */}
                             {shouldShowFeedback && definitionFeedback && !definitionFeedback.isCorrect && (
                                 <p className="text-xs text-red-600 mt-1">
-                                    Correcto: "{definitionFeedback.correctTerm || 'N/A'}"
+                                    Correcto: {Array.isArray(definitionFeedback.correctTerms) && definitionFeedback.correctTerms.length > 0
+                                        ? definitionFeedback.correctTerms.map(term => `"${term}"`).join(', ')
+                                        : definitionFeedback.correctTerm ? `"${definitionFeedback.correctTerm}"` : 'N/A'
+                                    }
                                 </p>
                             )}
                         </div>

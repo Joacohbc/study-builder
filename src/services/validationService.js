@@ -53,9 +53,53 @@ export const parseAndValidateSetData = (jsonString, setType) => {
                 case 'matching':
                     if (!Array.isArray(item.terms) || item.terms.length < 1) throw new Error(`Pregunta 'matching' '${item.id}' necesita un array 'terms' con al menos 1 string.`);
                     if (!Array.isArray(item.definitions) || item.definitions.length < 1) throw new Error(`Pregunta 'matching' '${item.id}' necesita un array 'definitions' con al menos 1 string.`);
-                    if (item.terms.length !== item.definitions.length) throw new Error(`Pregunta 'matching' '${item.id}' debe tener el mismo número de 'terms' y 'definitions'.`);
-                    if (!item.correctMatches || typeof item.correctMatches !== 'object' || Object.keys(item.correctMatches).length !== item.terms.length) throw new Error(`Pregunta 'matching' '${item.id}' necesita un objeto 'correctMatches' con una entrada para cada término.`);
-                    Object.entries(item.correctMatches).forEach(([term, definition]) => { if (!item.terms.includes(term) || !item.definitions.includes(definition)) throw new Error(`En pregunta 'matching' '${item.id}', cada clave/valor en 'correctMatches' debe existir en 'terms' y 'definitions' respectivamente.`); });
+                    if (!item.correctMatches || typeof item.correctMatches !== 'object') throw new Error(`Pregunta 'matching' '${item.id}' necesita un objeto 'correctMatches'.`);
+                    
+                    // Validate correctMatches format - can be either:
+                    // Format 1: { term: definition } (traditional 1:1 mapping)
+                    // Format 2: { definition: [term1, term2] } or { definition: term } (multiple terms per definition)
+                    
+                    let allTermsReferenced = new Set();
+                    let allDefinitionsReferenced = new Set();
+                    
+                    Object.entries(item.correctMatches).forEach(([key, value]) => {
+                        if (item.terms.includes(key)) {
+                            // Format 1: key is a term, value should be a definition
+                            if (typeof value !== 'string' || !item.definitions.includes(value)) {
+                                throw new Error(`En pregunta 'matching' '${item.id}', si la clave '${key}' es un término, el valor debe ser una definición válida.`);
+                            }
+                            allTermsReferenced.add(key);
+                            allDefinitionsReferenced.add(value);
+                        } else if (item.definitions.includes(key)) {
+                            // Format 2: key is a definition, value should be term(s)
+                            if (Array.isArray(value)) {
+                                value.forEach(term => {
+                                    if (typeof term !== 'string' || !item.terms.includes(term)) {
+                                        throw new Error(`En pregunta 'matching' '${item.id}', si la clave '${key}' es una definición, cada término en el array debe ser válido.`);
+                                    }
+                                    allTermsReferenced.add(term);
+                                });
+                            } else if (typeof value === 'string') {
+                                if (!item.terms.includes(value)) {
+                                    throw new Error(`En pregunta 'matching' '${item.id}', si la clave '${key}' es una definición, el valor '${value}' debe ser un término válido.`);
+                                }
+                                allTermsReferenced.add(value);
+                            } else {
+                                throw new Error(`En pregunta 'matching' '${item.id}', el valor para la definición '${key}' debe ser un string o array de strings.`);
+                            }
+                            allDefinitionsReferenced.add(key);
+                        } else {
+                            throw new Error(`En pregunta 'matching' '${item.id}', la clave '${key}' no existe ni en 'terms' ni en 'definitions'.`);
+                        }
+                    });
+                    
+                    // Ensure all terms are referenced in correctMatches
+                    item.terms.forEach(term => {
+                        if (!allTermsReferenced.has(term)) {
+                            throw new Error(`En pregunta 'matching' '${item.id}', el término '${term}' no está referenciado en 'correctMatches'.`);
+                        }
+                    });
+                    
                     break;
                 case 'fill-in-the-blanks': {
                     if (!item.blanks || typeof item.blanks !== 'object') throw new Error(`Pregunta 'fill-in-the-blanks' '${item.id}' necesita un objeto 'blanks'.`);

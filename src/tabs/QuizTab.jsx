@@ -53,13 +53,38 @@ const QuizTab = ({ onQuizComplete }) => {
     }, []);
 
     // Callback to handle answer changes from matching questions
-    const handleMatchChange = useCallback((questionId, definition, term) => {
+    const handleMatchChange = useCallback((questionId, definition, terms) => {
         setAnswers(prevAnswers => {
             const currentMatches = prevAnswers[questionId] || {}; // Get current matches for this question
             const newMatches = { ...currentMatches };
-            if (term === null) { delete newMatches[definition]; }
-            else { Object.keys(newMatches).forEach(defKey => { if (newMatches[defKey] === term) { delete newMatches[defKey]; } }); newMatches[definition] = term; }
-            return { ...prevAnswers, [questionId]: newMatches, };
+            
+            if (terms === null) { 
+                delete newMatches[definition]; 
+            } else {
+                // Remove any previous instances of these terms from other definitions
+                const termsToRemove = Array.isArray(terms) ? terms : [terms];
+                Object.keys(newMatches).forEach(defKey => {
+                    if (defKey !== definition) {
+                        const currentValue = newMatches[defKey];
+                        if (Array.isArray(currentValue)) {
+                            const filteredTerms = currentValue.filter(term => !termsToRemove.includes(term));
+                            if (filteredTerms.length === 0) {
+                                delete newMatches[defKey];
+                            } else if (filteredTerms.length === 1) {
+                                newMatches[defKey] = filteredTerms[0];
+                            } else {
+                                newMatches[defKey] = filteredTerms;
+                            }
+                        } else if (currentValue && termsToRemove.includes(currentValue)) {
+                            delete newMatches[defKey];
+                        }
+                    }
+                });
+                
+                newMatches[definition] = terms;
+            }
+            
+            return { ...prevAnswers, [questionId]: newMatches };
         });
     }, []);
 
