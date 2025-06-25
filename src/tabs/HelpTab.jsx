@@ -145,6 +145,29 @@ const HelpTab = () => {
                 </ul>
                 <pre className={codeBlockStyle}><code>{HELP_TAB_CONTENT.fillInTheBlanksExample}</code></pre>
             </div>
+            
+            {/* Image Support Section */}
+            <div className="mb-6">
+                <h3 className="text-lg font-medium mb-2">{HELP_TAB_CONTENT.imageSupportTitle}</h3>
+                <p className="text-gray-700 mb-3">{HELP_TAB_CONTENT.imageSupportIntro}</p>
+                
+                <h4 className="font-medium mb-2">{HELP_TAB_CONTENT.imageSupportFormatTitle}</h4>
+                <ul className="list-disc list-inside ml-4 my-2 space-y-1">
+                    {HELP_TAB_CONTENT.imageSupportFormatList.map((item, index) => (
+                        <li key={index} className="text-gray-700">{item}</li>
+                    ))}
+                </ul>
+                
+                <h4 className="font-medium mb-2">{HELP_TAB_CONTENT.imageSupportGuidelines}</h4>
+                <ul className="list-disc list-inside ml-4 my-2 space-y-1">
+                    {HELP_TAB_CONTENT.imageGuidelinesList.map((item, index) => (
+                        <li key={index} className="text-gray-700">{item}</li>
+                    ))}
+                </ul>
+                
+                <h4 className="font-medium mb-2">Ejemplo con imagen:</h4>
+                <pre className={codeBlockStyle}><code>{HELP_TAB_CONTENT.imageSupportExample}</code></pre>
+            </div>
         </div>
     );
 };

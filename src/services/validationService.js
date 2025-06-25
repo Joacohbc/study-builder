@@ -28,6 +28,18 @@ export const parseAndValidateSetData = (jsonString, setType) => {
             if (!item.type || typeof item.type !== 'string') throw new Error(`Pregunta '${item.id}' necesita un 'type' (string).`);
             if (!item.question || typeof item.question !== 'string') throw new Error(`Pregunta '${item.id}' necesita una 'question' (string).`);
 
+            // --- Optional Image Validation ---
+            if (item.image !== undefined) {
+                if (typeof item.image !== 'string' || item.image.trim() === '') {
+                    throw new Error(`Pregunta '${item.id}': Si se proporciona 'image', debe ser un string base64 no vacío.`);
+                }
+                // Basic base64 validation (optional - check if it looks like base64)
+                const base64Pattern = /^(?:data:image\/[a-zA-Z]*;base64,)?[A-Za-z0-9+/]*={0,2}$/;
+                if (!base64Pattern.test(item.image)) {
+                    throw new Error(`Pregunta '${item.id}': 'image' debe ser una cadena base64 válida o incluir el prefijo data:image.`);
+                }
+            }
+
             switch (item.type) {
                 case 'single':
                     if (!Array.isArray(item.options) || item.options.length < 2) throw new Error(`Pregunta 'single' '${item.id}' necesita un array 'options' con al menos 2 strings.`);
@@ -95,7 +107,19 @@ export const parseAndValidateSetData = (jsonString, setType) => {
             if (!item.back || typeof item.back !== 'string' || item.back.trim() === '') {
                 throw new Error(`Flashcard '${item.id}' necesita una propiedad 'back' (string) no vacía.`);
             }
-            const allowedKeys = ['id', 'front', 'back'];
+            
+            // --- Optional Image Validation for Flashcards ---
+            if (item.image !== undefined) {
+                if (typeof item.image !== 'string' || item.image.trim() === '') {
+                    throw new Error(`Flashcard '${item.id}': Si se proporciona 'image', debe ser un string base64 no vacío.`);
+                }
+                const base64Pattern = /^(?:data:image\/[a-zA-Z]*;base64,)?[A-Za-z0-9+/]*={0,2}$/;
+                if (!base64Pattern.test(item.image)) {
+                    throw new Error(`Flashcard '${item.id}': 'image' debe ser una cadena base64 válida o incluir el prefijo data:image.`);
+                }
+            }
+            
+            const allowedKeys = ['id', 'front', 'back', 'image'];
             Object.keys(item).forEach(key => {
                 if (!allowedKeys.includes(key)) {
                     console.warn(`Flashcard '${item.id}' tiene una propiedad inesperada: '${key}'. Será ignorada o puedes eliminarla.`);

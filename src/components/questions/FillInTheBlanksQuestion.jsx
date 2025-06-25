@@ -1,4 +1,5 @@
 import React from 'react';
+import QuestionImage from '../common/QuestionImage';
 
 // FillInTheBlanksQuestion Component
 // Removed unused questionIndex prop
@@ -60,6 +61,15 @@ const FillInTheBlanksQuestion = ({ questionData, selectedAnswers = {}, onChange,
 
     return (
         <div className="text-gray-800 leading-relaxed">
+            {/* Question Image */}
+            {questionData.image && (
+                <QuestionImage 
+                    imageData={questionData.image} 
+                    altText={`Imagen para la pregunta: ${questionData.question}`}
+                    className="mb-4"
+                />
+            )}
+            
             {renderQuestionText()}
             {/* Show overall feedback only if needed and the whole question is incorrect */}
             {shouldShowFeedback && feedback && !feedback.isCorrect && (

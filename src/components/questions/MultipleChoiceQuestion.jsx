@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { shuffleArray } from '../../utils/helpers';
+import QuestionImage from '../common/QuestionImage';
 
 // MultipleChoiceQuestion Component
 const MultipleChoiceQuestion = ({ questionData, questionIndex, selectedAnswers = [], onChange, isSubmitted, feedback, isIndividuallyChecked }) => {
@@ -23,7 +24,16 @@ const MultipleChoiceQuestion = ({ questionData, questionIndex, selectedAnswers =
     const shouldShowFeedback = (isSubmitted || isIndividuallyChecked) && feedback;
 
     return (
-        <div className="space-y-3"> 
+        <div className="space-y-3">
+            {/* Question Image */}
+            {questionData.image && (
+                <QuestionImage 
+                    imageData={questionData.image} 
+                    altText={`Imagen para la pregunta: ${questionData.question}`}
+                    className="mb-4"
+                />
+            )}
+            
             {shuffledOptions.map((option, index) => {
                 const inputId = `q${questionIndex}_option${index}`;
                 const isSelected = selectedAnswers.includes(option);

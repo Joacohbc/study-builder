@@ -23,6 +23,7 @@ Debes proporcionar dos arrays JSON separados con el siguiente formato:
     * \`id\`: String único (ej: "fc_1").
     * \`front\`: String con el contenido del frente de la tarjeta (pregunta, término o concepto).
     * \`back\`: String con el contenido del dorso de la tarjeta (respuesta, definición o explicación).
+    * \`image\` (opcional): String con imagen en formato base64 o data URL. Se mostrará en ambos lados de la tarjeta.
 
     *Ejemplo:*
     \`\`\`json
@@ -33,12 +34,23 @@ Debes proporcionar dos arrays JSON separados con el siguiente formato:
     }
     \`\`\`
 
+    *Ejemplo con imagen:*
+    \`\`\`json
+    {
+      "id": "fc_with_image",
+      "front": "¿Qué forma geométrica es esta?",
+      "back": "Círculo",
+      "image": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDAiIGZpbGw9ImJsdWUiLz48L3N2Zz4="
+    }
+    \`\`\`
+
 2.  **Opción Única (\`single\`):**
     * \`id\`: String único (ej: "q_single_1").
     * \`type\`: "single".
     * \`question\`: String con la pregunta.
     * \`options\`: Array de strings con las posibles respuestas (incluye la correcta). Debe haber al menos 2 opciones. Crea distractores plausibles pero incorrectos.
     * \`correctAnswer\`: String que coincide exactamente con la respuesta correcta dentro del array \`options\`.
+    * \`image\` (opcional): String con imagen en formato base64 o data URL.
 
     *Ejemplo:*
     \`\`\`json
@@ -48,6 +60,17 @@ Debes proporcionar dos arrays JSON separados con el siguiente formato:
       "question": "¿Cuál es la función principal del componente X?",
       "options": ["Almacenar datos", "Procesar entrada", "Mostrar info", "Gestionar red"],
       "correctAnswer": "Procesar entrada"
+    }\`\`\`
+
+    *Ejemplo con imagen:*
+    \`\`\`json
+    {
+      "id": "q_single_with_image",
+      "type": "single", 
+      "question": "¿Qué forma geométrica se muestra en la imagen?",
+      "options": ["Círculo", "Cuadrado", "Triángulo", "Rectángulo"],
+      "correctAnswer": "Círculo",
+      "image": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDAiIGZpbGw9ImJsdWUiLz48L3N2Zz4="
     }
     \`\`\`
 
@@ -57,6 +80,7 @@ Debes proporcionar dos arrays JSON separados con el siguiente formato:
     * \`question\`: String con la pregunta (indicar selección múltiple).
     * \`options\`: Array de strings con posibles respuestas (incluye correctas). Al menos 3 opciones.
     * \`correctAnswers\`: Array de strings que coinciden con *todas* las respuestas correctas en \`options\`.
+    * \`image\` (opcional): String con imagen en formato base64 o data URL.
 
     *Ejemplo:*
     \`\`\`json
@@ -75,6 +99,7 @@ Debes proporcionar dos arrays JSON separados con el siguiente formato:
     * \`question\`: String con la instrucción (ej: "Une cada término con su definición:").
     * \`terms\`: Array de strings (términos clave).
     * \`definitions\`: Array de strings (definiciones). Mismo número que términos.
+    * \`image\` (opcional): String con imagen en formato base64 o data URL.
     * \`correctMatches\`: Objeto { término: definición_correcta }. Cada término/definición debe ser único aquí.
 
     *Ejemplo:*
@@ -209,7 +234,8 @@ export const HELP_TAB_CONTENT = {
     flashcardFormatList: [
         "id: Identificador único para la flashcard (string, ej: \"fc1\").",
         "front: Contenido del frente de la tarjeta (pregunta, término o concepto).",
-        "back: Contenido del dorso de la tarjeta (respuesta, definición o explicación)."
+        "back: Contenido del dorso de la tarjeta (respuesta, definición o explicación).",
+        "image (opcional): Imagen en formato base64 o data URL."
     ],
     flashcardExample: `{
     "id": "fc_example",
@@ -303,5 +329,31 @@ export const HELP_TAB_CONTENT = {
             "correctAnswer": "abajo"
         }
     }
+}`,
+    
+    // Image Support Section
+    imageSupportTitle: "📷 Soporte de Imágenes",
+    imageSupportIntro: "Tanto las preguntas de cuestionario como las flashcards pueden incluir imágenes mediante el campo opcional 'image'.",
+    imageSupportFormatTitle: "Formato de Imagen:",
+    imageSupportFormatList: [
+        "Formato: String con imagen codificada en base64",
+        "Con prefijo: 'data:image/jpeg;base64,/9j/4AAQSkZJRgAB...'",
+        "Sin prefijo: '/9j/4AAQSkZJRgABAQEAYABgAAD...' (se añadirá automáticamente)",
+        "Tipos soportados: JPEG, PNG, GIF, WebP, SVG"
+    ],
+    imageSupportGuidelines: "Recomendaciones:",
+    imageGuidelinesList: [
+        "Mantén las imágenes por debajo de 2MB para un rendimiento óptimo",
+        "Usa imágenes relevantes que complementen el contenido educativo",
+        "Considera la accesibilidad: las imágenes se mostrarán con texto alternativo",
+        "Las imágenes se redimensionan automáticamente para ajustarse al contenedor"
+    ],
+    imageSupportExample: `{
+    "id": "q_with_image",
+    "type": "single",
+    "question": "¿Qué animal se muestra en la imagen?",
+    "options": ["Perro", "Gato", "Pájaro", "Pez"],
+    "correctAnswer": "Gato",
+    "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD..."
 }`
 };

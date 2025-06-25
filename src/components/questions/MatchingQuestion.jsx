@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'; // Imp
 import { shuffleArray } from '../../utils/helpers';
 import DraggableTerm from '../dnd/DraggableTerm';
 import DropZoneDefinition from '../dnd/DropZoneDefinition';
+import QuestionImage from '../common/QuestionImage';
 
 // MatchingQuestion Component
 const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitted, feedback, isIndividuallyChecked }) => {
@@ -48,6 +49,17 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Question Image */}
+            {questionData.image && (
+                <div className="md:col-span-2">
+                    <QuestionImage 
+                        imageData={questionData.image} 
+                        altText={`Imagen para la pregunta: ${questionData.question}`}
+                        className="mb-4"
+                    />
+                </div>
+            )}
+            
             {/* Available Terms Section */}
             <div className="space-y-3">
                 <h4 className="font-medium text-gray-600 mb-2">Términos (Arrastra desde aquí)</h4>

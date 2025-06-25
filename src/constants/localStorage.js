@@ -42,6 +42,15 @@ export const defaultQuizData = [
                 "correctAnswer": "RAM"
             }
         }
+    },
+    // --- Example with Image (Small sample base64 image) ---
+    {
+        id: 'q_img_example_1',
+        type: 'single',
+        question: '¿Qué forma geométrica se muestra en la imagen?',
+        options: ['Círculo', 'Cuadrado', 'Triángulo', 'Rectángulo'],
+        correctAnswer: 'Círculo',
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjQwIiBmaWxsPSIjM0I4MkY2IiBzdHJva2U9IiMxRTQwQUYiIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4K'
     }
 ];
 
@@ -71,6 +80,12 @@ export const defaultFlashcardData = [
         id: 'fc_default_3',
         front: 'Fórmula del agua',
         back: 'H₂O'
+    },
+    {
+        id: 'fc_img_example_1',
+        front: 'Forma geométrica básica',
+        back: 'Círculo',
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjQwIiBmaWxsPSIjRUY0NDQ0IiBzdHJva2U9IiNEQzI2MjYiIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4K'
     }
 ];
 

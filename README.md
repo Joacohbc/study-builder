@@ -9,6 +9,7 @@ A web application built with React and Vite to create, manage, and use interacti
 *   **Multiple Content Types**: 
     * **Quizzes**: Single-choice, multiple-choice, matching questions, and fill-in-the-blanks.
     * **Flashcards**: Simple front/back card format for memorization exercises.
+    * **Image Support**: Both quizzes and flashcards can include base64-encoded images.
 *   **Integrated Editor**: Create and modify both quiz and flashcard sets directly in the application.
 *   **Local Storage**: Saves your sets in the browser's local storage.
 *   **Interactive Experience**: 
@@ -66,15 +67,37 @@ The application supports two main types of content with the following structures
 {
     "id": "fc_example",
     "front": "Capital of France",
-    "back": "Paris"
+    "back": "Paris",
+    "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD..." 
 }
 ```
 
+Note: The `image` field is optional and should contain a base64-encoded image string.
+
 ### Quiz Question Formats
 
-*   **Single Choice**: `{ id, type: 'single', question, options, correctAnswer }`
-*   **Multiple Choice**: `{ id, type: 'multiple', question, options, correctAnswers: [] }`
-*   **Matching**: `{ id, type: 'matching', question, terms: [], definitions: [], correctMatches: {} }`
+*   **Single Choice**: `{ id, type: 'single', question, options, correctAnswer, image? }`
+*   **Multiple Choice**: `{ id, type: 'multiple', question, options, correctAnswers: [], image? }`
+*   **Matching**: `{ id, type: 'matching', question, terms: [], definitions: [], correctMatches: {}, image? }`
 *   **Fill-in-the-Blanks**: `{ id, type: 'fill-in-the-blanks', question, blanks: {} }`
 
-See the Help tab in the application for detailed format examples and validation rules.
+#### Image Support for Questions and Flashcards
+
+Both quiz questions and flashcards support optional images through the `image` field:
+
+- **Format**: Base64-encoded string with or without data URL prefix
+- **Accepted formats**: `data:image/jpeg;base64,...` or just the base64 string
+- **Supported image types**: JPEG, PNG, GIF, WebP, SVG
+- **Recommended size**: Keep images under 2MB for optimal performance
+
+**Example with image**:
+```json
+{
+    "id": "q_visual_1",
+    "type": "single",
+    "question": "What shape is shown in the image?",
+    "options": ["Circle", "Square", "Triangle", "Rectangle"],
+    "correctAnswer": "Circle",
+    "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+}
+```

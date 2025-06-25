@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import '../theme/Flashcard.css';
+import QuestionImage from '../common/QuestionImage';
 
 const Flashcard = ({ card, isFlipped, onFlip, index }) => {
     const frontContentRef = useRef(null);
@@ -92,6 +93,18 @@ const Flashcard = ({ card, isFlipped, onFlip, index }) => {
                 {/* Front Side */}
                 <div className="flashcard-front backface-hidden">
                     <div className="flashcard-badge">Término</div>
+                    
+                    {/* Front Image */}
+                    {card.image && (
+                        <div className="flashcard-image-container mb-3">
+                            <QuestionImage 
+                                imageData={card.image} 
+                                altText={`Imagen para: ${card.front}`}
+                                className="max-h-32 object-contain mx-auto"
+                            />
+                        </div>
+                    )}
+                    
                     <div 
                         ref={frontContentRef} 
                         className="flashcard-content"
@@ -106,6 +119,18 @@ const Flashcard = ({ card, isFlipped, onFlip, index }) => {
                 {/* Back Side */}
                 <div className="flashcard-back backface-hidden">
                     <div className="flashcard-badge">Definición</div>
+                    
+                    {/* Back Image (optional - you can also show the same image on both sides) */}
+                    {card.image && (
+                        <div className="flashcard-image-container mb-3">
+                            <QuestionImage 
+                                imageData={card.image} 
+                                altText={`Imagen para: ${card.front}`}
+                                className="max-h-32 object-contain mx-auto"
+                            />
+                        </div>
+                    )}
+                    
                     <div 
                         ref={backContentRef} 
                         className="flashcard-content"
