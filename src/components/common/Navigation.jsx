@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import QuizIcon from '../../icons/QuizIcon';
 import CardIcon from '../../icons/CardIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -10,42 +11,43 @@ import HelpIcon from '../../icons/HelpIcon';
  */
 const Navigation = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   
   const navItems = [
     {
       path: '/quiz',
       icon: QuizIcon,
-      label: 'Quiz',
+      label: t('navigation.quiz'),
       id: 'quiz'
     },
     {
       path: '/flashcards',
       icon: CardIcon,
-      label: 'Flashcards',
+      label: t('navigation.flashcards'),
       id: 'flashcards'
     },
     {
       path: '/editor',
       icon: EditIcon,
-      label: 'Editor de Sets',
+      label: t('navigation.editor'),
       id: 'editor'
     },
     {
       path: '/import',
       icon: ImportExportIcon,
-      label: 'Importar',
+      label: t('navigation.import'),
       id: 'import'
     },
     {
       path: '/export',
       icon: ImportExportIcon,
-      label: 'Exportar',
+      label: t('navigation.export'),
       id: 'export'
     },
     {
       path: '/help',
       icon: HelpIcon,
-      label: 'Ayuda',
+      label: t('navigation.help'),
       id: 'help'
     }
   ];

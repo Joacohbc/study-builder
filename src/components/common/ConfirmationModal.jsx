@@ -1,16 +1,25 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmationModal = ({ 
   isOpen, 
   onClose, 
   onConfirm, 
-  title = "Confirmar acción", 
-  message = "¿Estás seguro de que quieres continuar?",
-  confirmText = "Confirmar",
-  cancelText = "Cancelar",
+  title, 
+  message,
+  confirmText,
+  cancelText,
   type = "default" // default, danger, warning, success
 }) => {
+  const { t } = useTranslation();
+  
   if (!isOpen) return null;
+
+  // Use translation fallbacks if no custom text provided
+  const modalTitle = title || t('confirmModal.title');
+  const modalMessage = message || t('confirmModal.message');
+  const modalConfirmText = confirmText || t('common.confirm');
+  const modalCancelText = cancelText || t('common.cancel');
 
   const getButtonColors = () => {
     switch (type) {
@@ -66,14 +75,14 @@ const ConfirmationModal = ({
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">
-              {title}
+              {modalTitle}
             </h3>
           </div>
           
           {/* Content */}
           <div className="mb-6">
             <p className="text-gray-600 leading-relaxed">
-              {message}
+              {modalMessage}
             </p>
           </div>
           
@@ -83,14 +92,14 @@ const ConfirmationModal = ({
               onClick={onClose}
               className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${buttonColors.cancel}`}
             >
-              {cancelText}
+              {modalCancelText}
             </button>
             <button
               onClick={onConfirm}
               className={`px-5 py-2.5 rounded-lg font-medium text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${buttonColors.confirm}`}
               autoFocus
             >
-              {confirmText}
+              {modalConfirmText}
             </button>
           </div>
         </div>

@@ -1,8 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import TrophyIcon from '../../icons/TrophyIcon';
 import RefreshIcon from '../../icons/RefreshIcon';
 
 const QuizResults = ({ results, activeSetName, onRetry, shuffledQuestions }) => {
+    const { t } = useTranslation();
+    
     if (!results) return null;
 
     // Calculate for SVG circular progress bar
@@ -70,7 +73,7 @@ const QuizResults = ({ results, activeSetName, onRetry, shuffledQuestions }) => 
                     <div className="absolute inset-4 rounded-full bg-white flex items-center justify-center">
                         <div className="text-center">
                             <div className="text-2xl font-bold text-gray-800">{results.score}</div>
-                            <div className="text-xs text-gray-500">de {results.total}</div>
+                            <div className="text-xs text-gray-500">{t('quiz.results.score', { correct: results.score, total: results.total, percentage: displayPercentage.toFixed(0) })}</div>
                         </div>
                     </div>
                 </div> {/* Closing div for "relative h-32 w-32" */}
@@ -80,14 +83,14 @@ const QuizResults = ({ results, activeSetName, onRetry, shuffledQuestions }) => 
                         {results.total > 0 ? Math.round((results.score / results.total) * 100) : 0}%
                     </span>
                     <span className="text-gray-600 ml-1 text-sm">
-                        de aciertos
+                        {t('quiz.results.score', { correct: results.score, total: results.total, percentage: displayPercentage.toFixed(0) })}
                     </span>
                 </p>
             </div> {/* Closing div for "flex flex-col items-center mb-8" */}
 
             {/* Container for detailed feedback (optional, basic feedback shown here) */}
             <div id="feedback" className="space-y-4 max-w-2xl mx-auto">
-                <h3 className="text-lg font-medium text-gray-800 mb-2">Detalle de respuestas</h3>
+                <h3 className="text-lg font-medium text-gray-800 mb-2">{t('quiz.results.title')}</h3>
 
                 {/* Map over the *shuffled* questions again to show feedback in displayed order */}
                 {shuffledQuestions.map((qData, index) => {

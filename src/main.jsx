@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import './i18n/i18n'; // Import i18n configuration
 import { StudySetProvider } from './contexts/StudySetContext'; // Import the provider
 import { ConfirmationModalProvider } from './contexts/ConfirmationModalContext'; // Import the modal provider
 

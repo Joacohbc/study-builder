@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Hook personalizado para manejar la navegación de la aplicación
@@ -6,14 +7,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 export const useAppNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const navigationMap = {
-    '/quiz': 'Quiz',
-    '/flashcards': 'Flashcards', 
-    '/editor': 'Editor',
-    '/import': 'Importar',
-    '/export': 'Exportar',
-    '/help': 'Ayuda'
+    '/quiz': t('navigation.quiz'),
+    '/flashcards': t('navigation.flashcards'), 
+    '/editor': t('navigation.editor'),
+    '/import': t('navigation.import'),
+    '/export': t('navigation.export'),
+    '/help': t('navigation.help')
   };
 
   const getCurrentPageName = () => {

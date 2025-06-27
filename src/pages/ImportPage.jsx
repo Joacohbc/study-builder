@@ -1,10 +1,12 @@
 import React, { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StudySetContext } from '../contexts/StudySetContext';
 import ImportExportIcon from '../icons/ImportExportIcon';
 import ClipboardControls from '../components/editor/ClipboardControls';
 import FileDropZone from '../components/common/FileDropZone';
 
 const ImportPage = () => {
+  const { t } = useTranslation();
   const { handleSaveAsNewSet } = useContext(StudySetContext);
 
   const [importText, setImportText] = useState('');
@@ -24,13 +26,13 @@ const ImportPage = () => {
       const text = await navigator.clipboard.readText();
       if (text) {
         setImportText(text);
-        showClipboardStatus('JSON pegado desde el portapapeles', 'success');
+        showClipboardStatus(t('editor.jsonPasted'), 'success');
       } else {
-        showClipboardStatus('No hay contenido en el portapapeles', 'error');
+        showClipboardStatus(t('import.noContent'), 'error');
       }
     } catch (error) {
       console.error('Error al pegar:', error);
-      showClipboardStatus('Error al leer del portapapeles', 'error');
+      showClipboardStatus(t('import.errorReading'), 'error');
     }
   };
 
@@ -40,7 +42,7 @@ const ImportPage = () => {
       const parsed = typeof data === 'string' ? JSON.parse(data) : data;
       
       if (!parsed.data) {
-        throw new Error('Formato de datos inválido: falta propiedad "data"');
+        throw new Error(t('import.invalidFormat'));
       }
 
       // Validar estructura de datos

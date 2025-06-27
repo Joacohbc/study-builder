@@ -1,12 +1,15 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const useConfirmationModal = () => {
+  const { t } = useTranslation();
+  
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: '',
     message: '',
-    confirmText: 'Confirmar',
-    cancelText: 'Cancelar',
+    confirmText: '',
+    cancelText: '',
     type: 'default',
     onConfirm: null,
     onCancel: null
@@ -16,10 +19,10 @@ export const useConfirmationModal = () => {
     return new Promise((resolve) => {
       setModalState({
         isOpen: true,
-        title: options.title || 'Confirmar acción',
-        message: options.message || '¿Estás seguro de que quieres continuar?',
-        confirmText: options.confirmText || 'Confirmar',
-        cancelText: options.cancelText || 'Cancelar',
+        title: options.title || t('confirmModal.title'),
+        message: options.message || t('confirmModal.message'),
+        confirmText: options.confirmText || t('common.confirm'),
+        cancelText: options.cancelText || t('common.cancel'),
         type: options.type || 'default',
         onConfirm: () => {
           setModalState(prev => ({ ...prev, isOpen: false }));
@@ -31,7 +34,7 @@ export const useConfirmationModal = () => {
         }
       });
     });
-  }, []);
+  }, [t]);
 
   const hideModal = useCallback(() => {
     setModalState(prev => ({ ...prev, isOpen: false }));
@@ -42,26 +45,26 @@ export const useConfirmationModal = () => {
     return showConfirmation({
       ...options,
       type: 'danger',
-      title: options.title || 'Acción peligrosa',
-      confirmText: options.confirmText || 'Eliminar'
+      title: options.title || t('editor.dangerousAction'),
+      confirmText: options.confirmText || t('common.delete')
     });
-  }, [showConfirmation]);
+  }, [showConfirmation, t]);
 
   const confirmWarning = useCallback((options = {}) => {
     return showConfirmation({
       ...options,
       type: 'warning',
-      title: options.title || 'Advertencia'
+      title: options.title || t('common.warning')
     });
-  }, [showConfirmation]);
+  }, [showConfirmation, t]);
 
   const confirmSuccess = useCallback((options = {}) => {
     return showConfirmation({
       ...options,
       type: 'success',
-      title: options.title || 'Confirmar acción'
+      title: options.title || t('editor.confirmAction')
     });
-  }, [showConfirmation]);
+  }, [showConfirmation, t]);
 
   return {
     modalState,

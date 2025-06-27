@@ -1,9 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import QuestionImage from '../common/QuestionImage';
 
 // FillInTheBlanksQuestion Component
 // Removed unused questionIndex prop
 const FillInTheBlanksQuestion = ({ questionData, selectedAnswers = {}, onChange, isSubmitted, feedback, isIndividuallyChecked }) => { // Added isIndividuallyChecked
+    const { t } = useTranslation();
 
     const handleChange = (event, blankId) => {
         if (!isSubmitted) { // isSubmitted controls disabled state
@@ -45,9 +47,9 @@ const FillInTheBlanksQuestion = ({ questionData, selectedAnswers = {}, onChange,
                         onChange={(e) => handleChange(e, blankId)}
                         disabled={isSubmitted} // Use isSubmitted for disabled attribute
                         className={selectClass}
-                        aria-label={`Respuesta para ${blankId}`}
+                        aria-label={t('quiz.answerForBlank', { blankId })}
                     >
-                        <option value="" disabled>Selecciona...</option>
+                        <option value="" disabled>{t('common.selectOption')}</option>
                         {blankData.options.map(option => (
                             <option key={option} value={option}>{option}</option>
                         ))}

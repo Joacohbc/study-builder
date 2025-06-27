@@ -1,6 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Navigation from '../components/common/Navigation';
+import LanguageSelector from '../components/common/LanguageSelector';
 import AppRoutes from '../routes/AppRoutes';
 import RouteDebugger from '../components/debug/RouteDebugger';
 import GitHubIcon from '../icons/GitHubIcon';
@@ -14,6 +16,7 @@ import BookIcon from '../icons/BookIcon';
  */
 const AppLayout = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   const currentPath = location.pathname;
 
   // --- Scroll Navigation Functions ---
@@ -119,6 +122,9 @@ const AppLayout = () => {
 
   return (
     <div className="bg-gradient-to-br from-indigo-50 to-blue-100 font-sans min-h-screen relative">
+      {/* Language Selector */}
+      <LanguageSelector />
+      
       {/* Formas decorativas */}
       <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
       <div className="absolute top-0 left-0 w-32 h-32 md:w-64 md:h-64 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animation-delay-2000"></div>
@@ -146,16 +152,16 @@ const AppLayout = () => {
               <BookIcon />
             </div>
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
-              Study Builder
+              {t('help.studyBuilderTitle')}
             </h1>
-            <p className="text-gray-600 mt-2">Tu herramienta de estudio personalizada</p>
+            <p className="text-gray-600 mt-2">{t('help.studyBuilderDescription')}</p>
           </div>
 
           {/* Navigation */}
           <Navigation />
 
-          {/* Main Content */}
-          <div className="mt-6">
+          {/* Main content */}
+          <div className="mt-8">
             <AppRoutes />
           </div>
         </div>
@@ -183,7 +189,7 @@ const AppLayout = () => {
           <button
             onClick={scrollToFirstUnanswered}
             className="p-3 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-150"
-            title="Primera pregunta sin contestar"
+            title={t('tooltips.firstUnanswered')}
           >
             <QuestionIcon className="w-5 h-5" />
           </button>
@@ -193,7 +199,7 @@ const AppLayout = () => {
         <button
           onClick={handleScrollToBottom}
           className="p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150"
-          title={currentPath === '/quiz' ? "Siguiente pregunta respondida (o ir abajo)" : "Ir abajo del todo"}
+          title={currentPath === '/quiz' ? t('tooltips.nextQuestion') : t('tooltips.goToBottom')}
         >
           <ArrowDownIcon className="w-5 h-5" />
         </button>
