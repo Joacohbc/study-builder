@@ -11,6 +11,8 @@ export const useAppNavigation = () => {
     '/quiz': 'Quiz',
     '/flashcards': 'Flashcards', 
     '/editor': 'Editor',
+    '/import': 'Importar',
+    '/export': 'Exportar',
     '/help': 'Ayuda'
   };
 
@@ -21,6 +23,8 @@ export const useAppNavigation = () => {
   const navigateToQuiz = () => navigate('/quiz');
   const navigateToFlashcards = () => navigate('/flashcards');
   const navigateToEditor = () => navigate('/editor');
+  const navigateToImport = () => navigate('/import');
+  const navigateToExport = () => navigate('/export');
   const navigateToHelp = () => navigate('/help');
 
   const isCurrentPage = (path) => location.pathname === path;
@@ -31,6 +35,8 @@ export const useAppNavigation = () => {
     navigateToQuiz,
     navigateToFlashcards,
     navigateToEditor,
+    navigateToImport,
+    navigateToExport,
     navigateToHelp,
     isCurrentPage,
     navigate

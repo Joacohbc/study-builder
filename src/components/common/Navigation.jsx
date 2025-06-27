@@ -31,10 +31,16 @@ const Navigation = () => {
       id: 'editor'
     },
     {
-      path: '/import-export',
+      path: '/import',
       icon: ImportExportIcon,
-      label: 'Importar/Exportar',
-      id: 'import-export'
+      label: 'Importar',
+      id: 'import'
+    },
+    {
+      path: '/export',
+      icon: ImportExportIcon,
+      label: 'Exportar',
+      id: 'export'
     },
     {
       path: '/help',
