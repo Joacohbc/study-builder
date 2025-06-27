@@ -1,6 +1,6 @@
 import React, { createContext, useState, useCallback } from 'react';
-import { useQuizData } from '../hooks/useQuizData';
-import { useFlashcardData } from '../hooks/useFlashcardData';
+import { useQuizData } from '@/hooks/useQuizData';
+import { useFlashcardData } from '@/hooks/useFlashcardData';
 
 const StudySetContext = createContext();
 

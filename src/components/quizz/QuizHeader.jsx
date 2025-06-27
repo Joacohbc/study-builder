@@ -1,8 +1,8 @@
 import React from 'react';
-import QuestionIcon from '../../icons/QuestionIcon';
-import ResetIcon from '../../icons/ResetIcon';
-import ProgressBar from '../ProgressBar';
-import { useGlobalConfirmation } from '../../contexts/ConfirmationModalContext';
+import QuestionIcon from '@/icons/QuestionIcon';
+import ResetIcon from '@/icons/ResetIcon';
+import ProgressBar from '@/components/ProgressBar';
+import { useGlobalConfirmation } from '@/contexts/ConfirmationModalContext';
 
 const QuizHeader = ({ activeSetName, quizData, isSubmitted, completionPercentage, onClearProgress }) => {
     const { confirmDanger } = useGlobalConfirmation();

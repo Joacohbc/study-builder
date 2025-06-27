@@ -1,9 +1,9 @@
 import React from 'react';
-import SingleChoiceQuestion from '../questions/SingleChoiceQuestion';
-import MultipleChoiceQuestion from '../questions/MultipleChoiceQuestion';
-import MatchingQuestion from '../questions/MatchingQuestion';
-import FillInTheBlanksQuestion from '../questions/FillInTheBlanksQuestion';
-import CheckIcon from '../../icons/CheckIcon';
+import SingleChoiceQuestion from '@/components/questions/SingleChoiceQuestion';
+import MultipleChoiceQuestion from '@/components/questions/MultipleChoiceQuestion';
+import MatchingQuestion from '@/components/questions/MatchingQuestion';
+import FillInTheBlanksQuestion from '@/components/questions/FillInTheBlanksQuestion';
+import CheckIcon from '@/icons/CheckIcon';
 
 const QuestionList = ({
     questions,

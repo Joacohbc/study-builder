@@ -1,6 +1,6 @@
 import { BrowserRouter, HashRouter } from 'react-router-dom';
-import { useStudySets } from './contexts/useStudySets';
-import AppLayout from './layout/AppLayout';
+import { useStudySets } from '@/contexts/useStudySets';
+import AppLayout from '@/layout/AppLayout';
 
 function App() {
     const {

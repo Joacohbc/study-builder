@@ -1,8 +1,8 @@
 import React from 'react';
-import { useStudySets } from '../contexts/useStudySets';
-import EditorTab from '../tabs/EditorTab';
-import QuizIcon from '../icons/QuizIcon';
-import CardIcon from '../icons/CardIcon';
+import { useStudySets } from '@/contexts/useStudySets';
+import EditorTab from '@/tabs/EditorTab';
+import QuizIcon from '@/icons/QuizIcon';
+import CardIcon from '@/icons/CardIcon';
 
 /**
  * Página del Editor con selector de tipo de contenido

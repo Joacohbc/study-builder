@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatBase64Image, isValidBase64Image } from '../../utils/imageUtils';
+import { formatBase64Image, isValidBase64Image } from '@/utils/imageUtils';
 
 // QuestionImage Component - Handles display of base64 images in questions
 const QuestionImage = ({ imageData, altText = "Question image", className = "" }) => {

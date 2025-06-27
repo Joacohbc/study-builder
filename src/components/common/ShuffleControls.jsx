@@ -1,6 +1,6 @@
 import React from 'react';
-import ShuffleIcon from '../../icons/ShuffleIcon';
-import ResetIcon from '../../icons/ResetIcon';
+import ShuffleIcon from '@/icons/ShuffleIcon';
+import ResetIcon from '@/icons/ResetIcon';
 
 /**
  * Reusable ShuffleControls component for handling shuffle and reset order functionality

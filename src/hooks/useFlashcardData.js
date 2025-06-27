@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { loadAllSets, saveAllSets, loadActiveSetName, saveActiveSetName, getDefaultsForType } from '../services/storageManager';
+import { loadAllSets, saveAllSets, loadActiveSetName, saveActiveSetName, getDefaultsForType } from '@/services/storageManager';
 
 const flashcardDefaults = getDefaultsForType('flashcard');
 

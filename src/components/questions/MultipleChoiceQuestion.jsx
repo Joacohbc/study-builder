@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { shuffleArray } from '../../utils/helpers';
-import QuestionImage from '../common/QuestionImage';
+import { shuffleArray } from '@/utils/helpers';
+import QuestionImage from '@/components/common/QuestionImage';
 
 // MultipleChoiceQuestion Component
 const MultipleChoiceQuestion = ({ questionData, questionIndex, selectedAnswers = [], onChange, isSubmitted, feedback, isIndividuallyChecked }) => {

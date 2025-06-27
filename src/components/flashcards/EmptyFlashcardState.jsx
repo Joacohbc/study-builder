@@ -1,4 +1,4 @@
-import EmptyFlashcardIcon from '../../icons/EmptyFlashcardIcon';
+import EmptyFlashcardIcon from '@/icons/EmptyFlashcardIcon';
 
 const EmptyFlashcardState = ({ activeFlashcardSetName, onGoToEditor }) => {
     return (

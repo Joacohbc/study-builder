@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { shuffleArray } from '../utils/helpers';
+import { shuffleArray } from '@/utils/helpers';
 
 /**
  * Custom hook to manage shuffle functionality for any data array
