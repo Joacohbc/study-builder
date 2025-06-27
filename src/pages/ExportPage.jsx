@@ -1,7 +1,7 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { StudySetContext } from '../contexts/StudySetContext';
-import ImportExportIcon from '../icons/ImportExportIcon';
-import ClipboardControls from '../components/editor/ClipboardControls';
+import { StudySetContext } from '@/contexts/StudySetContext';
+import ImportExportIcon from '@/icons/ImportExportIcon';
+import ClipboardControls from '@/components/editor/ClipboardControls';
 
 const ExportPage = () => {
   const {

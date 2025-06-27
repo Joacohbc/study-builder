@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Flashcard from './Flashcard';
-import ShowAllIcon from '../../icons/ShowAllIcon'; // Importa el nuevo ícono
-import HideAllIcon from '../../icons/HideAllIcon'; // Importa el nuevo ícono
+import Flashcard from '@/components/flashcards/Flashcard';
+import ShowAllIcon from '@/icons/ShowAllIcon'; // Importa el nuevo ícono
+import HideAllIcon from '@/icons/HideAllIcon'; // Importa el nuevo ícono
 
 const GridFlashcardView = ({ flashcards, activeFlashcardSetName }) => {
     const [flippedStates, setFlippedStates] = useState({});

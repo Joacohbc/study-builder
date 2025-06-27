@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import '../theme/Flashcard.css';
-import QuestionImage from '../common/QuestionImage';
+import '@/components/theme/Flashcard.css';
+import QuestionImage from '@/components/common/QuestionImage';
 
 const Flashcard = ({ card, isFlipped, onFlip, index }) => {
     const frontContentRef = useRef(null);

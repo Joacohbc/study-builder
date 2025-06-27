@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { AI_PROMPT, HELP_TAB_CONTENT } from '../constants/helpTabConstants';
-import { copyToClipboard } from '../services/clipboardManager';
+import { AI_PROMPT, HELP_TAB_CONTENT } from '@/constants/helpTabConstants';
+import { copyToClipboard } from '@/services/clipboardManager';
 
 // Help Tab Component: Displays static help content using JSX and adds Copy Prompt button
 const HelpTab = () => {

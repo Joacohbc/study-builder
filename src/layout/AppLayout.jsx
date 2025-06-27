@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Navigation from '../components/common/Navigation';
-import AppRoutes from '../routes/AppRoutes';
-import RouteDebugger from '../components/debug/RouteDebugger';
-import GitHubIcon from '../icons/GitHubIcon';
-import ArrowUpIcon from '../icons/ArrowUpIcon';
-import ArrowDownIcon from '../icons/ArrowDownIcon';
-import QuestionIcon from '../icons/QuestionIcon';
-import BookIcon from '../icons/BookIcon';
+import Navigation from '@/components/common/Navigation';
+import AppRoutes from '@/routes/AppRoutes';
+import RouteDebugger from '@/components/debug/RouteDebugger';
+import GitHubIcon from '@/icons/GitHubIcon';
+import ArrowUpIcon from '@/icons/ArrowUpIcon';
+import ArrowDownIcon from '@/icons/ArrowDownIcon';
+import QuestionIcon from '@/icons/QuestionIcon';
+import BookIcon from '@/icons/BookIcon';
 
 /**
  * Layout principal de la aplicación con React Router

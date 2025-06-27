@@ -1,9 +1,9 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import QuizIcon from '../../icons/QuizIcon';
-import CardIcon from '../../icons/CardIcon';
-import EditIcon from '../../icons/EditIcon';
-import ImportExportIcon from '../../icons/ImportExportIcon';
-import HelpIcon from '../../icons/HelpIcon';
+import QuizIcon from '@/icons/QuizIcon';
+import CardIcon from '@/icons/CardIcon';
+import EditIcon from '@/icons/EditIcon';
+import ImportExportIcon from '@/icons/ImportExportIcon';
+import HelpIcon from '@/icons/HelpIcon';
 
 /**
  * Componente de navegación usando React Router

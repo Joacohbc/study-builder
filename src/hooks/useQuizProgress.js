@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { saveQuizProgress, loadQuizProgress, clearQuizProgress } from '../services/storageManager';
-import { useShuffle } from './useShuffle';
+import { saveQuizProgress, loadQuizProgress, clearQuizProgress } from '@/services/storageManager';
+import { useShuffle } from '@/hooks/useShuffle';
 
 export const useQuizProgress = (activeQuizSetName, originalQuestions, isSubmitted) => {
     const [answers, setAnswers] = useState({});

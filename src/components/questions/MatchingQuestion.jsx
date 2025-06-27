@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'; // Import useMemo
-import { shuffleArray } from '../../utils/helpers';
-import DraggableTerm from '../dnd/DraggableTerm';
-import DropZoneDefinition from '../dnd/DropZoneDefinition';
-import QuestionImage from '../common/QuestionImage';
+import { shuffleArray } from '@/utils/helpers';
+import DraggableTerm from '@/components/dnd/DraggableTerm';
+import DropZoneDefinition from '@/components/dnd/DropZoneDefinition';
+import QuestionImage from '@/components/common/QuestionImage';
 
 // MatchingQuestion Component
 const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitted, feedback, isIndividuallyChecked }) => {

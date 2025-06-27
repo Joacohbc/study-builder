@@ -1,5 +1,5 @@
 import React from 'react';
-import QuestionImage from '../common/QuestionImage';
+import QuestionImage from '@/components/common/QuestionImage';
 
 // FillInTheBlanksQuestion Component
 // Removed unused questionIndex prop

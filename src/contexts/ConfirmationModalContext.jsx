@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
-import { useConfirmationModal } from '../hooks/useConfirmationModal';
-import ConfirmationModal from '../components/common/ConfirmationModal';
+import { useConfirmationModal } from '@/hooks/useConfirmationModal';
+import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const ConfirmationModalContext = createContext();
 

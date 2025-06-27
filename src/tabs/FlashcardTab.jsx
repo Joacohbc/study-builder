@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useStudySets } from '../contexts/useStudySets';
-import EmptyFlashcardIcon from '../icons/EmptyFlashcardIcon';
-import SingleFlashcardView from '../components/flashcards/SingleFlashcardView';
-import GridFlashcardView from '../components/flashcards/GridFlashcardView';
-import ShuffleControls from '../components/common/ShuffleControls';
-import { useShuffle } from '../hooks/useShuffle';
-import EmptyFlashcardState from '../components/flashcards/EmptyFlashcardState';
+import { useStudySets } from '@/contexts/useStudySets';
+import EmptyFlashcardIcon from '@/icons/EmptyFlashcardIcon';
+import SingleFlashcardView from '@/components/flashcards/SingleFlashcardView';
+import GridFlashcardView from '@/components/flashcards/GridFlashcardView';
+import ShuffleControls from '@/components/common/ShuffleControls';
+import { useShuffle } from '@/hooks/useShuffle';
+import EmptyFlashcardState from '@/components/flashcards/EmptyFlashcardState';
 
 // FlashcardTab Component: Displays flashcards and handles navigation
 const FlashcardTab = () => {

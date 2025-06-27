@@ -1,11 +1,11 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import QuizTab from '../tabs/QuizTab';
-import EditorPage from '../pages/EditorPage';
-import ImportPage from '../pages/ImportPage';
-import ExportPage from '../pages/ExportPage';
-import HelpTab from '../tabs/HelpTab';
-import FlashcardTab from '../tabs/FlashcardTab';
+import QuizTab from '@/tabs/QuizTab';
+import EditorPage from '@/pages/EditorPage';
+import ImportPage from '@/pages/ImportPage';
+import ExportPage from '@/pages/ExportPage';
+import HelpTab from '@/tabs/HelpTab';
+import FlashcardTab from '@/tabs/FlashcardTab';
 
 /**
  * Configuración declarativa de rutas de la aplicación

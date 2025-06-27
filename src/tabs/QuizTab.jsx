@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useStudySets } from '../contexts/useStudySets';
-import { evaluateSingleQuestion } from '../services/evaluationService';
-import QuizHeader from '../components/quizz/QuizHeader';
-import NoQuestions from '../components/quizz/NoQuestions';
-import QuestionList from '../components/quizz/QuestionList';
-import QuizResults from '../components/quizz/QuizResults';
-import ShuffleControls from '../components/common/ShuffleControls';
-import { useQuizProgress } from '../hooks/useQuizProgress';
-import CheckIcon from '../icons/CheckIcon';
+import { useStudySets } from '@/contexts/useStudySets';
+import { evaluateSingleQuestion } from '@/services/evaluationService';
+import QuizHeader from '@/components/quizz/QuizHeader';
+import NoQuestions from '@/components/quizz/NoQuestions';
+import QuestionList from '@/components/quizz/QuestionList';
+import QuizResults from '@/components/quizz/QuizResults';
+import ShuffleControls from '@/components/common/ShuffleControls';
+import { useQuizProgress } from '@/hooks/useQuizProgress';
+import CheckIcon from '@/icons/CheckIcon';
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
 const QuizTab = ({ onQuizComplete }) => {

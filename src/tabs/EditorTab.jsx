@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useStudySets } from '../contexts/useStudySets'; // Import useStudySets
-import { useGlobalConfirmation } from '../contexts/ConfirmationModalContext';
-import { parseAndValidateSetData } from '../services/validationService';
-import { copyToClipboard, readFromClipboard } from '../services/clipboardManager';
-import { loadQuizProgress, clearQuizProgress } from '../services/storageManager';
-import { calculateProgressPercentage } from '../utils/progressUtils';
-import SetManagementControls from '../components/editor/SetManagementControls';
-import ClipboardControls from '../components/editor/ClipboardControls';
-import SaveActions from '../components/editor/SaveActions';
+import React, { useState, useRef, useEffect } from 'react';
+import { useStudySets } from '@/contexts/useStudySets'; // Import useStudySets
+import { useGlobalConfirmation } from '@/contexts/ConfirmationModalContext';
+import { parseAndValidateSetData } from '@/services/validationService';
+import { copyToClipboard, readFromClipboard } from '@/services/clipboardManager';
+import { loadQuizProgress, clearQuizProgress } from '@/services/storageManager';
+import { calculateProgressPercentage } from '@/utils/progressUtils';
+import SetManagementControls from '@/components/editor/SetManagementControls';
+import ClipboardControls from '@/components/editor/ClipboardControls';
+import SaveActions from '@/components/editor/SaveActions';
 
 // Editor Tab Component: Allows editing the quiz questions and managing sets
 const EditorTab = () => { // Removed all props
