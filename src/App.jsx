@@ -20,7 +20,7 @@ function App() {
     }
 
     return (
-        <BrowserRouter basename="/study-builder">
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
             <AppLayout />
         </BrowserRouter>
     );
