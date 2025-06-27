@@ -1,0 +1,328 @@
+{
+  "navigation": {
+    "quiz": "Cuestionario",
+    "flashcards": "Flashcards",
+    "editor": "Editor de Sets",
+    "import": "Importar",
+    "export": "Exportar",
+    "help": "Ayuda"
+  },
+  "common": {
+    "loading": "Cargando datos...",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "retry": "Reintentar",
+    "reset": "Restablecer",
+    "copy": "Copiar",
+    "paste": "Pegar",
+    "import": "Importar",
+    "export": "Exportar",
+    "close": "Cerrar",
+    "submit": "Enviar",
+    "clear": "Limpiar",
+    "shuffle": "Barajar",
+    "show": "Mostrar",
+    "hide": "Ocultar",
+    "all": "Todo",
+    "none": "Ninguno",
+    "select": "Seleccionar",
+    "selectOption": "Selecciona...",
+    "yes": "Sí",
+    "no": "No",
+    "continue": "Continuar",
+    "finish": "Finalizar",
+    "start": "Iniciar",
+    "stop": "Detener",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información"
+  },
+  "editor": {
+    "title": "Editor de Sets",
+    "editSetType": "Editar tipo de set:",
+    "quizzes": "Cuestionarios",
+    "flashcards": "Flashcards",
+    "setManagement": "Gestión de Sets",
+    "editingSet": "Editando Set",
+    "chooseSet": "Elegir Set:",
+    "loadSet": "Cargar Set",
+    "deleteSet": "Eliminar Set",
+    "resetDefault": "Restablecer Predeterminado",
+    "cannotDeleteDefault": "No se puede eliminar el set predeterminado \"{{setName}}\"",
+    "cannotOverwriteDefault": "No se puede sobrescribir \"{{setName}}\"",
+    "saveChanges": "Guardar Cambios",
+    "saveAsNewSet": "Guardar Como Nuevo Set",
+    "newSetName": "Nombre para el nuevo set ({{type}})",
+    "copyJSON": "Copiar JSON",
+    "pasteJSON": "Pegar JSON",
+    "copyToClipboard": "Copiar todo el JSON al portapapeles",
+    "pasteFromClipboard": "Pegar JSON desde el portapapeles",
+    "jsonCopied": "¡JSON copiado al portapapeles!",
+    "jsonPasted": "JSON pegado desde el portapapeles.",
+    "errorCopying": "Error al copiar JSON al portapapeles.",
+    "errorPasting": "Error al pegar JSON desde el portapapeles o el portapapeles está vacío.",
+    "modifyJson": "Modifica el JSON a continuación. Asegúrate de que el formato sea válido para el tipo '{{type}}' y que cada item tenga un `id` único.",
+    "flashcardRequirement": "Cada flashcard debe tener las propiedades `front` y `back`.",
+    "validationError": "Error de validación ({{type}}): {{message}}. Revisa la sintaxis, estructura, propiedades requeridas e IDs únicos.",
+    "changesSaved": "Cambios guardados en el set '{{setName}' ({{type}}).",
+    "errorSaving": "Error al guardar cambios en '{{setName}' ({{type}}).",
+    "setLoaded": "Set '{{setName}' ({{type}}) cargado.",
+    "setDeleted": "Set \"{{setName}}\" ({{type}}) eliminado.",
+    "errorDeleting": "Error al eliminar el set \"{{setName}}\" ({{type}}).",
+    "defaultSetReset": "Set predeterminado \"{{setName}}\" ({{type}}) restablecido.",
+    "errorResetting": "Error al restablecer el set predeterminado.",
+    "setAlreadyExists": "El set '{{setName}}' ({{type}}) ya existe. ¿Quieres sobrescribirlo?",
+    "setSavedAs": "Set guardado como '{{setName}' ({{type}}). Ahora es el set activo.",
+    "errorSavingAs": "Error al guardar como '{{setName}' ({{type}}).",
+    "enterSetName": "Por favor, introduce un nombre para el nuevo set.",
+    "cannotUseReservedName": "No puedes usar el nombre reservado \"{{setName}}\". Elige otro nombre.",
+    "cannotSaveToDefault": "No se pueden guardar cambios directamente en el set predeterminado \"{{setName}}\". Usa \"Guardar Como Nuevo Set\".",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar el set \"{{setName}}\" ({{type}})? Esta acción no se puede deshacer.",
+    "confirmReset": "¿Estás seguro de que quieres restablecer el set predeterminado \"{{setName}}\" ({{type}}) a su contenido original? Todos los cambios realizados en él se perderán.",
+    "confirmOverwrite": "Sobrescribir",
+    "quizProgressWillBeLost": "Se perderá el progreso del cuestionario",
+    "quizProgressMessage": "El set \"{{setName}}\" tiene un progreso del {{percentage}}% completado. {{action}} sobrescribirá este progreso y se perderán las respuestas guardadas. ¿Estás seguro de que quieres continuar?",
+    "quizProgressCleared": "Progreso del cuestionario \"{{setName}}\" eliminado.",
+    "noSetsOfType": "No hay sets de tipo '{{type}}'",
+    "dangerousAction": "Acción peligrosa",
+    "confirmAction": "Confirmar acción"
+  },
+  "quiz": {
+    "title": "Cuestionario",
+    "untitled": "Sin título",
+    "questionsCount": "{{count}} pregunta en este cuestionario",
+    "questionsCount_other": "{{count}} preguntas en este cuestionario",
+    "quizProgress": "Progreso del Cuestionario",
+    "clearProgress": "Limpiar Progreso",
+    "submitAnswers": "Enviar Respuestas",
+    "answersSubmitted": "Respuestas Enviadas",
+    "yourChoice": "Tu elección",
+    "answerForBlank": "Respuesta para {{blankId}}",
+    "noQuestions": "No Hay Preguntas Disponibles",
+    "noQuestionsDesc": "No hay preguntas en el set actual. Ve al Editor para añadir algunas preguntas.",
+    "goToEditor": "Ir al Editor",
+    "results": {
+      "title": "Resultados del Cuestionario",
+      "score": "Puntuación: {{correct}}/{{total}} ({{percentage}}%)",
+      "tryAgain": "Intentar de Nuevo",
+      "correct": "Correcto.",
+      "incorrect": "Incorrecto.",
+      "notAnswered": "No respondida.",
+      "correctAnswer": "La respuesta correcta es: {{answer}}",
+      "correctAnswers": "Las respuestas correctas son: {{answers}}",
+      "correctAnswersSummary": "Respuestas correctas: {{answers}}",
+      "reviewCorrectMatches": "Revisa las uniones correctas arriba."
+    }
+  },
+  "flashcards": {
+    "title": "Flashcards",
+    "noFlashcards": "No Hay Flashcards Disponibles",
+    "noFlashcardsDesc": "No hay flashcards en el set actual. Ve al Editor para añadir algunas flashcards.",
+    "goToEditor": "Ir al Editor",
+    "cardCount": "Tarjeta {{current}} de {{total}}",
+    "front": "Anverso",
+    "back": "Reverso",
+    "flip": "Voltear",
+    "showAll": "Mostrar Todo",
+    "hideAll": "Ocultar Todo",
+    "shuffleCards": "Barajar Tarjetas"
+  },
+  "import": {
+    "title": "Importar Configuración",
+    "subtitle": "Restaura tu configuración de Study Builder",
+    "importConfiguration": "Importar Configuración",
+    "importDescription": "Importa una configuración previamente exportada desde texto o archivo.",
+    "pasteConfiguration": "Pegar configuración:",
+    "pasteHere": "Pega aquí la configuración JSON exportada...",
+    "pasteFromClipboard": "Pegar desde Portapapeles",
+    "pasteClipboardTitle": "Pegar configuración JSON desde el portapapeles",
+    "importFromText": "Importar desde Texto",
+    "importFromFile": "Importar desde archivo:",
+    "importWarning": "⚠️ Advertencia: Importar creará nuevos sets con el sufijo '_imported'. Los sets existentes no serán modificados.",
+    "warningTitle": "Importante",
+    "warningDescription": "Asegúrate de que la configuración sea válida antes de importar. Datos inválidos pueden causar errores.",
+    "configurationImported": "Configuración importada exitosamente: {{quiz}} sets de quiz y {{flashcard}} sets de flashcards",
+    "fileImported": "Archivo importado exitosamente: {{quiz}} sets de quiz y {{flashcard}} sets de flashcards",
+    "pleaseProvideConfiguration": "Por favor, pega la configuración a importar",
+    "invalidFormat": "Formato de datos inválido: falta propiedad \"data\"",
+    "noContent": "No hay contenido en el portapapeles",
+    "errorReading": "Error al leer del portapapeles",
+    "errorProcessing": "Error al procesar archivo"
+  },
+  "export": {
+    "title": "Exportar Configuración",
+    "subtitle": "Respalda tu configuración de Study Builder",
+    "exportConfiguration": "Exportar Configuración",
+    "exportDescription": "Selecciona qué datos quieres exportar y elige el método de exportación.",
+    "dataToExport": "Datos a exportar:",
+    "exportAll": "Todo (Quiz y Flashcards)",
+    "exportQuiz": "Solo Quiz",
+    "exportFlashcards": "Solo Flashcards",
+    "quickActions": "Acciones rápidas:",
+    "copyToClipboard": "Copiar al Portapapeles",
+    "copyConfigTitle": "Copiar configuración exportada al portapapeles",
+    "saveFile": "Guardar archivo:",
+    "downloadJSON": "Descargar JSON",
+    "fileDownloaded": "Archivo descargado exitosamente",
+    "errorDownloading": "Error al descargar el archivo",
+    "configurationCopied": "¡Configuración copiada al portapapeles!",
+    "errorCopying": "Error al copiar al portapapeles"
+  },
+  "help": {
+    "title": "Ayuda / README",
+    "copyPromptButton": "Copiar Prompt para IA Generadora de Preguntas",
+    "copySuccessMessage": "¡Prompt copiado al portapapeles!",
+    "copyErrorMessage": "Error al copiar el prompt.",
+    "copyPromptSubText": "Usa este prompt con una IA (como Gemini, ChatGPT, etc.) para generar preguntas en el formato JSON correcto a partir de tus propios textos o documentos.",
+    "studyBuilderTitle": "Study Builder",
+    "studyBuilderDescription": "Tu herramienta de estudio personalizada",
+    "featuresTitle": "Características",
+    "howToUseTitle": "Cómo Usar",
+    "jsonFormatTitle": "Formato JSON de Preguntas y Flashcards",
+    "imageSupportTitle": "📷 Soporte de Imágenes",
+    "imageSupportIntro": "Tanto las preguntas de cuestionario como las flashcards pueden incluir imágenes mediante el campo opcional 'image'.",
+    "imageSupportFormatTitle": "Formato de Imagen:",
+    "imageSupportGuidelines": "Recomendaciones:",
+    "features": [
+      "Gestión de Sets: Guardar, cargar y eliminar diferentes conjuntos de preguntas o flashcards.",
+      "Preguntas de opción única, múltiple, unir conceptos (arrastrar y soltar) y rellenar huecos (dropdowns).",
+      "Flashcards con frente/dorso y navegación intuitiva.",
+      "Barajado aleatorio de preguntas y opciones/términos al cargar y reintentar (dentro del set activo).",
+      "Retroalimentación instantánea al enviar.",
+      "Puntuación final.",
+      "Edición de Preguntas y Flashcards (JSON) del set activo.",
+      "Ayuda Integrada con prompt para IA."
+    ],
+    "howToUseSteps": [
+      {
+        "title": "Navegar por Pestañas",
+        "description": "Usa los botones (\"Cuestionario\", \"Flashcards\", \"Editor de Sets\", \"Ayuda / README\")."
+      },
+      {
+        "title": "Gestionar Sets (en \"Editor de Sets\")",
+        "subSteps": [
+          "Usa el dropdown y el botón \"Cargar Set Seleccionado\" para elegir qué conjunto de preguntas usar en el cuestionario y editar.",
+          "Usa el botón \"Eliminar Set Seleccionado\" para borrar un set (excepto el predeterminado).",
+          "Usa el botón \"Restablecer 'Preguntas de Ejemplo'\" para volver a la versión original de ese set específico."
+        ]
+      },
+      {
+        "title": "Editar Preguntas (en \"Editor de Sets\")",
+        "subSteps": [
+          "El textarea muestra el JSON del set actualmente cargado.",
+          "Modifica el JSON. ¡Cuidado con la sintaxis y los IDs únicos!",
+          "Usa \"Guardar Cambios\" para actualizar el set actual (no funciona con el set predeterminado).",
+          "Introduce un nombre y usa \"Guardar Como Nuevo Set\" para crear un nuevo conjunto con el contenido del editor. Este nuevo set se volverá el activo."
+        ]
+      },
+      {
+        "title": "Responder (en \"Cuestionario\")",
+        "description": "Responde las preguntas del set activo. Arrastra términos a definiciones para unir. Selecciona opciones en los desplegables para rellenar huecos. Haz clic en \"Enviar Respuestas\"."
+      },
+      {
+        "title": "Ver Resultados",
+        "description": "Se mostrará puntuación y retroalimentación para el set activo."
+      },
+      {
+        "title": "Reintentar",
+        "description": "Usa \"Intentar de Nuevo\" para reiniciar el cuestionario *con el mismo set activo* (se baraja de nuevo)."
+      }
+    ],
+    "jsonFormatDescription": "Cada set es un array de objetos JSON. Cada objeto debe tener una clave id única dentro de ese set.",
+    "flashcardFormatTitle": "Formato de Flashcard",
+    "flashcardFormatList": [
+      "id: Identificador único para la flashcard (string, ej: \"fc1\").",
+      "front: Contenido del frente de la tarjeta (pregunta, término o concepto).",
+      "back: Contenido del dorso de la tarjeta (respuesta, definición o explicación).",
+      "image (opcional): Imagen en formato base64 o data URL."
+    ],
+    "quizQuestionFormatTitle": "Formato de Preguntas de Cuestionario",
+    "quizQuestionFormatList": [
+      "id: Identificador único para la pregunta (string, ej: \"q1\").",
+      "type: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.",
+      "question: Texto de la pregunta o la frase con huecos (string)."
+    ],
+    "singleTypeTitle": "Tipo 'single'",
+    "singleTypeList": [
+      "options: Array de strings (respuestas).",
+      "correctAnswer: String de la respuesta correcta."
+    ],
+    "multipleTypeTitle": "Tipo 'multiple'",
+    "multipleTypeList": [
+      "options: Array de strings (respuestas).",
+      "correctAnswers: Array de strings con las respuestas correctas."
+    ],
+    "matchingTypeTitle": "Tipo 'matching'",
+    "matchingTypeList": [
+      "terms: Array de strings (términos a arrastrar).",
+      "definitions: Array de strings (definiciones/zonas de soltar).",
+      "correctMatches: Objeto con dos formatos posibles:",
+      "  • Formato 1 (tradicional): { término: definición_correcta }",
+      "  • Formato 2 (múltiples términos): { definición: [término1, término2] } o { definición: término }"
+    ],
+    "fillInTheBlanksTitle": "Tipo 'fill-in-the-blanks'",
+    "fillInTheBlanksList": [
+      "question: String con el texto y placeholders como [BLANK_ID].",
+      "blanks: Objeto donde cada clave es un BLANK_ID (sin corchetes) del texto.",
+      "Cada valor en blanks es un objeto con:"
+    ],
+    "fillInTheBlanksSubList": [
+      "options: Array de strings (opciones para ese hueco).",
+      "correctAnswer: String de la respuesta correcta para ese hueco."
+    ],
+    "imageSupportFormatList": [
+      "Formato: String con imagen codificada en base64",
+      "Con prefijo: 'data:image/jpeg;base64,/9j/4AAQSkZJRgAB...'",
+      "Sin prefijo: '/9j/4AAQSkZJRgABAQEAYABgAAD...' (se añadirá automáticamente)",
+      "Tipos soportados: JPEG, PNG, GIF, WebP, SVG"
+    ],
+    "imageGuidelinesList": [
+      "Mantén las imágenes por debajo de 2MB para un rendimiento óptimo",
+      "Usa imágenes relevantes que complementen el contenido educativo",
+      "Considera la accesibilidad: las imágenes se mostrarán con texto alternativo",
+      "Las imágenes se redimensionan automáticamente para ajustarse al contenedor"
+    ]
+  },
+  "language": {
+    "current": "Español",
+    "switchTo": "English",
+    "switch": "Cambiar Idioma"
+  },
+  "confirmModal": {
+    "title": "Confirmar acción",
+    "message": "¿Estás seguro de que quieres continuar?",
+    "dangerousAction": "Acción peligrosa",
+    "warning": "Advertencia",
+    "confirmAction": "Confirmar acción"
+  },
+  "progressBar": {
+    "label": "Progreso",
+    "percentage": "{{percentage}}%"
+  },
+  "fileDropZone": {
+    "dragDrop": "Arrastra y suelta un archivo JSON aquí",
+    "or": "o",
+    "clickToSelect": "haz clic para seleccionar un archivo",
+    "supportedFormats": "Formatos soportados: .json",
+    "fileSelected": "Archivo seleccionado: {{fileName}}",
+    "processing": "Procesando archivo...",
+    "errorReading": "Error al leer archivo: {{error}}"
+  },
+  "editorPage": {
+    "title": "Editor de Sets"
+  },
+  "tooltips": {
+    "firstUnanswered": "Primera pregunta sin contestar",
+    "nextQuestion": "Siguiente pregunta respondida (o ir abajo)",
+    "goToBottom": "Ir abajo del todo"
+  }
+}

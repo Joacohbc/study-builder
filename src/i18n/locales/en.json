@@ -1,0 +1,328 @@
+{
+  "navigation": {
+    "quiz": "Quiz",
+    "flashcards": "Flashcards",
+    "editor": "Set Editor",
+    "import": "Import",
+    "export": "Export",
+    "help": "Help"
+  },
+  "common": {
+    "loading": "Loading data...",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "retry": "Retry",
+    "reset": "Reset",
+    "copy": "Copy",
+    "paste": "Paste",
+    "import": "Import",
+    "export": "Export",
+    "close": "Close",
+    "submit": "Submit",
+    "clear": "Clear",
+    "shuffle": "Shuffle",
+    "show": "Show",
+    "hide": "Hide",
+    "all": "All",
+    "none": "None",
+    "select": "Select",
+    "selectOption": "Select...",
+    "yes": "Yes",
+    "no": "No",
+    "continue": "Continue",
+    "finish": "Finish",
+    "start": "Start",
+    "stop": "Stop",
+    "pause": "Pause",
+    "resume": "Resume",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "editor": {
+    "title": "Set Editor",
+    "editSetType": "Edit set type:",
+    "quizzes": "Quizzes",
+    "flashcards": "Flashcards",
+    "setManagement": "Set Management",
+    "editingSet": "Editing Set",
+    "chooseSet": "Choose Set:",
+    "loadSet": "Load Set",
+    "deleteSet": "Delete Set",
+    "resetDefault": "Reset Default",
+    "cannotDeleteDefault": "Cannot delete the default set \"{{setName}}\"",
+    "cannotOverwriteDefault": "Cannot overwrite \"{{setName}}\"",
+    "saveChanges": "Save Changes",
+    "saveAsNewSet": "Save as New Set",
+    "newSetName": "Name for the new set ({{type}})",
+    "copyJSON": "Copy JSON",
+    "pasteJSON": "Paste JSON",
+    "copyToClipboard": "Copy all JSON to clipboard",
+    "pasteFromClipboard": "Paste JSON from clipboard",
+    "jsonCopied": "JSON copied to clipboard!",
+    "jsonPasted": "JSON pasted from clipboard.",
+    "errorCopying": "Error copying JSON to clipboard.",
+    "errorPasting": "Error pasting JSON from clipboard or clipboard is empty.",
+    "modifyJson": "Modify the JSON below. Make sure the format is valid for the '{{type}}' type and that each item has a unique `id`.",
+    "flashcardRequirement": "Each flashcard must have `front` and `back` properties.",
+    "validationError": "Validation error ({{type}}): {{message}}. Check syntax, structure, required properties and unique IDs.",
+    "changesSaved": "Changes saved in set '{{setName}' ({{type}}).",
+    "errorSaving": "Error saving changes in '{{setName}' ({{type}}).",
+    "setLoaded": "Set '{{setName}' ({{type}}) loaded.",
+    "setDeleted": "Set \"{{setName}}\" ({{type}}) deleted.",
+    "errorDeleting": "Error deleting set \"{{setName}}\" ({{type}}).",
+    "defaultSetReset": "Default set \"{{setName}}\" ({{type}}) reset.",
+    "errorResetting": "Error resetting default set.",
+    "setAlreadyExists": "Set '{{setName}}' ({{type}}) already exists. Do you want to overwrite it?",
+    "setSavedAs": "Set saved as '{{setName}' ({{type}}). It is now the active set.",
+    "errorSavingAs": "Error saving as '{{setName}}' ({{type}}).",
+    "enterSetName": "Please enter a name for the new set.",
+    "cannotUseReservedName": "You cannot use the reserved name \"{{setName}}\". Choose another name.",
+    "cannotSaveToDefault": "Cannot save changes directly to the default set \"{{setName}}\". Use \"Save as New Set\".",
+    "confirmDelete": "Are you sure you want to delete the set \"{{setName}}\" ({{type}})? This action cannot be undone.",
+    "confirmReset": "Are you sure you want to reset the default set \"{{setName}}\" ({{type}}) to its original content? All changes made to it will be lost.",
+    "confirmOverwrite": "Overwrite",
+    "quizProgressWillBeLost": "Quiz progress will be lost",
+    "quizProgressMessage": "The set \"{{setName}}\" has {{percentage}}% progress completed. {{action}} will overwrite this progress and saved answers will be lost. Are you sure you want to continue?",
+    "quizProgressCleared": "Quiz progress \"{{setName}}\" cleared.",
+    "noSetsOfType": "No sets of type '{{type}}'",
+    "dangerousAction": "Dangerous action",
+    "confirmAction": "Confirm action"
+  },
+  "quiz": {
+    "title": "Quiz",
+    "untitled": "Untitled",
+    "questionsCount": "{{count}} question in this quiz",
+    "questionsCount_other": "{{count}} questions in this quiz",
+    "quizProgress": "Quiz Progress",
+    "clearProgress": "Clear Progress",
+    "submitAnswers": "Submit Answers",
+    "answersSubmitted": "Answers Submitted",
+    "yourChoice": "Your choice",
+    "answerForBlank": "Answer for {{blankId}}",
+    "noQuestions": "No Questions Available",
+    "noQuestionsDesc": "There are no questions in the current set. Go to the Editor to add some questions.",
+    "goToEditor": "Go to Editor",
+    "results": {
+      "title": "Quiz Results",
+      "score": "Score: {{correct}}/{{total}} ({{percentage}}%)",
+      "tryAgain": "Try Again",
+      "correct": "Correct.",
+      "incorrect": "Incorrect.",
+      "notAnswered": "Not answered.",
+      "correctAnswer": "The correct answer is: {{answer}}",
+      "correctAnswers": "The correct answers are: {{answers}}",
+      "correctAnswersSummary": "Correct answers: {{answers}}",
+      "reviewCorrectMatches": "Review the correct matches above."
+    }
+  },
+  "flashcards": {
+    "title": "Flashcards",
+    "noFlashcards": "No Flashcards Available",
+    "noFlashcardsDesc": "There are no flashcards in the current set. Go to the Editor to add some flashcards.",
+    "goToEditor": "Go to Editor",
+    "cardCount": "Card {{current}} of {{total}}",
+    "front": "Front",
+    "back": "Back",
+    "flip": "Flip",
+    "showAll": "Show All",
+    "hideAll": "Hide All",
+    "shuffleCards": "Shuffle Cards"
+  },
+  "import": {
+    "title": "Import Configuration",
+    "subtitle": "Restore your Study Builder configuration",
+    "importConfiguration": "Import Configuration",
+    "importDescription": "Import a previously exported configuration from text or file.",
+    "pasteConfiguration": "Paste configuration:",
+    "pasteHere": "Paste the exported JSON configuration here...",
+    "pasteFromClipboard": "Paste from Clipboard",
+    "pasteClipboardTitle": "Paste JSON configuration from clipboard",
+    "importFromText": "Import from Text",
+    "importFromFile": "Import from file:",
+    "importWarning": "⚠️ Warning: Importing will create new sets with the suffix '_imported'. Existing sets will not be modified.",
+    "warningTitle": "Important",
+    "warningDescription": "Make sure the configuration is valid before importing. Invalid data may cause errors.",
+    "configurationImported": "Configuration imported successfully: {{quiz}} quiz sets and {{flashcard}} flashcard sets",
+    "fileImported": "File imported successfully: {{quiz}} quiz sets and {{flashcard}} flashcard sets",
+    "pleaseProvideConfiguration": "Please paste the configuration to import",
+    "invalidFormat": "Invalid data format: missing \"data\" property",
+    "noContent": "No content in clipboard",
+    "errorReading": "Error reading from clipboard",
+    "errorProcessing": "Error processing file"
+  },
+  "export": {
+    "title": "Export Configuration", 
+    "subtitle": "Backup your Study Builder configuration",
+    "exportConfiguration": "Export Configuration",
+    "exportDescription": "Select what data you want to export and choose the export method.",
+    "dataToExport": "Data to export:",
+    "exportAll": "All (Quiz and Flashcards)",
+    "exportQuiz": "Quiz Only",
+    "exportFlashcards": "Flashcards Only",
+    "quickActions": "Quick actions:",
+    "copyToClipboard": "Copy to Clipboard",
+    "copyConfigTitle": "Copy exported configuration to clipboard",
+    "saveFile": "Save file:",
+    "downloadJSON": "Download JSON",
+    "fileDownloaded": "File downloaded successfully",
+    "errorDownloading": "Error downloading file",
+    "configurationCopied": "Configuration copied to clipboard!",
+    "errorCopying": "Error copying to clipboard"
+  },
+  "help": {
+    "title": "Help / README", 
+    "copyPromptButton": "Copy AI Question Generator Prompt",
+    "copySuccessMessage": "Prompt copied to clipboard!",
+    "copyErrorMessage": "Error copying prompt.",
+    "copyPromptSubText": "Use this prompt with an AI (like Gemini, ChatGPT, etc.) to generate questions in the correct JSON format from your own texts or documents.",
+    "studyBuilderTitle": "Study Builder",
+    "studyBuilderDescription": "Your personalized study tool",
+    "featuresTitle": "Features",
+    "howToUseTitle": "How to Use",
+    "jsonFormatTitle": "JSON Format for Questions and Flashcards",
+    "imageSupportTitle": "📷 Image Support",
+    "imageSupportIntro": "Both quiz questions and flashcards can include images through the optional 'image' field.",
+    "imageSupportFormatTitle": "Image Format:",
+    "imageSupportGuidelines": "Recommendations:",
+    "features": [
+      "Set Management: Save, load and delete different sets of questions or flashcards.",
+      "Single choice, multiple choice, matching (drag and drop) and fill-in-the-blanks (dropdowns) questions.",
+      "Flashcards with front/back and intuitive navigation.",
+      "Random shuffling of questions and options/terms when loading and retrying (within the active set).",
+      "Instant feedback when submitting.",
+      "Final score.",
+      "Question and Flashcard (JSON) editing of the active set.",
+      "Integrated Help with AI prompt."
+    ],
+    "howToUseSteps": [
+      {
+        "title": "Navigate Tabs",
+        "description": "Use the buttons (\"Quiz\", \"Flashcards\", \"Set Editor\", \"Help / README\")."
+      },
+      {
+        "title": "Manage Sets (in \"Set Editor\")",
+        "subSteps": [
+          "Use the dropdown and \"Load Selected Set\" button to choose which set of questions to use in the quiz and edit.",
+          "Use the \"Delete Selected Set\" button to delete a set (except the default one).",
+          "Use the \"Reset 'Example Questions'\" button to return to the original version of that specific set."
+        ]
+      },
+      {
+        "title": "Edit Questions (in \"Set Editor\")",
+        "subSteps": [
+          "The textarea shows the JSON of the currently loaded set.",
+          "Modify the JSON. Be careful with syntax and unique IDs!",
+          "Use \"Save Changes\" to update the current set (doesn't work with the default set).",
+          "Enter a name and use \"Save as New Set\" to create a new set with the editor content. This new set will become the active one."
+        ]
+      },
+      {
+        "title": "Answer (in \"Quiz\")",
+        "description": "Answer the questions from the active set. Drag terms to definitions to match. Select options in dropdowns to fill blanks. Click \"Submit Answers\"."
+      },
+      {
+        "title": "View Results",
+        "description": "Score and feedback will be shown for the active set."
+      },
+      {
+        "title": "Retry",
+        "description": "Use \"Try Again\" to restart the quiz *with the same active set* (shuffled again)."
+      }
+    ],
+    "jsonFormatDescription": "Each set is an array of JSON objects. Each object must have a unique id key within that set.",
+    "flashcardFormatTitle": "Flashcard Format",
+    "flashcardFormatList": [
+      "id: Unique identifier for the flashcard (string, e.g. \"fc1\").",
+      "front: Front content of the card (question, term or concept).",
+      "back: Back content of the card (answer, definition or explanation).",
+      "image (optional): Image in base64 format or data URL."
+    ],
+    "quizQuestionFormatTitle": "Quiz Question Format",
+    "quizQuestionFormatList": [
+      "id: Unique identifier for the question (string, e.g. \"q1\").",
+      "type: 'single', 'multiple', 'matching', 'fill-in-the-blanks'.",
+      "question: Question text or sentence with blanks (string)."
+    ],
+    "singleTypeTitle": "Type 'single'",
+    "singleTypeList": [
+      "options: Array of strings (answers).",
+      "correctAnswer: String of the correct answer."
+    ],
+    "multipleTypeTitle": "Type 'multiple'",
+    "multipleTypeList": [
+      "options: Array of strings (answers).",
+      "correctAnswers: Array of strings with the correct answers."
+    ],
+    "matchingTypeTitle": "Type 'matching'",
+    "matchingTypeList": [
+      "terms: Array of strings (terms to drag).",
+      "definitions: Array of strings (definitions/drop zones).",
+      "correctMatches: Object with two possible formats:",
+      "  • Format 1 (traditional): { term: correct_definition }",
+      "  • Format 2 (multiple terms): { definition: [term1, term2] } or { definition: term }"
+    ],
+    "fillInTheBlanksTitle": "Type 'fill-in-the-blanks'",
+    "fillInTheBlanksList": [
+      "question: String with text and placeholders like [BLANK_ID].",
+      "blanks: Object where each key is a BLANK_ID (without brackets) from the text.",
+      "Each value in blanks is an object with:"
+    ],
+    "fillInTheBlanksSubList": [
+      "options: Array of strings (options for that blank).",
+      "correctAnswer: String of the correct answer for that blank."
+    ],
+    "imageSupportFormatList": [
+      "Format: String with base64-encoded image",
+      "With prefix: 'data:image/jpeg;base64,/9j/4AAQSkZJRgAB...'",
+      "Without prefix: '/9j/4AAQSkZJRgABAQEAYABgAAD...' (will be added automatically)",
+      "Supported types: JPEG, PNG, GIF, WebP, SVG"
+    ],
+    "imageGuidelinesList": [
+      "Keep images under 2MB for optimal performance",
+      "Use relevant images that complement educational content",
+      "Consider accessibility: images will be displayed with alt text",
+      "Images are automatically resized to fit the container"
+    ]
+  },
+  "language": {
+    "current": "English",
+    "switchTo": "Español",
+    "switch": "Switch Language"
+  },
+  "confirmModal": {
+    "title": "Confirm Action",
+    "message": "Are you sure you want to continue?",
+    "dangerousAction": "Dangerous Action",
+    "warning": "Warning",
+    "confirmAction": "Confirm Action"
+  },
+  "progressBar": {
+    "label": "Progress",
+    "percentage": "{{percentage}}%"
+  },
+  "fileDropZone": {
+    "dragDrop": "Drag and drop a JSON file here",
+    "or": "or",
+    "clickToSelect": "click to select a file",
+    "supportedFormats": "Supported formats: .json",
+    "fileSelected": "File selected: {{fileName}}",
+    "processing": "Processing file...",
+    "errorReading": "Error reading file: {{error}}"
+  },
+  "editorPage": {
+    "title": "Set Editor"
+  },
+  "tooltips": {
+    "firstUnanswered": "First unanswered question",
+    "nextQuestion": "Next answered question (or go down)",
+    "goToBottom": "Go to bottom"
+  }
+}
