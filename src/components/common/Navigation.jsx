@@ -2,6 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import QuizIcon from '../../icons/QuizIcon';
 import CardIcon from '../../icons/CardIcon';
 import EditIcon from '../../icons/EditIcon';
+import ImportExportIcon from '../../icons/ImportExportIcon';
 import HelpIcon from '../../icons/HelpIcon';
 
 /**
@@ -28,6 +29,12 @@ const Navigation = () => {
       icon: EditIcon,
       label: 'Editor de Sets',
       id: 'editor'
+    },
+    {
+      path: '/import-export',
+      icon: ImportExportIcon,
+      label: 'Importar/Exportar',
+      id: 'import-export'
     },
     {
       path: '/help',

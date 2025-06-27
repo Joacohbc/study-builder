@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import QuizTab from '../tabs/QuizTab';
 import EditorPage from '../pages/EditorPage';
+import ImportExportPage from '../pages/ImportExportPage';
 import HelpTab from '../tabs/HelpTab';
 import FlashcardTab from '../tabs/FlashcardTab';
 
@@ -22,6 +23,9 @@ const AppRoutes = () => {
       
       {/* Ruta para Editor */}
       <Route path="/editor" element={<EditorPage />} />
+      
+      {/* Ruta para Importar/Exportar */}
+      <Route path="/import-export" element={<ImportExportPage />} />
       
       {/* Ruta para Ayuda */}
       <Route path="/help" element={<HelpTab />} />
