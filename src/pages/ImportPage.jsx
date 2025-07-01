@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { StudySetContext } from '@/contexts/StudySetContext';
-import ImportExportIcon from '@/icons/ImportExportIcon';
+import ImportIcon from '@/icons/ImportIcon';
 import ClipboardControls from '@/components/editor/ClipboardControls';
 import FileDropZone from '@/components/common/FileDropZone';
 
@@ -146,7 +146,7 @@ const ImportPage = () => {
         {/* Header */}
         <div className="border-b border-gray-200 p-6">
           <div className="flex items-center space-x-3">
-            <ImportExportIcon className="w-8 h-8 text-indigo-600" />
+            <ImportIcon className="w-8 h-8 text-indigo-600" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Importar Configuración</h1>
               <p className="text-gray-600">Restaura tu configuración de Study Builder</p>
@@ -208,7 +208,7 @@ const ImportPage = () => {
                     onClick={handleImportFromText}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 text-sm"
                   >
-                    <ImportExportIcon className="w-4 h-4" />
+                    <ImportIcon className="w-4 h-4" />
                     Importar desde Texto
                   </button>
                 </div>

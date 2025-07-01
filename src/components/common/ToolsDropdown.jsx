@@ -31,6 +31,11 @@ const ToolsDropdown = ({ items }) => {
     };
   }, []);
 
+  // Cerrar dropdown cuando cambia la ruta (fix para mobile)
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
   const handleNavigation = (path) => {
     navigate(path);
     setIsOpen(false);

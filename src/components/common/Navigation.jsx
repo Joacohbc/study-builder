@@ -2,7 +2,8 @@ import { NavLink, useLocation } from 'react-router-dom';
 import QuizIcon from '@/icons/QuizIcon';
 import CardIcon from '@/icons/CardIcon';
 import EditIcon from '@/icons/EditIcon';
-import ImportExportIcon from '@/icons/ImportExportIcon';
+import ImportIcon from '@/icons/ImportIcon';
+import ExportIcon from '@/icons/ExportIcon';
 import HelpIcon from '@/icons/HelpIcon';
 import ToolsDropdown from './ToolsDropdown';
 
@@ -36,13 +37,13 @@ const Navigation = () => {
     },
     {
       path: '/import',
-      icon: ImportExportIcon,
+      icon: ImportIcon,
       label: 'Importar',
       id: 'import'
     },
     {
       path: '/export',
-      icon: ImportExportIcon,
+      icon: ExportIcon,
       label: 'Exportar',
       id: 'export'
     },

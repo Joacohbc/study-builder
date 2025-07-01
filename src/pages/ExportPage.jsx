@@ -1,6 +1,6 @@
 import React, { useState, useContext, useCallback } from 'react';
 import { StudySetContext } from '@/contexts/StudySetContext';
-import ImportExportIcon from '@/icons/ImportExportIcon';
+import ExportIcon from '@/icons/ExportIcon';
 import ClipboardControls from '@/components/editor/ClipboardControls';
 
 const ExportPage = () => {
@@ -95,7 +95,7 @@ const ExportPage = () => {
         {/* Header */}
         <div className="border-b border-gray-200 p-6">
           <div className="flex items-center space-x-3">
-            <ImportExportIcon className="w-8 h-8 text-indigo-600" />
+            <ExportIcon className="w-8 h-8 text-indigo-600" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Exportar Configuración</h1>
               <p className="text-gray-600">Respalda tu configuración de Study Builder</p>
