@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { StudySetContext } from '@/contexts/StudySetContext';
 import ImportExportIcon from '@/icons/ImportExportIcon';
 import ClipboardControls from '@/components/editor/ClipboardControls';
@@ -13,10 +13,51 @@ const ExportPage = () => {
     activeFlashcardData
   } = useContext(StudySetContext);
 
-  const [exportFormat, setExportFormat] = useState('all'); // 'all', 'quiz', 'flashcard'
+  // Initialize selection with all sets by default
+  const [selectedQuizSets, setSelectedQuizSets] = useState([]);
+  const [selectedFlashcardSets, setSelectedFlashcardSets] = useState([]);
+
   const [successMessage, setSuccessMessage] = useState('');
   const [exportError, setExportError] = useState('');
   const [clipboardMessage, setClipboardMessage] = useState({ message: '', type: '' });
+
+  // Initialize selections when sets are loaded
+  useEffect(() => {
+    if (quizSets) {
+      setSelectedQuizSets(Object.keys(quizSets));
+    }
+  }, [quizSets]);
+
+  useEffect(() => {
+    if (flashcardSets) {
+      setSelectedFlashcardSets(Object.keys(flashcardSets));
+    }
+  }, [flashcardSets]);
+
+  // Selection handlers
+  const toggleQuizSet = (setName) => {
+    setSelectedQuizSets(prev =>
+      prev.includes(setName)
+        ? prev.filter(n => n !== setName)
+        : [...prev, setName]
+    );
+  };
+
+  const toggleFlashcardSet = (setName) => {
+    setSelectedFlashcardSets(prev =>
+      prev.includes(setName)
+        ? prev.filter(n => n !== setName)
+        : [...prev, setName]
+    );
+  };
+
+  const selectAllQuiz = (select) => {
+    setSelectedQuizSets(select ? Object.keys(quizSets) : []);
+  };
+
+  const selectAllFlashcard = (select) => {
+    setSelectedFlashcardSets(select ? Object.keys(flashcardSets) : []);
+  };
 
   // Generar datos de exportación
   const generateExportData = useCallback(() => {
@@ -26,24 +67,40 @@ const ExportPage = () => {
       data: {}
     };
 
-    if (exportFormat === 'all' || exportFormat === 'quiz') {
+    // Export Selected Quiz Sets
+    if (selectedQuizSets.length > 0) {
+      const filteredSets = {};
+      selectedQuizSets.forEach(setName => {
+        if (quizSets[setName]) {
+          filteredSets[setName] = quizSets[setName];
+        }
+      });
+
       exportData.data.quiz = {
-        sets: quizSets,
-        activeSet: activeQuizSetName,
-        activeData: activeQuizData
+        sets: filteredSets,
+        activeSet: selectedQuizSets.includes(activeQuizSetName) ? activeQuizSetName : null,
+        activeData: selectedQuizSets.includes(activeQuizSetName) ? activeQuizData : null
       };
     }
 
-    if (exportFormat === 'all' || exportFormat === 'flashcard') {
+    // Export Selected Flashcard Sets
+    if (selectedFlashcardSets.length > 0) {
+      const filteredSets = {};
+      selectedFlashcardSets.forEach(setName => {
+        if (flashcardSets[setName]) {
+          filteredSets[setName] = flashcardSets[setName];
+        }
+      });
+
       exportData.data.flashcard = {
-        sets: flashcardSets,
-        activeSet: activeFlashcardSetName,
-        activeData: activeFlashcardData
+        sets: filteredSets,
+        activeSet: selectedFlashcardSets.includes(activeFlashcardSetName) ? activeFlashcardSetName : null,
+        activeData: selectedFlashcardSets.includes(activeFlashcardSetName) ? activeFlashcardData : null
       };
     }
 
     return exportData;
-  }, [exportFormat, quizSets, flashcardSets, activeQuizSetName, activeFlashcardSetName, activeQuizData, activeFlashcardData]);
+  }, [selectedQuizSets, selectedFlashcardSets, quizSets, flashcardSets, activeQuizSetName, activeFlashcardSetName, activeQuizData, activeFlashcardData]);
 
   // Función para mostrar mensajes del portapapeles
   const showClipboardStatus = (message, type) => {
@@ -54,6 +111,11 @@ const ExportPage = () => {
   // Copiar al portapapeles
   const handleCopyToClipboard = async () => {
     try {
+      if (selectedQuizSets.length === 0 && selectedFlashcardSets.length === 0) {
+        setExportError('Debes seleccionar al menos un set para exportar');
+        setTimeout(() => setExportError(''), 3000);
+        return;
+      }
       const data = generateExportData();
       await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
       showClipboardStatus('Configuración copiada al portapapeles', 'success');
@@ -70,6 +132,11 @@ const ExportPage = () => {
   // Descargar como archivo JSON
   const handleDownloadJSON = () => {
     try {
+      if (selectedQuizSets.length === 0 && selectedFlashcardSets.length === 0) {
+        setExportError('Debes seleccionar al menos un set para exportar');
+        setTimeout(() => setExportError(''), 3000);
+        return;
+      }
       const data = generateExportData();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -120,118 +187,138 @@ const ExportPage = () => {
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Exportar Configuración</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Seleccionar Datos a Exportar</h3>
               <p className="text-gray-600 mb-6">
-                Selecciona qué datos quieres exportar y elige el método de exportación.
+                Elige qué sets deseas incluir en tu archivo de respaldo.
               </p>
             </div>
 
-            {/* Export Format Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Datos a exportar:
-              </label>
-              <div className="space-y-3">
-                <label className="flex items-center gap-3 cursor-pointer bg-white px-4 py-3 rounded-lg border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
-                  <input
-                    type="radio"
-                    name="exportFormat"
-                    value="all"
-                    checked={exportFormat === 'all'}
-                    onChange={(e) => setExportFormat(e.target.value)}
-                    className="h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-                  />
-                  <span className="font-medium">Todo (Quiz y Flashcards)</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer bg-white px-4 py-3 rounded-lg border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
-                  <input
-                    type="radio"
-                    name="exportFormat"
-                    value="quiz"
-                    checked={exportFormat === 'quiz'}
-                    onChange={(e) => setExportFormat(e.target.value)}
-                    className="h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-                  />
-                  <span className="font-medium">Solo Quiz</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer bg-white px-4 py-3 rounded-lg border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
-                  <input
-                    type="radio"
-                    name="exportFormat"
-                    value="flashcard"
-                    checked={exportFormat === 'flashcard'}
-                    onChange={(e) => setExportFormat(e.target.value)}
-                    className="h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-                  />
-                  <span className="font-medium">Solo Flashcards</span>
-                </label>
+            {/* Quiz Sets Selection */}
+            {quizSets && Object.keys(quizSets).length > 0 && (
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                    <h4 className="font-semibold text-gray-800">Quiz Sets ({Object.keys(quizSets).length})</h4>
+                  </div>
+                  <div className="space-x-3 text-sm">
+                    <button
+                      onClick={() => selectAllQuiz(true)}
+                      className="text-indigo-600 hover:text-indigo-800 font-medium"
+                    >
+                      Todos
+                    </button>
+                    <button
+                      onClick={() => selectAllQuiz(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      Ninguno
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {Object.keys(quizSets).map(setName => (
+                    <label key={setName} className="flex items-center gap-2 cursor-pointer p-2 bg-white rounded border border-gray-200 hover:border-indigo-300 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedQuizSets.includes(setName)}
+                        onChange={() => toggleQuizSet(setName)}
+                        className="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                      />
+                      <span className="text-sm text-gray-700 truncate" title={setName}>{setName}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Flashcard Sets Selection */}
+            {flashcardSets && Object.keys(flashcardSets).length > 0 && (
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <h4 className="font-semibold text-gray-800">Flashcard Sets ({Object.keys(flashcardSets).length})</h4>
+                  </div>
+                  <div className="space-x-3 text-sm">
+                    <button
+                      onClick={() => selectAllFlashcard(true)}
+                      className="text-indigo-600 hover:text-indigo-800 font-medium"
+                    >
+                      Todos
+                    </button>
+                    <button
+                      onClick={() => selectAllFlashcard(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      Ninguno
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {Object.keys(flashcardSets).map(setName => (
+                    <label key={setName} className="flex items-center gap-2 cursor-pointer p-2 bg-white rounded border border-gray-200 hover:border-indigo-300 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedFlashcardSets.includes(setName)}
+                        onChange={() => toggleFlashcardSet(setName)}
+                        className="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                      />
+                      <span className="text-sm text-gray-700 truncate" title={setName}>{setName}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Export Actions */}
-            <div className="space-y-4">
-              {/* Clipboard Controls */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Acciones rápidas:
-                </label>
-                <ClipboardControls
-                  onCopyToClipboard={handleCopyToClipboard}
-                  onPasteFromClipboard={null} // No mostrar paste en export
-                  clipboardMessage={clipboardMessage}
-                  showCopy={true}
-                  showPaste={false}
-                  copyLabel="Copiar al Portapapeles"
-                  copyTitle="Copiar configuración exportada al portapapeles"
-                  buttonSize="md"
-                  variant="primary"
-                />
-              </div>
-              
-              {/* Download Button */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Guardar archivo:
-                </label>
-                <button
-                  onClick={handleDownloadJSON}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Descargar JSON
-                </button>
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row gap-4 justify-between items-end">
+                {/* Clipboard Controls */}
+                <div className="w-full sm:w-auto">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Acciones rápidas:
+                  </label>
+                  <ClipboardControls
+                    onCopyToClipboard={handleCopyToClipboard}
+                    onPasteFromClipboard={null}
+                    clipboardMessage={clipboardMessage}
+                    showCopy={true}
+                    showPaste={false}
+                    copyLabel="Copiar al Portapapeles"
+                    copyTitle="Copiar configuración exportada al portapapeles"
+                    buttonSize="md"
+                    variant="primary"
+                    disabled={selectedQuizSets.length === 0 && selectedFlashcardSets.length === 0}
+                  />
+                </div>
+
+                {/* Download Button */}
+                <div className="w-full sm:w-auto">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Guardar archivo:
+                  </label>
+                  <button
+                    onClick={handleDownloadJSON}
+                    disabled={selectedQuizSets.length === 0 && selectedFlashcardSets.length === 0}
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 font-medium rounded-lg shadow-sm transition-all duration-200 ${
+                      selectedQuizSets.length === 0 && selectedFlashcardSets.length === 0
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-green-600 text-white hover:bg-green-700 hover:shadow-md transform hover:-translate-y-0.5'
+                    }`}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Descargar JSON
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Preview */}
-            <div className="mt-6">
-              <h4 className="text-md font-medium text-gray-900 mb-3">Vista previa de datos a exportar:</h4>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3">
-                {exportFormat === 'all' || exportFormat === 'quiz' ? (
-                  <div className="flex items-center justify-between p-3 bg-white rounded-md border border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
-                      <span className="font-medium text-gray-700">Quiz:</span>
-                    </div>
-                    <span className="text-gray-600 text-sm">
-                      {Object.keys(quizSets || {}).length} sets {activeQuizSetName && `(activo: ${activeQuizSetName})`}
-                    </span>
-                  </div>
-                ) : null}
-                {exportFormat === 'all' || exportFormat === 'flashcard' ? (
-                  <div className="flex items-center justify-between p-3 bg-white rounded-md border border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <span className="font-medium text-gray-700">Flashcards:</span>
-                    </div>
-                    <span className="text-gray-600 text-sm">
-                      {Object.keys(flashcardSets || {}).length} sets {activeFlashcardSetName && `(activo: ${activeFlashcardSetName})`}
-                    </span>
-                  </div>
-                ) : null}
-              </div>
+            {/* Summary */}
+            <div className="mt-4 text-sm text-gray-500 text-center">
+              Seleccionados: {selectedQuizSets.length} Quiz, {selectedFlashcardSets.length} Flashcards
             </div>
           </div>
         </div>
