@@ -165,6 +165,14 @@ const QuizView = ({ onQuizComplete }) => {
         window.scrollTo(0, 0);
     };
 
+    // Handle Clearing Progress manually
+    const handleClearProgress = () => {
+        clearCurrentSavedProgress();
+        setIsSubmitted(false);
+        setResults(null);
+        setIndividualFeedback({});
+    };
+
     // Calculate completion percentage
     const calculateCompletionPercentage = () => {
         if (!processedQuestions || processedQuestions.length === 0) return { current: 0, total: 0 };
@@ -196,7 +204,7 @@ const QuizView = ({ onQuizComplete }) => {
                 quizData={processedQuestions} // Use processedQuestions
                 isSubmitted={isSubmitted}
                 completionPercentage={calculateCompletionPercentage()}
-                onClearProgress={clearCurrentSavedProgress}
+                onClearProgress={handleClearProgress}
             />
 
             {/* Shuffle Controls for Quiz */}
