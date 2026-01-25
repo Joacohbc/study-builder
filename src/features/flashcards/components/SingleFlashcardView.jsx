@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Flashcard from '@/components/flashcards/Flashcard';
+import { useState, useRef, useEffect } from 'react';
+import Flashcard from '@/features/flashcards/components/Flashcard';
 import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/icons/ArrowRightIcon';
 import FlipIcon from '@/icons/FlipIcon';
 import ShuffleIcon from '@/icons/ShuffleIcon';
-import ProgressBar from '@/components/ProgressBar';
+import ProgressBar from '@/components/ui/ProgressBar';
 
 const SingleFlashcardView = ({
     shuffledData,

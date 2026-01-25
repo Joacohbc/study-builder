@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Navigation from '@/components/common/Navigation';
+import Navigation from '@/components/ui/Navigation';
 import AppRoutes from '@/routes/AppRoutes';
 import RouteDebugger from '@/components/debug/RouteDebugger';
 import GitHubIcon from '@/icons/GitHubIcon';

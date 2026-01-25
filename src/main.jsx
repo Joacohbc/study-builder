@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from '@/App';
-import '@/index.css';
+import '@/styles/global.css';
 import { StudySetProvider } from '@/contexts/StudySetContext'; // Import the provider
 import { ConfirmationModalProvider } from '@/contexts/ConfirmationModalContext'; // Import the modal provider
 

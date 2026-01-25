@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { shuffleArray } from '@/utils/helpers';
-import QuestionImage from '@/components/common/QuestionImage';
+import QuestionImage from '@/components/ui/QuestionImage';
 
 // SingleChoiceQuestion Component
 const SingleChoiceQuestion = ({ questionData, questionIndex, selectedAnswer, onChange, isSubmitted, feedback, isIndividuallyChecked }) => {

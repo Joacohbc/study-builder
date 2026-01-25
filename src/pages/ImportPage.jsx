@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { StudySetContext } from '@/contexts/StudySetContext';
 import ImportExportIcon from '@/icons/ImportExportIcon';
-import ClipboardControls from '@/components/editor/ClipboardControls';
-import FileDropZone from '@/components/common/FileDropZone';
+import ClipboardControls from '@/features/editor/components/ClipboardControls';
+import FileDropZone from '@/components/ui/FileDropZone';
 
 const ImportPage = () => {
   const { handleSaveAsNewSet } = useContext(StudySetContext);

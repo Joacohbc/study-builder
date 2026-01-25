@@ -3,7 +3,7 @@ import { AI_PROMPT, HELP_TAB_CONTENT } from '@/constants/helpTabConstants';
 import { copyToClipboard } from '@/services/clipboardManager';
 
 // Help Tab Component: Displays static help content using JSX and adds Copy Prompt button
-const HelpTab = () => {
+const HelpView = () => {
     // Define styles for code blocks and inline code
     const codeBlockStyle = "bg-gray-100 p-3 rounded-md overflow-x-auto my-2 font-mono text-sm whitespace-pre-wrap break-words";
     const inlineCodeStyle = "bg-gray-200 text-sm px-1 py-0.5 rounded font-mono";
@@ -172,4 +172,4 @@ const HelpTab = () => {
     );
 };
 
-export default HelpTab;
+export default HelpView;

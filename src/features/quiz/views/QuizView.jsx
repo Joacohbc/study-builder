@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useStudySets } from '@/contexts/useStudySets';
 import { evaluateSingleQuestion } from '@/services/evaluationService';
-import QuizHeader from '@/components/quizz/QuizHeader';
-import NoQuestions from '@/components/quizz/NoQuestions';
-import QuestionList from '@/components/quizz/QuestionList';
-import QuizResults from '@/components/quizz/QuizResults';
-import ShuffleControls from '@/components/common/ShuffleControls';
-import { useQuizProgress } from '@/hooks/useQuizProgress';
+import QuizHeader from '@/features/quiz/components/QuizHeader';
+import NoQuestions from '@/features/quiz/components/NoQuestions';
+import QuestionList from '@/features/quiz/components/QuestionList';
+import QuizResults from '@/features/quiz/components/QuizResults';
+import ShuffleControls from '@/components/ui/ShuffleControls';
+import { useQuizProgress } from '@/features/quiz/hooks/useQuizProgress';
 import CheckIcon from '@/icons/CheckIcon';
 
 // Quiz Tab Component: Manages the quiz state, question rendering, and results
-const QuizTab = ({ onQuizComplete }) => {
+const QuizView = ({ onQuizComplete }) => {
     const { 
         activeQuizData, 
         activeQuizSetName
@@ -252,4 +252,4 @@ const QuizTab = ({ onQuizComplete }) => {
     );
 };
 
-export default QuizTab;
+export default QuizView;

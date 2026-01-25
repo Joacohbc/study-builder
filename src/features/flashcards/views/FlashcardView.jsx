@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useStudySets } from '@/contexts/useStudySets';
 import EmptyFlashcardIcon from '@/icons/EmptyFlashcardIcon';
-import SingleFlashcardView from '@/components/flashcards/SingleFlashcardView';
-import GridFlashcardView from '@/components/flashcards/GridFlashcardView';
-import ShuffleControls from '@/components/common/ShuffleControls';
+import SingleFlashcardView from '@/features/flashcards/components/SingleFlashcardView';
+import GridFlashcardView from '@/features/flashcards/components/GridFlashcardView';
+import ShuffleControls from '@/components/ui/ShuffleControls';
 import { useShuffle } from '@/hooks/useShuffle';
-import EmptyFlashcardState from '@/components/flashcards/EmptyFlashcardState';
+import EmptyFlashcardState from '@/features/flashcards/components/EmptyFlashcardState';
 
 // FlashcardTab Component: Displays flashcards and handles navigation
-const FlashcardTab = () => {
+const FlashcardView = () => {
     const { activeFlashcardData, activeFlashcardSetName } = useStudySets();
 
     const [isShuffling, setIsShuffling] = useState(false);
@@ -116,4 +116,4 @@ const FlashcardTab = () => {
     );
 };
 
-export default FlashcardTab;
+export default FlashcardView;

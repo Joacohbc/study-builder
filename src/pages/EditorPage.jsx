@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStudySets } from '@/contexts/useStudySets';
-import EditorTab from '@/tabs/EditorTab';
+import EditorView from '@/features/editor/views/EditorView';
 import QuizIcon from '@/icons/QuizIcon';
 import CardIcon from '@/icons/CardIcon';
 
@@ -46,7 +46,7 @@ const EditorPage = () => {
           </label>
         </div>
       </div>
-      <EditorTab />
+      <EditorView />
     </div>
   );
 };

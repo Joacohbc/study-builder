@@ -1,8 +1,8 @@
 import React from 'react';
-import SingleChoiceQuestion from '@/components/questions/SingleChoiceQuestion';
-import MultipleChoiceQuestion from '@/components/questions/MultipleChoiceQuestion';
-import MatchingQuestion from '@/components/questions/MatchingQuestion';
-import FillInTheBlanksQuestion from '@/components/questions/FillInTheBlanksQuestion';
+import SingleChoiceQuestion from '@/features/quiz/components/SingleChoiceQuestion';
+import MultipleChoiceQuestion from '@/features/quiz/components/MultipleChoiceQuestion';
+import MatchingQuestion from '@/features/quiz/components/MatchingQuestion';
+import FillInTheBlanksQuestion from '@/features/quiz/components/FillInTheBlanksQuestion';
 import CheckIcon from '@/icons/CheckIcon';
 
 const QuestionList = ({

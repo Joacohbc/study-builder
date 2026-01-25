@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // DropZoneDefinition Component
 const DropZoneDefinition = ({ definition, questionId, droppedTerms = [], onDrop, isSubmitted, feedback }) => { // Changed droppedTerm to droppedTerms array
