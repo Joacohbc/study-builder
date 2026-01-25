@@ -73,7 +73,7 @@ const FillInTheBlanksQuestion = ({ questionData, selectedAnswers = {}, onChange,
             {renderQuestionText()}
             {/* Show overall feedback only if needed and the whole question is incorrect */}
             {shouldShowFeedback && feedback && !feedback.isCorrect && (
-                <div className="mt-2 text-xs text-red-600">
+                <div className="mt-2 text-xs text-error">
                     Respuestas correctas:
                     {Object.entries(questionData.blanks).map(([id, data]) => (
                         <span key={id} className="ml-2 font-semibold">{`[${id}]: ${data.correctAnswer}`}</span>

@@ -41,7 +41,7 @@ const HelpView = () => {
                 </button>
                 {/* Display copy success/error message */}
                 {copySuccess && (
-                    <p className={`mt-2 text-sm ${copySuccess.includes('Error') ? 'text-red-600' : 'text-green-600'}`}>
+                    <p className={`mt-2 text-sm ${copySuccess.includes('Error') ? 'text-error' : 'text-success'}`}>
                         {copySuccess}
                     </p>
                 )}

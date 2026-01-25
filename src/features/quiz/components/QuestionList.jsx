@@ -137,7 +137,7 @@ const QuestionList = ({
                             )}
                         </div>
                         {(isSubmitted || isIndividuallyChecked) && questionFeedback?.error && (
-                            <p className="mt-3 text-sm text-red-600 font-medium">{questionFeedback.error}</p>
+                            <p className="mt-3 text-sm text-error font-medium">{questionFeedback.error}</p>
                         )}
                         {!isSubmitted && (
                             <div className="mt-4">

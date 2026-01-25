@@ -123,7 +123,7 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
                 {shouldShowFeedback && feedback?.unplacedTerms?.length > 0 && (
                     <div className="mt-4 p-2 border border-red-300 bg-red-50 rounded">
                         <p className="text-sm font-semibold text-red-700">Términos no colocados:</p>
-                        <ul className="list-disc list-inside text-sm text-red-600">
+                        <ul className="list-disc list-inside text-sm text-error">
                             {feedback.unplacedTerms.map(term => <li key={term}>{term}</li>)}
                         </ul>
                     </div>
@@ -170,7 +170,7 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
                             )}
                             {/* Feedback Hint for Incorrect Match */}
                             {shouldShowFeedback && definitionFeedback && !definitionFeedback.isCorrect && (
-                                <p className="text-xs text-red-600 mt-1">
+                                <p className="text-xs text-error mt-1">
                                     Correcto: {Array.isArray(definitionFeedback.correctTerms) && definitionFeedback.correctTerms.length > 0
                                         ? definitionFeedback.correctTerms.map(term => `"${term}"`).join(', ')
                                         : definitionFeedback.correctTerm ? `"${definitionFeedback.correctTerm}"` : 'N/A'
