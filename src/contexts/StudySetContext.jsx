@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback } from 'react';
+import { createContext, useState } from 'react';
 import { useQuizData } from '@/features/quiz/hooks/useQuizData';
 import { useFlashcardData } from '@/features/flashcards/hooks/useFlashcardData';
 
@@ -10,7 +10,7 @@ export const StudySetProvider = ({ children }) => {
     const quizHookData = useQuizData();
     const flashcardHookData = useFlashcardData();
 
-    const handleLoadSet = useCallback((type, setName) => {
+    const handleLoadSet = (type, setName) => {
         if (type === 'quiz') {
             quizHookData.loadQuizSet(setName);
         } else if (type === 'flashcard') {
@@ -18,9 +18,9 @@ export const StudySetProvider = ({ children }) => {
         } else {
             console.error(`Invalid set type for load: ${type}`);
         }
-    }, [quizHookData, flashcardHookData]);
+    };
 
-    const handleSaveChanges = useCallback((type, setName, updatedData) => {
+    const handleSaveChanges = (type, setName, updatedData) => {
         if (type === 'quiz') {
             return quizHookData.saveQuizChanges(setName, updatedData);
         } else if (type === 'flashcard') {
@@ -28,9 +28,9 @@ export const StudySetProvider = ({ children }) => {
         }
         console.error(`Invalid set type for save changes: ${type}`);
         return false;
-    }, [quizHookData, flashcardHookData]);
+    };
 
-    const handleSaveAsNewSet = useCallback((type, newSetName, dataToSave) => {
+    const handleSaveAsNewSet = (type, newSetName, dataToSave) => {
         if (type === 'quiz') {
             return quizHookData.saveAsNewQuizSet(newSetName, dataToSave);
         } else if (type === 'flashcard') {
@@ -38,9 +38,9 @@ export const StudySetProvider = ({ children }) => {
         }
         console.error(`Invalid set type for save as new: ${type}`);
         return false;
-    }, [quizHookData, flashcardHookData]);
+    };
 
-    const handleDeleteSet = useCallback((type, setNameToDelete) => {
+    const handleDeleteSet = (type, setNameToDelete) => {
         if (type === 'quiz') {
             quizHookData.deleteQuizSet(setNameToDelete);
         } else if (type === 'flashcard') {
@@ -48,9 +48,9 @@ export const StudySetProvider = ({ children }) => {
         } else {
             console.error(`Invalid set type for delete: ${type}`);
         }
-    }, [quizHookData, flashcardHookData]);
+    };
 
-    const handleResetDefaultSet = useCallback((type) => {
+    const handleResetDefaultSet = (type) => {
         if (type === 'quiz') {
             quizHookData.resetDefaultQuizSet();
         } else if (type === 'flashcard') {
@@ -58,7 +58,7 @@ export const StudySetProvider = ({ children }) => {
         } else {
             console.error(`Invalid set type for reset: ${type}`);
         }
-    }, [quizHookData, flashcardHookData]);
+    };
 
     const value = {
         // Quiz data and functions from useQuizData

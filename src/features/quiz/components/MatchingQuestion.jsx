@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'; // Import useMemo
+import { useState, useEffect } from 'react';
 import { shuffleArray } from '@/utils/helpers';
 import DraggableTerm from '@/components/ui/dnd/DraggableTerm';
 import DropZoneDefinition from '@/components/ui/dnd/DropZoneDefinition';
@@ -23,21 +23,17 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
     }, [questionData.definitions]);
 
     // Derive available terms based on shuffledTerms and current matches
-    // useMemo ensures this calculation only runs when dependencies change, preventing unnecessary shuffling
-    const availableTerms = useMemo(() => {
-        const termsInUse = new Set();
-        // Collect all terms that are currently in use (supports multiple terms per definition)
-        Object.values(matches).forEach(value => {
-            if (Array.isArray(value)) {
-                value.forEach(term => termsInUse.add(term));
-            } else if (value) {
-                termsInUse.add(value);
-            }
-        });
-        return shuffledTerms.filter(term => !termsInUse.has(term));
-    }, [shuffledTerms, matches]); // Depends only on the shuffled list and the current matches
+    const termsInUse = new Set();
+    Object.values(matches).forEach(value => {
+        if (Array.isArray(value)) {
+            value.forEach(term => termsInUse.add(term));
+        } else if (value) {
+            termsInUse.add(value);
+        }
+    });
+    const availableTerms = shuffledTerms.filter(term => !termsInUse.has(term));
 
-    const handleDrop = useCallback((definition, term) => {
+    const handleDrop = (definition, term) => {
         if (isSubmitted) return;
         
         // Get current matches for this definition
@@ -64,9 +60,9 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
         }
         
         onMatchChange(questionData.id, definition, newMatches);
-    }, [isSubmitted, onMatchChange, questionData.id, matches]);
+    };
 
-    const returnTermToAvailable = useCallback((term, definition) => {
+    const returnTermToAvailable = (term, definition) => {
         if (isSubmitted || !term) return;
         
         const currentMatches = matches[definition];
@@ -86,7 +82,7 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
         }
         
         onMatchChange(questionData.id, definition, newMatches);
-    }, [isSubmitted, matches, onMatchChange, questionData.id]);
+    };
 
     const shouldShowFeedback = (isSubmitted || isIndividuallyChecked) && feedback;
 
@@ -110,7 +106,7 @@ const MatchingQuestion = ({ questionData, matches = {}, onMatchChange, isSubmitt
                 {availableTerms.length === 0 && (questionData.terms || []).length > 0 && !isSubmitted && Object.keys(matches).length > 0 && (
                     <p className="text-sm text-gray-500 italic">Todos los términos han sido usados.</p>
                 )}
-                {/* Display available terms derived from useMemo */}
+                {/* Display available terms */}
                 {availableTerms.map(term => (
                     <DraggableTerm
                         key={term}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { loadAllSets, saveAllSets, loadActiveSetName, saveActiveSetName, getDefaultsForType } from '@/services/storageManager';
 
 const quizDefaults = getDefaultsForType('quiz');
@@ -26,7 +26,7 @@ export const useQuizData = () => {
         saveAllSets(quizDefaults.storageKey, newSets);
     };
 
-    const loadQuizSet = useCallback((setName) => {
+    const loadQuizSet = (setName) => {
         if (quizSets && quizSets[setName]) {
             setActiveQuizSetName(setName);
             const newActiveData = quizSets[setName] || [];
@@ -36,9 +36,9 @@ export const useQuizData = () => {
         } else {
             console.error(`Attempted to load non-existent quiz set: ${setName}`);
         }
-    }, [quizSets]);
+    };
 
-    const saveQuizChanges = useCallback((setName, updatedData) => {
+    const saveQuizChanges = (setName, updatedData) => {
         if (setName === quizDefaults.defaultSetName) {
             console.error("Attempted to save changes to the default quiz set. Use 'Save As New'.");
             return false;
@@ -54,9 +54,9 @@ export const useQuizData = () => {
         }
         console.error(`Attempted to save changes to non-existent quiz set: ${setName}`);
         return false;
-    }, [quizSets, activeQuizSetName]);
+    };
 
-    const saveAsNewQuizSet = useCallback((newSetName, dataToSave) => {
+    const saveAsNewQuizSet = (newSetName, dataToSave) => {
         if (!newSetName || newSetName.trim() === '') {
             console.error("Attempted to save quiz set with empty name.");
             return false;
@@ -75,9 +75,9 @@ export const useQuizData = () => {
 
         console.log(`Quiz set saved as '${newSetName}' and activated via useQuizData.`);
         return true;
-    }, [quizSets]);
+    };
 
-    const deleteQuizSet = useCallback((setNameToDelete) => {
+    const deleteQuizSet = (setNameToDelete) => {
         if (!setNameToDelete || setNameToDelete === quizDefaults.defaultSetName) {
             console.error(`Attempted to delete invalid or default quiz set: ${setNameToDelete}`);
             return;
@@ -95,9 +95,9 @@ export const useQuizData = () => {
         } else {
             console.error(`Attempted to delete non-existent quiz set: ${setNameToDelete}`);
         }
-    }, [quizSets, activeQuizSetName, loadQuizSet]);
+    };
 
-    const resetDefaultQuizSet = useCallback(() => {
+    const resetDefaultQuizSet = () => {
         const defaultDataWithIds = quizDefaults.defaultData.map((item, index) => ({ ...item, id: item.id || `quiz_default_${index}` }));
         if (quizSets) {
             const newSets = { ...quizSets, [quizDefaults.defaultSetName]: defaultDataWithIds };
@@ -107,7 +107,7 @@ export const useQuizData = () => {
                 setActiveQuizData(defaultDataWithIds);
             }
         }
-    }, [quizSets, activeQuizSetName]);
+    };
 
     return {
         quizSets,

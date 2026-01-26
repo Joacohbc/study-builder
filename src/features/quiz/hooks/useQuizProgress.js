@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { saveQuizProgress, loadQuizProgress, clearQuizProgress } from '@/services/storageManager';
 import { useShuffle } from '@/hooks/useShuffle';
 
@@ -24,15 +24,15 @@ export const useQuizProgress = (activeQuizSetName, originalQuestions, isSubmitte
     }, [initialLoadedQuestionOrder, originalQuestions]);
 
     // Wrapper functions that update the processed questions state
-    const shuffle = useCallback(() => {
+    const shuffle = () => {
         const shuffledData = shuffleFunction();
         setProcessedQuestions(shuffledData);
-    }, [shuffleFunction]);
+    };
 
-    const resetOrder = useCallback(() => {
+    const resetOrder = () => {
         const resetData = resetOrderFunction();
         setProcessedQuestions(resetData);
-    }, [resetOrderFunction]);
+    };
 
     // Effect to load progress when the active quiz set name changes
     useEffect(() => {
@@ -59,13 +59,13 @@ export const useQuizProgress = (activeQuizSetName, originalQuestions, isSubmitte
         }
     }, [answers, processedQuestions, activeQuizSetName, isSubmitted]);
 
-    const clearCurrentSavedProgress = useCallback(() => {
+    const clearCurrentSavedProgress = () => {
         if (activeQuizSetName) {
             clearQuizProgress(activeQuizSetName);
             setAnswers({});
             setInitialLoadedQuestionOrder(null);
         }
-    }, [activeQuizSetName]);
+    };
 
     return { 
         answers, 

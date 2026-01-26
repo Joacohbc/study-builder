@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { shuffleArray } from '@/utils/helpers';
 
 /**
@@ -9,7 +8,7 @@ import { shuffleArray } from '@/utils/helpers';
  */
 export const useShuffle = (originalData, processedData) => {
     // Check if current data is in original order
-    const isInOriginalOrder = useCallback(() => {
+    const isInOriginalOrder = () => {
         if (!originalData || !processedData || originalData.length !== processedData.length) {
             return true;
         }
@@ -20,20 +19,20 @@ export const useShuffle = (originalData, processedData) => {
             const processedId = processedData[index]?.id || processedData[index];
             return originalId === processedId;
         });
-    }, [originalData, processedData]);
+    };
 
     // Shuffle the data - returns shuffled array
-    const shuffle = useCallback(() => {
+    const shuffle = () => {
         if (originalData && originalData.length > 1) {
             return shuffleArray([...originalData]);
         }
         return originalData || [];
-    }, [originalData]);
+    };
 
     // Reset to original order - returns original array
-    const resetOrder = useCallback(() => {
+    const resetOrder = () => {
         return [...(originalData || [])];
-    }, [originalData]);
+    };
 
     return {
         isInOriginalOrder: isInOriginalOrder(),

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
 export const useConfirmationModal = () => {
   const [modalState, setModalState] = useState({
@@ -12,7 +12,7 @@ export const useConfirmationModal = () => {
     onCancel: null
   });
 
-  const showConfirmation = useCallback((options = {}) => {
+  const showConfirmation = (options = {}) => {
     return new Promise((resolve) => {
       setModalState({
         isOpen: true,
@@ -31,37 +31,37 @@ export const useConfirmationModal = () => {
         }
       });
     });
-  }, []);
+  };
 
-  const hideModal = useCallback(() => {
+  const hideModal = () => {
     setModalState(prev => ({ ...prev, isOpen: false }));
-  }, []);
+  };
 
   // Métodos de conveniencia para diferentes tipos de confirmación
-  const confirmDanger = useCallback((options = {}) => {
+  const confirmDanger = (options = {}) => {
     return showConfirmation({
       ...options,
       type: 'danger',
       title: options.title || 'Acción peligrosa',
       confirmText: options.confirmText || 'Eliminar'
     });
-  }, [showConfirmation]);
+  };
 
-  const confirmWarning = useCallback((options = {}) => {
+  const confirmWarning = (options = {}) => {
     return showConfirmation({
       ...options,
       type: 'warning',
       title: options.title || 'Advertencia'
     });
-  }, [showConfirmation]);
+  };
 
-  const confirmSuccess = useCallback((options = {}) => {
+  const confirmSuccess = (options = {}) => {
     return showConfirmation({
       ...options,
       type: 'success',
       title: options.title || 'Confirmar acción'
     });
-  }, [showConfirmation]);
+  };
 
   return {
     modalState,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { loadAllSets, saveAllSets, loadActiveSetName, saveActiveSetName, getDefaultsForType } from '@/services/storageManager';
 
 const flashcardDefaults = getDefaultsForType('flashcard');
@@ -25,7 +25,7 @@ export const useFlashcardData = () => {
         saveAllSets(flashcardDefaults.storageKey, newSets);
     };
 
-    const loadFlashcardSet = useCallback((setName) => {
+    const loadFlashcardSet = (setName) => {
         if (flashcardSets && flashcardSets[setName]) {
             setActiveFlashcardSetName(setName);
             setActiveFlashcardData(flashcardSets[setName] || []);
@@ -34,9 +34,9 @@ export const useFlashcardData = () => {
         } else {
             console.error(`Attempted to load non-existent flashcard set: ${setName}`);
         }
-    }, [flashcardSets]);
+    };
 
-    const saveFlashcardChanges = useCallback((setName, updatedData) => {
+    const saveFlashcardChanges = (setName, updatedData) => {
         if (setName === flashcardDefaults.defaultSetName) {
             console.error("Attempted to save changes to the default flashcard set. Use 'Save As New'.");
             return false;
@@ -52,9 +52,9 @@ export const useFlashcardData = () => {
         }
         console.error(`Attempted to save changes to non-existent flashcard set: ${setName}`);
         return false;
-    }, [flashcardSets, activeFlashcardSetName]);
+    };
 
-    const saveAsNewFlashcardSet = useCallback((newSetName, dataToSave) => {
+    const saveAsNewFlashcardSet = (newSetName, dataToSave) => {
         if (!newSetName || newSetName.trim() === '') {
             console.error("Attempted to save flashcard set with empty name.");
             return false;
@@ -73,9 +73,9 @@ export const useFlashcardData = () => {
 
         console.log(`Flashcard set saved as '${newSetName}' and activated via useFlashcardData.`);
         return true;
-    }, [flashcardSets]);
+    };
 
-    const deleteFlashcardSet = useCallback((setNameToDelete) => {
+    const deleteFlashcardSet = (setNameToDelete) => {
         if (!setNameToDelete || setNameToDelete === flashcardDefaults.defaultSetName) {
             console.error(`Attempted to delete invalid or default flashcard set: ${setNameToDelete}`);
             return;
@@ -93,9 +93,9 @@ export const useFlashcardData = () => {
         } else {
             console.error(`Attempted to delete non-existent flashcard set: ${setNameToDelete}`);
         }
-    }, [flashcardSets, activeFlashcardSetName, loadFlashcardSet]);
+    };
 
-    const resetDefaultFlashcardSet = useCallback(() => {
+    const resetDefaultFlashcardSet = () => {
         const defaultDataWithIds = flashcardDefaults.defaultData.map((item, index) => ({ ...item, id: item.id || `flashcard_default_${index}` }));
         if (flashcardSets) {
             const newSets = { ...flashcardSets, [flashcardDefaults.defaultSetName]: defaultDataWithIds };
@@ -105,7 +105,7 @@ export const useFlashcardData = () => {
                 setActiveFlashcardData(defaultDataWithIds);
             }
         }
-    }, [flashcardSets, activeFlashcardSetName]);
+    };
 
     return {
         flashcardSets,

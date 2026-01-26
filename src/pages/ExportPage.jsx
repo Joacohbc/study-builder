@@ -1,4 +1,4 @@
-import { useState, useContext, useCallback } from 'react';
+import { useState, useContext } from 'react';
 import { StudySetContext } from '@/contexts/StudySetContext';
 import ImportExportIcon from '@/icons/ImportExportIcon';
 import ClipboardControls from '@/features/editor/components/ClipboardControls';
@@ -19,7 +19,7 @@ const ExportPage = () => {
   const [clipboardMessage, setClipboardMessage] = useState({ message: '', type: '' });
 
   // Generar datos de exportación
-  const generateExportData = useCallback(() => {
+  const generateExportData = () => {
     const exportData = {
       version: '1.0',
       timestamp: new Date().toISOString(),
@@ -43,7 +43,7 @@ const ExportPage = () => {
     }
 
     return exportData;
-  }, [exportFormat, quizSets, flashcardSets, activeQuizSetName, activeFlashcardSetName, activeQuizData, activeFlashcardData]);
+  };
 
   // Función para mostrar mensajes del portapapeles
   const showClipboardStatus = (message, type) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useStudySets } from '@/contexts/useStudySets';
 import { evaluateSingleQuestion } from '@/services/evaluationService';
 import QuizHeader from '@/features/quiz/components/QuizHeader';
@@ -45,15 +45,15 @@ const QuizView = ({ onQuizComplete }) => {
     }, [activeQuizSetName]);
 
     // Callback to handle answer changes from single/multiple choice questions
-    const handleAnswerChange = useCallback((questionId, value) => {
+    const handleAnswerChange = (questionId, value) => {
         setAnswers(prevAnswers => ({
             ...prevAnswers,
             [questionId]: value,
         }));
-    }, []);
+    };
 
     // Callback to handle answer changes from matching questions
-    const handleMatchChange = useCallback((questionId, definition, terms) => {
+    const handleMatchChange = (questionId, definition, terms) => {
         setAnswers(prevAnswers => {
             const currentMatches = prevAnswers[questionId] || {}; // Get current matches for this question
             const newMatches = { ...currentMatches };
@@ -86,10 +86,10 @@ const QuizView = ({ onQuizComplete }) => {
             
             return { ...prevAnswers, [questionId]: newMatches };
         });
-    }, []);
+    };
 
     // Callback to handle answer changes from fill-in-the-blanks questions
-    const handleFillInTheBlanksChange = useCallback((questionId, blankId, value) => {
+    const handleFillInTheBlanksChange = (questionId, blankId, value) => {
         setAnswers(prevAnswers => {
             const currentBlanks = prevAnswers[questionId] || {}; // Get current answers for this question
             const newBlanks = {
@@ -101,13 +101,13 @@ const QuizView = ({ onQuizComplete }) => {
                 [questionId]: newBlanks,
             };
         });
-    }, []);
+    };
 
 
     // --- Evaluation Logic ---
 
     // Handle checking a single question
-    const handleCheckSingleQuestion = useCallback((questionId) => {
+    const handleCheckSingleQuestion = (questionId) => {
         const question = processedQuestions.find(q => q.id === questionId);
         if (!question) return;
 
@@ -119,7 +119,7 @@ const QuizView = ({ onQuizComplete }) => {
                 [questionId]: feedback
             }));
         }
-    }, [processedQuestions, answers]);
+    };
 
 
     // Handle form submission: calculate score and generate feedback
