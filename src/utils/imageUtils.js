@@ -11,14 +11,23 @@ export const isValidBase64Image = (imageString) => {
     }
 
     // Check if it has the data URL prefix
-    const dataUrlPattern = /^data:image\/(png|jpg|jpeg|gif|webp|svg\+xml);base64,/;
-    if (dataUrlPattern.test(imageString)) {
-        return true;
+    if (imageString.startsWith('data:image/')) {
+        // Use a regex only on the beginning of the string to avoid performance issues with large strings
+        const dataUrlPattern = /^data:image\/(png|jpg|jpeg|gif|webp|svg\+xml);base64,/;
+        return dataUrlPattern.test(imageString.substring(0, 100));
     }
 
     // Check if it's just base64 without prefix
+    // For large strings, a full regex match is slow.
+    // We do a basic validation: length multiple of 4 and check characters of a small sample.
+    if (imageString.length % 4 !== 0) {
+        return false;
+    }
+
+    // Check first few characters to ensure it looks like base64
+    const beginning = imageString.substring(0, 100);
     const base64Pattern = /^[A-Za-z0-9+/]*={0,2}$/;
-    return base64Pattern.test(imageString);
+    return base64Pattern.test(beginning);
 };
 
 /**
